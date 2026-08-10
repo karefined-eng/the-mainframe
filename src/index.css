@@ -1,0 +1,60 @@
+@import "tailwindcss";
+
+/* ── Design tokens from doc 02 ── */
+@theme {
+  --color-bg: #0E0E10;
+  --color-surface: #1A1A1D;
+  --color-surface-alt: #141518;
+  --color-text: #F2F2F0;
+  --color-text-muted: #B1B3B7;
+  --color-accent: #4A9EFF;
+  --color-border: #1F2024;
+  --color-sidebar: #111214;
+  --color-danger: #FF5E5E;
+  --color-success: #34D399;
+  --color-warning: #FBBF24;
+}
+
+/* ── Base reset ── */
+:root {
+  color-scheme: dark;
+  font-family: Inter, system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button, input, textarea, select {
+  font: inherit;
+}
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+
+/* ── Animations ── */
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

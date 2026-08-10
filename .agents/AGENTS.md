@@ -1,0 +1,70 @@
+<RULE[user_global]>
+---
+name: Frictionless Launchers
+description: >
+  Automatically generate a .bat launcher script for uncompiled local projects to improve developer UX and reduce terminal friction on Windows.
+---
+# Frictionless Launchers
+When scaffolding a new local project on Windows that relies on a development server (e.g., Vite, Tauri, React, Node) and is not immediately bundled into a standalone executable, you MUST automatically generate a `.bat` launcher script in the project root.
+
+The script should use the following robust pattern:
+```bat
+@echo off
+cd /d "%~dp0"
+start "" <your-start-command>
+```
+Name the file `<project-name>.bat` (e.g., `the-mainframe.bat`). This ensures the user can double-click the file (or a desktop shortcut) to launch the project with zero terminal friction.
+</RULE[user_global]>
+
+<RULE>
+---
+name: Mainframe Neuro-UX Guidelines
+description: >
+  Strict UI/UX design constraints for The Mainframe based on cognitive load theory and ADHD-friendly psychology. Must be applied to all frontend React/Tailwind components.
+---
+# Mainframe Neuro-UX Guidelines
+When implementing UI components, dashboards, or notification views for The Mainframe, you MUST adhere to the following neurological UX constraints:
+
+1. **Strict Chunking (Working Memory):** Never display massive walls of raw tasks. In the "What's Hot" or urgent views, limit the top high-priority items to 3-5 distinct chunks.
+2. **No Shame Mechanics:** Never use punitive design (e.g., flashing red text, broken streaks, aggressive alerts) for overdue items. Present delays neutrally ("blunt re-entry") to avoid triggering avoidance loops or dopamine deficits.
+3. **Immediate Additive Feedback:** The exact millisecond a task is completed, provide immediate, satisfying visual feedback (e.g., a smooth strikethrough, a clean animation, or color transition).
+4. **Avoid Hick's Law Fatigue:** Do NOT build complex tag clouds, multi-sort dropdowns, or excessive domain filters. Rely on algorithmic curation (urgency scores) over manual user filtering.
+5. **Zeigarnik Cues:** Prominently surface items marked `in_progress` to create a psychological open loop, encouraging the user to finish them.
+6. **Implementation Intentions:** If an item has an `action_trigger` (the user's "when/where/how" plan), it MUST be displayed verbatim. Do not replace it with generic text.
+</RULE>
+
+<RULE>
+---
+name: Mainframe SQLite Deduplication
+description: >
+  Enforces strict deduplication at the database schema level using SQLite constraints to prevent duplicate entries from multiple imports or manual entry.
+---
+# Mainframe SQLite Deduplication
+When generating SQLite schemas, writing import scripts, or performing migrations for The Mainframe, you MUST include native database constraints to prevent duplicate row creation. Do not rely solely on frontend or application logic.
+
+1. **Unique Constraints**: Apply a `UNIQUE(title)` constraint to all primary domain tables (`courses`, `acquisitions`, `goals`, `build_ideas`, `ventures`).
+2. **Conflict Resolution**: When performing inserts (e.g., during bulk imports or pasting text), always use `INSERT OR IGNORE` to silently skip existing entries without throwing an error, or `INSERT OR REPLACE` if the user is explicitly updating an item.
+</RULE>
+
+<RULE>
+---
+name: Defensive UI Mapping
+description: >
+  Enforces safe fallbacks when using dictionary lookups for UI styling based on dynamic or extensible domains.
+---
+# Defensive UI Mapping
+When mapping dynamic keys (like database domains, categories, or enums) to UI properties (like colors, icons, or classes) in React components, you MUST ALWAYS provide a safe fallback value. 
+Never assume the dictionary contains all possible keys.
+Example: `backgroundColor: domainColors[key] || "#94a3b8"`
+</RULE>
+
+<RULE>
+---
+name: Windows ACL Terminal Error Fallback
+description: >
+  Guides the agent on how to handle the "opening NUL for ACL write: Access is denied" error on Windows.
+---
+# Windows ACL Terminal Error Fallback
+If you encounter the error `opening NUL for ACL write: Access is denied.` when trying to execute a command via the `run_command` tool on Windows, DO NOT attempt to retry the command with `cmd.exe /c` or other wrappers. 
+Acknowledge the environment limitation and immediately provide the exact command to the user so they can run it manually in their own terminal.
+</RULE>

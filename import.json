@@ -1,0 +1,116 @@
+[
+  {
+    "domain": "acquisitions",
+    "title": "Bandages",
+    "notes": null,
+    "status": "not_started",
+    "estimated_cost": 30,
+    "priority": "low",
+    "category": "Fitness"
+  },
+  {
+    "domain": "acquisitions",
+    "title": "Wrist straps",
+    "notes": null,
+    "status": "not_started",
+    "estimated_cost": 80,
+    "priority": "medium",
+    "category": "Fitness"
+  },
+  {
+    "domain": "acquisitions",
+    "title": "Paralletes",
+    "notes": null,
+    "status": "not_started",
+    "estimated_cost": 250,
+    "priority": "medium",
+    "category": "Fitness"
+  },
+  {
+    "domain": "acquisitions",
+    "title": "Hiking Shoes",
+    "notes": "Proper traction",
+    "status": "not_started",
+    "estimated_cost": 400,
+    "priority": "high",
+    "category": "Fitness"
+  },
+  {
+    "domain": "acquisitions",
+    "title": "Weighted Joggers",
+    "notes": null,
+    "status": "not_started",
+    "estimated_cost": 250,
+    "priority": "medium",
+    "category": "Fitness"
+  },
+  {
+    "domain": "acquisitions",
+    "title": "Bass Guitar",
+    "notes": null,
+    "status": "not_started",
+    "estimated_cost": 1500,
+    "priority": "medium",
+    "category": "Music"
+  },
+  {
+    "domain": "acquisitions",
+    "title": "New Laptop",
+    "notes": "Specs: 16GB+ RAM, 1TB ROM, CUDA (NVIDIA GPU), OLED Display",
+    "status": "not_started",
+    "estimated_cost": 18000,
+    "priority": "high",
+    "category": "Electronics"
+  },
+  {
+    "domain": "acquisitions",
+    "title": "Audio/Video Recorder",
+    "notes": null,
+    "status": "not_started",
+    "estimated_cost": 250,
+    "priority": "medium",
+    "category": "Electronics"
+  },
+  {
+    "domain": "acquisitions",
+    "title": "Black shorts (3 pcs)",
+    "notes": null,
+    "status": "not_started",
+    "estimated_cost": 150,
+    "priority": "medium",
+    "category": "Fitness"
+  },
+  {
+    "domain": "acquisitions",
+    "title": "Black tank tops (3 pcs)",
+    "notes": null,
+    "status": "not_started",
+    "estimated_cost": 120,
+    "priority": "medium",
+    "category": "Fitness"
+  },
+  { "domain": "skills", "title": "Shadow boxing", "status": "not_started" },
+  { "domain": "skills", "title": "Calisthenics", "status": "not_started" },
+  { "domain": "skills", "title": "Typing", "status": "not_started" },
+  { "domain": "skills", "title": "Singing", "status": "not_started" },
+  { "domain": "skills", "title": "Running", "status": "not_started" },
+  { "domain": "skills", "title": "Swimming", "status": "not_started" },
+  { "domain": "skills", "title": "Writing", "status": "not_started" },
+  { "domain": "skills", "title": "Taking pictures", "status": "not_started" },
+  { "domain": "skills", "title": "Thinking", "status": "not_started" },
+  { "domain": "skills", "title": "Reading", "status": "not_started" },
+  { "domain": "skills", "title": "Coding", "status": "not_started" },
+  { "domain": "skills", "title": "Speaking", "status": "not_started" },
+  { "domain": "skills", "title": "Teaching", "status": "not_started" },
+  { "domain": "skills", "title": "Leading", "status": "not_started" },
+  { "domain": "skills", "title": "Helping", "status": "not_started" },
+  { "domain": "skills", "title": "Building", "status": "not_started" },
+  { "domain": "experiences", "title": "Climbing", "status": "not_started" },
+  { "domain": "experiences", "title": "Discovering", "status": "not_started" },
+  { "domain": "experiences", "title": "Flying", "status": "not_started" },
+  { "domain": "experiences", "title": "Skydiving", "status": "not_started" },
+  { "domain": "experiences", "title": "Gliding", "status": "not_started" },
+  { "domain": "experiences", "title": "Walking", "status": "not_started" },
+  { "domain": "experiences", "title": "Sketching", "status": "not_started" },
+  { "domain": "experiences", "title": "Hiking", "status": "not_started" }
+]
