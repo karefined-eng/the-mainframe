@@ -25,7 +25,7 @@ export default function PasteIngest({ domain, onImported }: PasteIngestProps) {
       const db = await getDb();
       for (const line of lines) {
         await db.execute(
-          `INSERT INTO ${domain} (title, raw_import_text) VALUES ($1, $2)`,
+          `INSERT OR IGNORE INTO ${domain} (title, raw_import_text) VALUES ($1, $2)`,
           [line, line],
         );
       }

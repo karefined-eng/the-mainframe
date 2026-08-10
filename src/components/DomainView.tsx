@@ -82,7 +82,7 @@ export default function DomainView({
     } else {
       const placeholders = keys.map((_, i) => `$${i + 1}`).join(", ");
       await db.execute(
-        `INSERT INTO ${domain} (${keys.join(", ")}) VALUES (${placeholders})`,
+        `INSERT OR IGNORE INTO ${domain} (${keys.join(", ")}) VALUES (${placeholders})`,
         Object.values(fields),
       );
     }
