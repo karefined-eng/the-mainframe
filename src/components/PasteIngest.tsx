@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { DomainKey } from "../App";
+import { Check } from "lucide-react";
 import { getDb } from "../App";
 
 interface PasteIngestProps {
@@ -58,7 +59,7 @@ export default function PasteIngest({ domain, onImported }: PasteIngestProps) {
       <div className="flex items-center justify-between">
         {result ? (
           <span className={`text-sm font-medium ${result.startsWith("Error") ? "text-danger" : "text-success"}`}>
-            ✓ {result}
+            <Check className="w-4 h-4 inline-block text-success mr-2" /> {result}
           </span>
         ) : (
           <span className="text-xs text-text-muted">

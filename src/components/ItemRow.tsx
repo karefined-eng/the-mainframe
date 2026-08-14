@@ -1,4 +1,5 @@
 import type { DomainKey, BaseItem, Status } from "../App";
+import { X } from "lucide-react";
 
 const statusCycle: Status[] = ["not_started", "in_progress", "done", "paused"];
 const statusLabels: Record<Status, string> = {
@@ -90,7 +91,7 @@ export default function ItemRow({
         className="shrink-0 rounded-lg p-1.5 text-text-muted/40 opacity-0 group-hover:opacity-100 hover:text-danger transition-all cursor-pointer"
         title="Delete"
       >
-        ✕
+        <X className="w-4 h-4 mx-auto" />
       </button>
     </div>
   );

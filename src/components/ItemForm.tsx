@@ -1,5 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import type { DomainKey, BaseItem } from "../App";
+import { getDb } from "../App";
+import { Pen, Plus, X } from "lucide-react";
 import BriefingTimeline from "./BriefingTimeline";
 
 interface ItemFormProps {
@@ -53,6 +55,8 @@ const domainFields: Record<DomainKey, { key: string; label: string; type: string
 
 
 export default function ItemForm({ domain, item, onSave, onCancel, onEnterDraftingMode }: ItemFormProps) {
+  const isTier1 = ["build_ideas", "writing", "ventures", "goals", "skills", "experiences"].includes(domain);
+
   const [form, setForm] = useState<Record<string, string>>(() => {
     if (item) {
       const init: Record<string, string> = {};
@@ -68,6 +72,27 @@ export default function ItemForm({ domain, item, onSave, onCancel, onEnterDrafti
     }
     return { title: "", notes: "", status: "not_started", target_date: "" };
   });
+
+  const [cards, setCards] = useState<{ id?: number; title: string; isDeleted?: boolean }[]>([
+    { title: "" }
+  ]);
+  const [cardsLoaded, setCardsLoaded] = useState(false);
+
+  useEffect(() => {
+    if (isTier1 && item) {
+      getDb().then(db => {
+        db.select<{id: number, title: string}>("SELECT id, title FROM cards WHERE domain = $1 AND row_id = $2 ORDER BY order_index ASC", [domain, item.id])
+          .then(res => {
+            if (res.length > 0) {
+              setCards(res);
+            }
+            setCardsLoaded(true);
+          });
+      });
+    } else {
+      setCardsLoaded(true);
+    }
+  }, [item, domain, isTier1]);
 
   const set = (key: string, value: string) => setForm((f) => ({ ...f, [key]: value }));
 
@@ -85,6 +110,11 @@ export default function ItemForm({ domain, item, onSave, onCancel, onEnterDrafti
         fields[f.key] = f.type === "number" ? Number(val) : val;
       }
     }
+    
+    if (isTier1) {
+      fields.cards = cards.filter(c => c.title.trim() !== "" || c.isDeleted);
+    }
+    
     onSave(fields);
   };
 
@@ -213,27 +243,81 @@ export default function ItemForm({ domain, item, onSave, onCancel, onEnterDrafti
           </div>
         ))}
 
-        {/* Notes — full width */}
+        {/* Notes or Cards — full width */}
         <div className="sm:col-span-2">
-          <label className="block text-xs text-text-muted mb-1">Description / Summary</label>
-          <textarea
-            className={`${inputClass} resize-y min-h-16`}
-            value={form.notes || ""}
-            onChange={(e) => set("notes", e.target.value)}
-            placeholder="Optional notes"
-            rows={2}
-          />
+          {!isTier1 ? (
+            <>
+              <label className="block text-xs text-text-muted mb-1">Description / Summary</label>
+              <textarea
+                className={`${inputClass} resize-y min-h-16`}
+                value={form.notes || ""}
+                onChange={(e) => set("notes", e.target.value)}
+                placeholder="Optional notes"
+                rows={2}
+              />
+            </>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <label className="block text-xs text-text-muted mb-1">Cards / Points (Hit Enter to add)</label>
+              {cards.filter(c => !c.isDeleted).map((card, i) => (
+                <div key={card.id ?? `new-${i}`} className="flex gap-2 items-center">
+                  <input
+                    type="text"
+                    className={inputClass}
+                    value={card.title}
+                    placeholder="Enter a point or question..."
+                    onChange={(e) => {
+                      const newCards = [...cards];
+                      const idx = newCards.findIndex(c => c === card);
+                      newCards[idx].title = e.target.value;
+                      setCards(newCards);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        setCards([...cards, { title: "" }]);
+                        // Next render will add a new input, autofocus handling could be added but omitted for simplicity
+                      }
+                    }}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const newCards = [...cards];
+                      const idx = newCards.findIndex(c => c === card);
+                      if (newCards[idx].id) {
+                        newCards[idx].isDeleted = true;
+                      } else {
+                        newCards.splice(idx, 1);
+                      }
+                      setCards(newCards);
+                    }}
+                    className="p-2 text-text-muted hover:text-danger cursor-pointer transition-colors"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => setCards([...cards, { title: "" }])}
+                className="text-xs font-medium text-accent hover:text-accent/80 transition-colors flex items-center gap-1 self-start mt-1 cursor-pointer"
+              >
+                <Plus className="w-3 h-3" /> Add Card
+              </button>
+            </div>
+          )}
         </div>
       </div>
 
       <div className="flex gap-3 justify-end">
-        {domain === "writing" && item && onEnterDraftingMode && (
+        {isTier1 && item && onEnterDraftingMode && (
           <button
             type="button"
             onClick={() => onEnterDraftingMode(item)}
             className="mr-auto rounded-lg border border-accent bg-transparent px-4 py-2 text-sm font-medium text-accent hover:bg-accent/10 transition-colors cursor-pointer"
           >
-            ✏️ Enter Drafting Mode
+            <Pen className="w-4 h-4 inline-block mr-1" /> Enter Drafting Mode
           </button>
         )}
         <button

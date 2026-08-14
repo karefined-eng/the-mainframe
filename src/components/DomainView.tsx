@@ -74,7 +74,13 @@ export default function DomainView({
 
   const handleSave = async (fields: Record<string, unknown>) => {
     const db = await getDb();
+    
+    const cardsToSync = fields.cards as {id?: number, title: string, isDeleted?: boolean}[] | undefined;
+    delete fields.cards;
+
     const keys = Object.keys(fields);
+    let itemId = editingItem?.id;
+    
     if (editingItem) {
       const sets = keys.map((k, i) => `${k} = $${i + 1}`).join(", ");
       await db.execute(
@@ -83,10 +89,24 @@ export default function DomainView({
       );
     } else {
       const placeholders = keys.map((_, i) => `$${i + 1}`).join(", ");
-      await db.execute(
+      const result = await db.execute(
         `INSERT OR IGNORE INTO ${domain} (${keys.join(", ")}) VALUES (${placeholders})`,
         Object.values(fields),
       );
+      itemId = result.lastInsertId;
+    }
+
+    if (cardsToSync && itemId) {
+      for (let i = 0; i < cardsToSync.length; i++) {
+        const c = cardsToSync[i];
+        if (c.isDeleted && c.id) {
+          await db.execute(`DELETE FROM cards WHERE id = $1`, [c.id]);
+        } else if (c.id) {
+          await db.execute(`UPDATE cards SET title = $1, order_index = $2, updated_at = datetime('now') WHERE id = $3`, [c.title, i, c.id]);
+        } else if (c.title.trim()) {
+          await db.execute(`INSERT INTO cards (domain, row_id, title, order_index) VALUES ($1, $2, $3, $4)`, [domain, itemId, c.title.trim(), i]);
+        }
+      }
     }
     setShowForm(false);
     setEditingItem(null);

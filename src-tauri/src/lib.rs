@@ -209,6 +209,41 @@ pub fn run() {
             "#,
             kind: MigrationKind::Up,
         },
+        Migration {
+            version: 7,
+            description: "create_cards_table_and_migrate_notes",
+            sql: r#"
+                CREATE TABLE IF NOT EXISTS cards (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    domain TEXT NOT NULL,
+                    row_id INTEGER NOT NULL,
+                    title TEXT NOT NULL,
+                    draft_content TEXT,
+                    order_index INTEGER NOT NULL DEFAULT 0,
+                    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+                    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+                );
+                
+                INSERT INTO cards (domain, row_id, title, draft_content, order_index, created_at, updated_at)
+                SELECT 'build_ideas', id, 'Legacy Notes', notes, 0, created_at, updated_at FROM build_ideas WHERE notes IS NOT NULL AND notes != '';
+
+                INSERT INTO cards (domain, row_id, title, draft_content, order_index, created_at, updated_at)
+                SELECT 'ventures', id, 'Legacy Notes', notes, 0, created_at, updated_at FROM ventures WHERE notes IS NOT NULL AND notes != '';
+
+                INSERT INTO cards (domain, row_id, title, draft_content, order_index, created_at, updated_at)
+                SELECT 'goals', id, 'Legacy Notes', notes, 0, created_at, updated_at FROM goals WHERE notes IS NOT NULL AND notes != '';
+
+                INSERT INTO cards (domain, row_id, title, draft_content, order_index, created_at, updated_at)
+                SELECT 'skills', id, 'Legacy Notes', notes, 0, created_at, updated_at FROM skills WHERE notes IS NOT NULL AND notes != '';
+
+                INSERT INTO cards (domain, row_id, title, draft_content, order_index, created_at, updated_at)
+                SELECT 'experiences', id, 'Legacy Notes', notes, 0, created_at, updated_at FROM experiences WHERE notes IS NOT NULL AND notes != '';
+
+                INSERT INTO cards (domain, row_id, title, draft_content, order_index, created_at, updated_at)
+                SELECT 'writing', id, 'Legacy Notes', notes || char(10) || coalesce(draft_content, ''), 0, created_at, updated_at FROM writing WHERE (notes IS NOT NULL AND notes != '') OR (draft_content IS NOT NULL AND draft_content != '');
+            "#,
+            kind: MigrationKind::Up,
+        },
     ];
 
     tauri::Builder::default()

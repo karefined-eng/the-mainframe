@@ -8,7 +8,7 @@ import Settings from "./components/Settings";
 import BackupExport from "./components/BackupExport";
 import SyncPanel from "./components/SyncPanel";
 import ToastContainer from "./components/Toast";
-import { Award, Wrench, ShoppingCart, Target, Rocket, Feather, Zap, Compass } from "lucide-react";
+import { Award, Wrench, ShoppingCart, Target, Rocket, Feather, Zap, Compass, X, ClipboardPaste, ArrowRight } from "lucide-react";
 import { runUrgencyCheck } from "./engine/urgency";
 import CalendarView from "./components/CalendarView";
 import FocusDraftingMode from "./components/FocusDraftingMode";
@@ -81,7 +81,7 @@ function App() {
   const [period, setPeriod] = useState<Period>("daily");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showIngest, setShowIngest] = useState(false);
-  const [draftingItem, setDraftingItem] = useState<BaseItem | null>(null);
+  const [draftingItem, setDraftingItem] = useState<{item: BaseItem, domain: DomainKey} | null>(null);
 
   const refreshCounts = useCallback(() => {
     loadCounts().then(setCounts).catch(console.error);
@@ -163,7 +163,7 @@ function App() {
                 onClick={() => setShowIngest((s) => !s)}
                 className="rounded-xl border border-border bg-surface-alt px-4 py-2.5 text-sm text-text-muted hover:border-accent/50 hover:text-text transition-all cursor-pointer"
               >
-                {showIngest ? "✕ Close" : "📋 Paste Import"}
+                {showIngest ? <><X className="w-4 h-4 inline-block mr-1" /> Close</> : <><ClipboardPaste className="w-4 h-4 inline-block mr-1" /> Paste Import</>}
               </button>
             </div>
 
@@ -183,8 +183,10 @@ function App() {
               period={period}
               onCountChange={refreshCounts}
               onEnterDraftingMode={(item) => {
-                setDraftingItem(item);
-                setActiveView("drafting_mode");
+                if (activeDomain) {
+                  setDraftingItem({ item, domain: activeDomain });
+                  setActiveView("drafting_mode");
+                }
               }}
             />
           </div>
@@ -200,10 +202,11 @@ function App() {
           <CalendarView />
         ) : activeView === "drafting_mode" && draftingItem ? (
           <FocusDraftingMode 
-            item={draftingItem} 
+            item={draftingItem.item} 
+            domain={draftingItem.domain}
             onClose={() => {
+              setActiveView(draftingItem.domain);
               setDraftingItem(null);
-              setActiveView("writing");
             }} 
           />
         ) : (
@@ -225,7 +228,7 @@ function App() {
                   </p>
                 ) : (
                   <p className="m-0 text-accent/70 text-sm">
-                    Paste your {d.label.toLowerCase()} list to get started →
+                    Paste your {d.label.toLowerCase()} list to get started <ArrowRight className="w-4 h-4 inline-block ml-1" />
                   </p>
                 )}
               </button>

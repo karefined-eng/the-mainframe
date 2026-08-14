@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Download } from "lucide-react";
 import type { DomainKey } from "../App";
 import { getDb, domains } from "../App";
 
@@ -57,7 +58,7 @@ export default function BackupExport() {
             onClick={exportAllText}
             className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-bg hover:bg-accent/90 transition-colors cursor-pointer"
           >
-            📋 Export All Domains
+            <Download className="w-4 h-4 inline-block mr-2" /> Export All Domains
           </button>
           {domains.map((d) => {
             const Icon = d.icon;
