@@ -12,6 +12,7 @@ import { Award, Wrench, ShoppingCart, Target, Rocket, Feather, Zap, Compass, X, 
 import { runUrgencyCheck } from "./engine/urgency";
 import CalendarView from "./components/CalendarView";
 import FocusDraftingMode from "./components/FocusDraftingMode";
+import NotificationEngine from "./components/NotificationEngine";
 
 export const domains = [
   { key: "certifications", label: "Certifications", icon: Award },
@@ -237,6 +238,7 @@ function App() {
         )}
       </main>
 
+      <NotificationEngine />
       <ToastContainer />
     </div>
   );

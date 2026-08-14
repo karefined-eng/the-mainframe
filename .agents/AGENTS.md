@@ -83,3 +83,15 @@ When troubleshooting database schema or migration errors (such as Tauri SQL plug
 3. **Import Script Schema Sync**: Before recommending or executing database import scripts, verify that table names and column definitions in the script match the current application migrations (e.g., `certifications` vs legacy `courses`).
 4. **Frontend Schema Sync**: Whenever database tables (such as domains) are renamed or added in migrations, you MUST also update the corresponding frontend configuration files (e.g., `domains` array, `DomainKey` types, and `domainFields` mapping in `App.tsx` and related components) to match the new table names exactly. Failing to do this causes unhandled SQL exceptions at runtime.
 </RULE>
+
+<RULE>
+---
+name: UI/UX Intent over Static Mockups
+description: >
+  Prioritizes the user's verbal/textual workflow constraints over literal static HTML mockups, and enforces a strict minimalist aesthetic (no emojis, use lucide-react).
+---
+# UI/UX Intent over Static Mockups
+When the user provides static prototypes (e.g., HTML mockups) alongside audio transcripts or textual explanations:
+1. **Transcript as Source of Truth:** Treat the static mockup as a structural or visual baseline only. The ultimate source of truth for the interaction model, dynamic state (e.g., "side-by-side editing", "draggable cards"), and workflow is the user's transcript. Do not blindly copy the static code if the verbal intent demands a more complex, interactive state.
+2. **Strict Minimalist Aesthetic:** Adhere to the "Ponytail" minimalist philosophy. **NEVER use emojis in the UI** (e.g., no ✏️, 📋, 💾). Exclusively use `lucide-react` SVG icons for all UI elements requiring iconography. Maintain a clean, native-feeling aesthetic without bloat.
+</RULE>
