@@ -4,7 +4,7 @@ import { showToast } from "../components/Toast";
 
 // Per-domain importance defaults (doc 06 §2.2)
 const domainImportance: Record<DomainKey, number> = {
-  courses: 1,
+  certifications: 1,
   acquisitions: 0,
   goals: 1,
   build_ideas: 1,

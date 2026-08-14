@@ -1,24 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { DomainKey, BaseItem } from "../App";
+import BriefingTimeline from "./BriefingTimeline";
 
 interface ItemFormProps {
   domain: DomainKey;
   item: BaseItem | null;
   onSave: (fields: Record<string, unknown>) => void;
   onCancel: () => void;
+  onEnterDraftingMode?: (item: BaseItem) => void;
 }
 
 // Domain-specific field definitions
 const domainFields: Record<DomainKey, { key: string; label: string; type: string }[]> = {
-  courses: [
+  certifications: [
     { key: "platform", label: "Platform", type: "text" },
     { key: "url", label: "URL", type: "url" },
-    { key: "progress_percent", label: "Progress %", type: "number" },
+    { key: "credential_url", label: "Credential URL", type: "url" },
+    { key: "expires_at", label: "Expires At", type: "date" },
   ],
   acquisitions: [
     { key: "category", label: "Category", type: "text" },
     { key: "estimated_cost", label: "Estimated Cost", type: "number" },
     { key: "priority", label: "Priority", type: "select" },
+    { key: "necessity", label: "Necessity", type: "select" },
   ],
   goals: [
     { key: "timeframe", label: "Timeframe", type: "text" },
@@ -31,11 +35,24 @@ const domainFields: Record<DomainKey, { key: string; label: string; type: string
   ],
   ventures: [
     { key: "stage", label: "Stage", type: "select" },
+    { key: "target_audience", label: "Target Audience", type: "text" },
     { key: "action_trigger", label: "Action Trigger", type: "text" },
+  ],
+  writing: [
+    { key: "writing_type", label: "Writing Type", type: "select" },
+  ],
+  skills: [
+    { key: "proficiency", label: "Proficiency", type: "select" },
+    { key: "proof_link", label: "Proof Link", type: "url" },
+  ],
+  experiences: [
+    { key: "impact", label: "Impact", type: "select" },
+    { key: "takeaway", label: "Takeaway", type: "text" },
   ],
 };
 
-export default function ItemForm({ domain, item, onSave, onCancel }: ItemFormProps) {
+
+export default function ItemForm({ domain, item, onSave, onCancel, onEnterDraftingMode }: ItemFormProps) {
   const [form, setForm] = useState<Record<string, string>>(() => {
     if (item) {
       const init: Record<string, string> = {};
@@ -43,7 +60,8 @@ export default function ItemForm({ domain, item, onSave, onCancel }: ItemFormPro
       init.notes = item.notes ?? "";
       init.status = item.status;
       init.target_date = item.target_date ?? "";
-      for (const f of domainFields[domain]) {
+      const fields = domainFields[domain] || [];
+      for (const f of fields) {
         init[f.key] = String(item[f.key] ?? "");
       }
       return init;
@@ -60,7 +78,8 @@ export default function ItemForm({ domain, item, onSave, onCancel }: ItemFormPro
     if (form.notes) fields.notes = form.notes;
     if (form.status) fields.status = form.status;
     if (form.target_date) fields.target_date = form.target_date;
-    for (const f of domainFields[domain]) {
+    const fieldsList = domainFields[domain] || [];
+    for (const f of fieldsList) {
       const val = form[f.key];
       if (val !== undefined && val !== "") {
         fields[f.key] = f.type === "number" ? Number(val) : val;
@@ -73,9 +92,10 @@ export default function ItemForm({ domain, item, onSave, onCancel }: ItemFormPro
     "w-full rounded-lg border border-border bg-bg px-3 py-2 text-sm text-text outline-none focus:border-accent/50 transition-colors";
 
   return (
+    <div className="rounded-2xl border border-accent/30 bg-surface p-5 flex flex-col gap-4">
     <form
       onSubmit={handleSubmit}
-      className="rounded-2xl border border-accent/30 bg-surface p-5 flex flex-col gap-4"
+      className="flex flex-col gap-4"
     >
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         {/* Title — always first, full width */}
@@ -118,10 +138,50 @@ export default function ItemForm({ domain, item, onSave, onCancel }: ItemFormPro
         </div>
 
         {/* Domain-specific fields */}
-        {domainFields[domain].map((f) => (
+        {(domainFields[domain] || []).map((f) => (
           <div key={f.key}>
             <label className="block text-xs text-text-muted mb-1">{f.label}</label>
             {f.key === "priority" ? (
+              <select
+                className={inputClass}
+                value={form[f.key] || "medium"}
+                onChange={(e) => set(f.key, e.target.value)}
+              >
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            ) : f.key === "necessity" ? (
+              <select
+                className={inputClass}
+                value={form[f.key] || "want"}
+                onChange={(e) => set(f.key, e.target.value)}
+              >
+                <option value="want">Want</option>
+                <option value="need">Need</option>
+              </select>
+            ) : f.key === "writing_type" ? (
+              <select
+                className={inputClass}
+                value={form[f.key] || "essay"}
+                onChange={(e) => set(f.key, e.target.value)}
+              >
+                <option value="essay">Essay</option>
+                <option value="research">Research</option>
+                <option value="letter">Letter</option>
+                <option value="journal">Journal</option>
+              </select>
+            ) : f.key === "proficiency" ? (
+              <select
+                className={inputClass}
+                value={form[f.key] || "novice"}
+                onChange={(e) => set(f.key, e.target.value)}
+              >
+                <option value="novice">Novice</option>
+                <option value="competent">Competent</option>
+                <option value="expert">Expert</option>
+              </select>
+            ) : f.key === "impact" ? (
               <select
                 className={inputClass}
                 value={form[f.key] || "medium"}
@@ -143,13 +203,11 @@ export default function ItemForm({ domain, item, onSave, onCancel }: ItemFormPro
               </select>
             ) : (
               <input
-                type={f.type === "number" ? "number" : "text"}
+                type={f.type === "number" ? "number" : f.type === "date" ? "date" : "text"}
                 className={inputClass}
                 value={form[f.key] || ""}
                 onChange={(e) => set(f.key, e.target.value)}
                 placeholder={f.label}
-                min={f.key === "progress_percent" ? 0 : undefined}
-                max={f.key === "progress_percent" ? 100 : undefined}
               />
             )}
           </div>
@@ -157,7 +215,7 @@ export default function ItemForm({ domain, item, onSave, onCancel }: ItemFormPro
 
         {/* Notes — full width */}
         <div className="sm:col-span-2">
-          <label className="block text-xs text-text-muted mb-1">Notes</label>
+          <label className="block text-xs text-text-muted mb-1">Description / Summary</label>
           <textarea
             className={`${inputClass} resize-y min-h-16`}
             value={form.notes || ""}
@@ -169,6 +227,15 @@ export default function ItemForm({ domain, item, onSave, onCancel }: ItemFormPro
       </div>
 
       <div className="flex gap-3 justify-end">
+        {domain === "writing" && item && onEnterDraftingMode && (
+          <button
+            type="button"
+            onClick={() => onEnterDraftingMode(item)}
+            className="mr-auto rounded-lg border border-accent bg-transparent px-4 py-2 text-sm font-medium text-accent hover:bg-accent/10 transition-colors cursor-pointer"
+          >
+            ✏️ Enter Drafting Mode
+          </button>
+        )}
         <button
           type="button"
           onClick={onCancel}
@@ -184,5 +251,10 @@ export default function ItemForm({ domain, item, onSave, onCancel }: ItemFormPro
         </button>
       </div>
     </form>
+    
+    {item && (
+      <BriefingTimeline domain={domain} rowId={item.id} />
+    )}
+    </div>
   );
 }

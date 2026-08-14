@@ -59,15 +59,18 @@ export default function BackupExport() {
           >
             📋 Export All Domains
           </button>
-          {domains.map((d) => (
-            <button
-              key={d.key}
-              onClick={() => exportDomainText(d.key)}
-              className="rounded-lg border border-border px-3 py-2 text-sm text-text-muted hover:text-text hover:border-accent/50 transition-all cursor-pointer"
-            >
-              {d.icon} {d.label}
-            </button>
-          ))}
+          {domains.map((d) => {
+            const Icon = d.icon;
+            return (
+              <button
+                key={d.key}
+                onClick={() => exportDomainText(d.key)}
+                className="rounded-lg border border-border px-3 py-2 text-sm text-text-muted hover:text-text hover:border-accent/50 transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <Icon className="w-4 h-4" /> {d.label}
+              </button>
+            );
+          })}
         </div>
 
         {status && (

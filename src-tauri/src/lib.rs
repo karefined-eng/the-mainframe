@@ -1,5 +1,7 @@
 use tauri_plugin_sql::{Migration, MigrationKind};
 
+mod sync;
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let migrations = vec![
@@ -167,15 +169,61 @@ pub fn run() {
             "#,
             kind: MigrationKind::Up,
         },
+        Migration {
+            version: 5,
+            description: "add_item_updates_and_domain_fields",
+            sql: r#"
+                CREATE TABLE IF NOT EXISTS item_updates (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    domain TEXT NOT NULL,
+                    row_id INTEGER NOT NULL,
+                    content TEXT NOT NULL,
+                    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+                );
+                
+                ALTER TABLE certifications DROP COLUMN progress_percent;
+                ALTER TABLE certifications ADD COLUMN credential_url TEXT;
+                ALTER TABLE certifications ADD COLUMN expires_at TEXT;
+                
+                ALTER TABLE ventures ADD COLUMN target_audience TEXT;
+                
+                ALTER TABLE acquisitions ADD COLUMN necessity TEXT;
+                
+                ALTER TABLE writing DROP COLUMN publish_target;
+                ALTER TABLE writing DROP COLUMN platform;
+                ALTER TABLE writing ADD COLUMN writing_type TEXT;
+                
+                ALTER TABLE skills ADD COLUMN proficiency TEXT;
+                ALTER TABLE skills ADD COLUMN proof_link TEXT;
+                
+                ALTER TABLE experiences ADD COLUMN impact TEXT;
+                ALTER TABLE experiences ADD COLUMN takeaway TEXT;
+            "#,
+            kind: MigrationKind::Up,
+        },
+        Migration {
+            version: 6,
+            description: "add_draft_content_to_writing",
+            sql: r#"
+                ALTER TABLE writing ADD COLUMN draft_content TEXT;
+            "#,
+            kind: MigrationKind::Up,
+        },
     ];
 
     tauri::Builder::default()
+        .manage(sync::SyncState::default())
         .plugin(tauri_plugin_opener::init())
         .plugin(
             tauri_plugin_sql::Builder::default()
                 .add_migrations("sqlite:mainframe.db", migrations)
                 .build(),
         )
+        .invoke_handler(tauri::generate_handler![
+            sync::start_sync_server,
+            sync::stop_sync_server,
+            sync::pull_from_device
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

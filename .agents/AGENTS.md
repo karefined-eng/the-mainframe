@@ -68,3 +68,18 @@ description: >
 If you encounter the error `opening NUL for ACL write: Access is denied.` when trying to execute a command via the `run_command` tool on Windows, DO NOT attempt to retry the command with `cmd.exe /c` or other wrappers. 
 Acknowledge the environment limitation and immediately provide the exact command to the user so they can run it manually in their own terminal.
 </RULE>
+
+<RULE>
+---
+name: Database Migration and Reset Safety
+description: >
+  Prevents accidental data loss when troubleshooting database or migration errors by enforcing mandatory backup steps, user warnings, and schema alignment checks.
+---
+7. **Database Migration and Reset Safety**
+When troubleshooting database schema or migration errors (such as Tauri SQL plugin checksum mismatches):
+
+1. **Mandatory Backup First**: NEVER instruct or execute deletion of a database file (`.db`, `.sqlite`) without first creating a copy (e.g., `mainframe_backup.db`).
+2. **Explicit User Warning**: Always explicitly inform the user that clearing a database file will reset local data/stats before providing deletion commands.
+3. **Import Script Schema Sync**: Before recommending or executing database import scripts, verify that table names and column definitions in the script match the current application migrations (e.g., `certifications` vs legacy `courses`).
+4. **Frontend Schema Sync**: Whenever database tables (such as domains) are renamed or added in migrations, you MUST also update the corresponding frontend configuration files (e.g., `domains` array, `DomainKey` types, and `domainFields` mapping in `App.tsx` and related components) to match the new table names exactly. Failing to do this causes unhandled SQL exceptions at runtime.
+</RULE>

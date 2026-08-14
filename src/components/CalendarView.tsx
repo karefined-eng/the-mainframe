@@ -22,7 +22,7 @@ interface CalendarEvent {
 }
 
 const domainColors: Record<string, string> = {
-  courses: "#3b82f6",
+  certifications: "#3b82f6",
   build_ideas: "#f59e0b",
   acquisitions: "#10b981",
   goals: "#ef4444",

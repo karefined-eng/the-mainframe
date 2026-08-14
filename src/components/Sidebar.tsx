@@ -1,6 +1,6 @@
 import type { DomainKey, DomainCounts } from "../App";
 import { domains } from "../App";
-import { Bell, Save, Settings as SettingsIcon, Home, Calendar as CalendarIcon, ChevronLeft, ChevronRight } from "lucide-react";
+import { Bell, Save, Settings as SettingsIcon, Home, Calendar as CalendarIcon, ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 
 interface SidebarProps {
   domains: typeof domains;
@@ -16,6 +16,7 @@ interface SidebarProps {
 const bottomNav = [
   { key: "calendar", icon: CalendarIcon, label: "Calendar" },
   { key: "notifications", icon: Bell, label: "Notifications" },
+  { key: "sync", icon: RefreshCw, label: "Device Sync" },
   { key: "export", icon: Save, label: "Export / Backup" },
   { key: "settings", icon: SettingsIcon, label: "Settings" },
 ];

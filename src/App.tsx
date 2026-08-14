@@ -6,13 +6,15 @@ import PasteIngest from "./components/PasteIngest";
 import NotificationLog from "./components/NotificationLog";
 import Settings from "./components/Settings";
 import BackupExport from "./components/BackupExport";
+import SyncPanel from "./components/SyncPanel";
 import ToastContainer from "./components/Toast";
 import { Award, Wrench, ShoppingCart, Target, Rocket, Feather, Zap, Compass } from "lucide-react";
 import { runUrgencyCheck } from "./engine/urgency";
 import CalendarView from "./components/CalendarView";
+import FocusDraftingMode from "./components/FocusDraftingMode";
 
 export const domains = [
-  { key: "courses", label: "Courses", icon: Award },
+  { key: "certifications", label: "Certifications", icon: Award },
   { key: "build_ideas", label: "Build Ideas", icon: Wrench },
   { key: "acquisitions", label: "Acquisitions", icon: ShoppingCart },
   { key: "goals", label: "Goals", icon: Target },
@@ -22,7 +24,7 @@ export const domains = [
   { key: "experiences", label: "Experiences", icon: Compass },
 ] as const;
 
-export type DomainKey = "courses" | "build_ideas" | "acquisitions" | "goals" | "ventures" | "writing" | "skills" | "experiences";
+export type DomainKey = "certifications" | "build_ideas" | "acquisitions" | "goals" | "ventures" | "writing" | "skills" | "experiences";
 export type DomainInfo = typeof domains[number];
 export type Period = "daily" | "weekly" | "monthly";
 export type Status = "not_started" | "in_progress" | "done" | "paused";
@@ -62,12 +64,12 @@ async function loadCounts(): Promise<DomainCounts> {
   return counts;
 }
 
-type View = DomainKey | "notifications" | "settings" | "export" | "calendar" | null;
+type View = DomainKey | "notifications" | "settings" | "export" | "calendar" | "sync" | "drafting_mode" | null;
 
 function App() {
   const [activeView, setActiveView] = useState<View>(null);
   const [counts, setCounts] = useState<DomainCounts>({
-    courses: 0,
+    certifications: 0,
     build_ideas: 0,
     acquisitions: 0,
     goals: 0,
@@ -79,6 +81,7 @@ function App() {
   const [period, setPeriod] = useState<Period>("daily");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showIngest, setShowIngest] = useState(false);
+  const [draftingItem, setDraftingItem] = useState<BaseItem | null>(null);
 
   const refreshCounts = useCallback(() => {
     loadCounts().then(setCounts).catch(console.error);
@@ -90,7 +93,7 @@ function App() {
     runUrgencyCheck().catch(console.error);
   }, [refreshCounts]);
 
-  const activeDomain = (activeView && !["notifications", "settings", "export", "calendar"].includes(activeView))
+  const activeDomain = (activeView && !["notifications", "settings", "export", "calendar", "sync", "drafting_mode"].includes(activeView))
     ? (activeView as DomainKey)
     : null;
   const activeDomainInfo = activeDomain ? domains.find((d) => d.key === activeDomain) : undefined;
@@ -100,6 +103,7 @@ function App() {
     if (activeView === "notifications") return "Notifications";
     if (activeView === "settings") return "Settings";
     if (activeView === "export") return "Export / Backup";
+    if (activeView === "sync") return "Device Sync";
     if (activeView === "calendar") return "Calendar";
     return "The Mainframe";
   };
@@ -178,6 +182,10 @@ function App() {
               domainInfo={activeDomainInfo}
               period={period}
               onCountChange={refreshCounts}
+              onEnterDraftingMode={(item) => {
+                setDraftingItem(item);
+                setActiveView("drafting_mode");
+              }}
             />
           </div>
         ) : activeView === "notifications" ? (
@@ -186,8 +194,18 @@ function App() {
           <Settings />
         ) : activeView === "export" ? (
           <BackupExport />
+        ) : activeView === "sync" ? (
+          <SyncPanel />
         ) : activeView === "calendar" ? (
           <CalendarView />
+        ) : activeView === "drafting_mode" && draftingItem ? (
+          <FocusDraftingMode 
+            item={draftingItem} 
+            onClose={() => {
+              setDraftingItem(null);
+              setActiveView("writing");
+            }} 
+          />
         ) : (
           /* Dashboard summary cards */
           <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

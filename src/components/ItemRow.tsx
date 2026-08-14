@@ -56,19 +56,8 @@ export default function ItemRow({
 
         {/* Domain-specific extras */}
         <div className="flex gap-3 mt-0.5 flex-wrap">
-          {domain === "courses" && item.platform && (
+          {domain === "certifications" && item.platform && (
             <small className="text-xs text-text-muted">{item.platform as string}</small>
-          )}
-          {domain === "courses" && typeof item.progress_percent === "number" && (
-            <div className="flex items-center gap-1.5">
-              <div className="w-16 h-1.5 rounded-full bg-border overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-accent transition-all"
-                  style={{ width: `${item.progress_percent}%` }}
-                />
-              </div>
-              <small className="text-xs text-text-muted">{item.progress_percent}%</small>
-            </div>
           )}
           {domain === "acquisitions" && item.priority && (
             <small className={`text-xs font-medium ${

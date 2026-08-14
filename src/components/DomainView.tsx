@@ -9,6 +9,7 @@ interface DomainViewProps {
   domainInfo: DomainInfo;
   period: Period;
   onCountChange: () => void;
+  onEnterDraftingMode?: (item: BaseItem) => void;
 }
 
 export default function DomainView({
@@ -16,6 +17,7 @@ export default function DomainView({
   domainInfo,
   period,
   onCountChange,
+  onEnterDraftingMode,
 }: DomainViewProps) {
   const [items, setItems] = useState<BaseItem[]>([]);
   const [search, setSearch] = useState("");
@@ -133,6 +135,7 @@ export default function DomainView({
             setShowForm(false);
             setEditingItem(null);
           }}
+          onEnterDraftingMode={onEnterDraftingMode}
         />
       )}
 
