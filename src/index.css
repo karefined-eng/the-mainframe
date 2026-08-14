@@ -1,24 +1,26 @@
+@import url('https://api.fontshare.com/v2/css?f[]=satoshi@900,700,500,300,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
 @import "tailwindcss";
 
-/* ── Design tokens from doc 02 ── */
+/* ── Design tokens from DESIGN.md ── */
 @theme {
-  --color-bg: #0E0E10;
-  --color-surface: #1A1A1D;
-  --color-surface-alt: #141518;
-  --color-text: #F2F2F0;
-  --color-text-muted: #B1B3B7;
-  --color-accent: #4A9EFF;
-  --color-border: #1F2024;
-  --color-sidebar: #111214;
-  --color-danger: #FF5E5E;
-  --color-success: #34D399;
-  --color-warning: #FBBF24;
+  --color-bg: #09090B;
+  --color-surface: #18181B;
+  --color-surface-alt: #09090B;
+  --color-text: #FAFAFA;
+  --color-text-muted: #A1A1AA;
+  --color-accent: #F59E0B;
+  --color-border: rgba(255,255,255,0.08);
+  --color-sidebar: #09090B;
+  --color-danger: #EF4444;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
 }
 
 /* ── Base reset ── */
 :root {
   color-scheme: dark;
-  font-family: Inter, system-ui, -apple-system, sans-serif;
+  font-family: 'Satoshi', system-ui, -apple-system, sans-serif;
   font-size: 16px;
   line-height: 1.5;
   color: var(--color-text);
@@ -29,7 +31,7 @@
 
 body {
   margin: 0;
-  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--color-bg);
 }
 
@@ -39,6 +41,11 @@ body {
 
 button, input, textarea, select {
   font: inherit;
+}
+
+/* ── Utilities ── */
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
 }
 
 /* ── Scrollbar ── */

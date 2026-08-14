@@ -257,7 +257,8 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             sync::start_sync_server,
             sync::stop_sync_server,
-            sync::pull_from_device
+            sync::pull_from_device,
+            sync::discover_devices
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

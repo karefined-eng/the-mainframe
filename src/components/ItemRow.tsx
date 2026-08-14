@@ -40,7 +40,7 @@ export default function ItemRow({
       {/* Status toggle */}
       <button
         onClick={() => onStatusChange(item.id, nextStatus())}
-        className={`shrink-0 rounded-lg border border-border px-2.5 py-1 text-xs font-medium transition-all cursor-pointer hover:border-accent/50 ${statusColors[item.status]}`}
+        className={`shrink-0 rounded-lg border border-border px-2.5 py-1 text-xs font-medium transition-all cursor-pointer hover:border-accent/50 ${statusColors[item.status] || "text-text-muted"}`}
         title={`Click to change to ${statusLabels[nextStatus()]}`}
       >
         {statusLabels[item.status]}
@@ -88,7 +88,7 @@ export default function ItemRow({
       {/* Actions */}
       <button
         onClick={() => onDelete(item.id)}
-        className="shrink-0 rounded-lg p-1.5 text-text-muted/40 opacity-0 group-hover:opacity-100 hover:text-danger transition-all cursor-pointer"
+        className="shrink-0 rounded-lg p-1.5 text-text-muted/40 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:text-danger transition-all cursor-pointer"
         title="Delete"
       >
         <X className="w-4 h-4 mx-auto" />

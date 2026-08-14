@@ -62,6 +62,11 @@ export default function BriefingTimeline({ domain, rowId }: BriefingTimelineProp
           placeholder="Add a new note or progress update..."
           value={newUpdate}
           onChange={(e) => setNewUpdate(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+              handleAdd(e);
+            }
+          }}
         />
         <div className="flex justify-end">
           <button

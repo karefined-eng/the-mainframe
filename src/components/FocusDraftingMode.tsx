@@ -24,7 +24,32 @@ export default function FocusDraftingMode({ item, domain, onClose }: FocusDrafti
   
   const [draft, setDraft] = useState("");
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState(false);
   const saveTimeout = useRef<number | null>(null);
+
+  const draftRef = useRef(draft);
+  const selectedRef = useRef(selectedCardId);
+
+  useEffect(() => {
+    draftRef.current = draft;
+    selectedRef.current = selectedCardId;
+  }, [draft, selectedCardId]);
+
+  useEffect(() => {
+    return () => {
+      if (saveTimeout.current) {
+        clearTimeout(saveTimeout.current);
+        if (selectedRef.current) {
+          getDb().then(db => {
+            db.execute(
+              `UPDATE cards SET draft_content = $1, updated_at = datetime('now') WHERE id = $2`,
+              [draftRef.current, selectedRef.current]
+            ).catch(console.error);
+          });
+        }
+      }
+    };
+  }, []);
 
   const [draggedCardId, setDraggedCardId] = useState<number | null>(null);
 
@@ -53,6 +78,7 @@ export default function FocusDraftingMode({ item, domain, onClose }: FocusDrafti
 
   const saveDraft = useCallback(async (content: string, id: number) => {
     setSaving(true);
+    setSaveError(false);
     try {
       const db = await getDb();
       await db.execute(
@@ -62,6 +88,7 @@ export default function FocusDraftingMode({ item, domain, onClose }: FocusDrafti
       setCards(prev => prev.map(c => c.id === id ? { ...c, updated_at: new Date().toISOString() } : c));
     } catch (e) {
       console.error("Failed to save draft", e);
+      setSaveError(true);
     } finally {
       setSaving(false);
     }
@@ -158,8 +185,8 @@ export default function FocusDraftingMode({ item, domain, onClose }: FocusDrafti
       <header className="flex-none h-14 border-b border-border bg-surface px-6 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <h1 className="text-lg font-semibold m-0 truncate max-w-md">{item.title}</h1>
-          <span className="text-xs text-text-muted">
-            {saving ? "Saving..." : "Saved"}
+          <span className={`text-xs ${saveError ? "text-danger" : "text-text-muted"}`}>
+            {saveError ? "Save Failed" : saving ? "Saving..." : "Saved"}
           </span>
         </div>
         <div className="flex items-center gap-3">
