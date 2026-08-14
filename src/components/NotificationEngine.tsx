@@ -1,10 +1,22 @@
 import { useEffect, useRef } from "react";
 import { getDb, type DomainKey } from "../App";
-import { 
-  isPermissionGranted, 
-  requestPermission, 
-  sendNotification 
-} from "@tauri-apps/plugin-notification";
+
+// Safe wrapper for notifications using native Web Notification API
+async function notify(title: string, body: string) {
+  if (typeof window === "undefined" || !("Notification" in window)) return;
+  
+  if (Notification.permission === "default") {
+    await Notification.requestPermission();
+  }
+  
+  if (Notification.permission === "granted") {
+    try {
+      new Notification(title, { body });
+    } catch (e) {
+      console.warn("Could not dispatch notification:", e);
+    }
+  }
+}
 
 const DOMAINS: DomainKey[] = [
   "certifications",
@@ -28,20 +40,6 @@ export default function NotificationEngine() {
   const isRunning = useRef(false);
 
   useEffect(() => {
-    // Check permission on startup
-    async function initPermissions() {
-      try {
-        let granted = await isPermissionGranted();
-        if (!granted) {
-          const permission = await requestPermission();
-          granted = permission === "granted";
-        }
-      } catch (err) {
-        console.warn("Notification permissions check failed:", err);
-      }
-    }
-
-    initPermissions();
 
     // Check every 30 minutes for retention hooks
     const checkAndNotify = async () => {
@@ -49,8 +47,16 @@ export default function NotificationEngine() {
       isRunning.current = true;
 
       try {
-        const granted = await isPermissionGranted();
-        if (!granted) {
+        if (typeof window === "undefined" || !("Notification" in window)) {
+          isRunning.current = false;
+          return;
+        }
+
+        if (Notification.permission === "default") {
+          await Notification.requestPermission();
+        }
+
+        if (Notification.permission !== "granted") {
           isRunning.current = false;
           return;
         }
@@ -86,10 +92,7 @@ export default function NotificationEngine() {
             ? `Scheduled for today: ${calendarItem.action_trigger}`
             : `Scheduled item due: "${calendarItem.title}".`;
 
-          sendNotification({
-            title: "Mainframe Calendar Due",
-            body: body,
-          });
+          notify("Mainframe Calendar Due", body);
 
           await db.execute(
             `UPDATE ${calendarItem.domain} SET last_notified_at = datetime('now') WHERE id = $1`,
@@ -142,10 +145,7 @@ export default function NotificationEngine() {
               ? `Backlog Recall: ${oldestItem.action_trigger}`
               : `Backlog Recall: "${oldestItem.title}". Ready to review?`;
 
-            sendNotification({
-              title: "Mainframe Recall Cycle",
-              body: body,
-            });
+            notify("Mainframe Recall Cycle", body);
 
             await db.execute(
               `UPDATE ${oldestItem.domain} SET last_notified_at = datetime('now') WHERE id = $1`,
