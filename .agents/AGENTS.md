@@ -95,3 +95,51 @@ When the user provides static prototypes (e.g., HTML mockups) alongside audio tr
 1. **Transcript as Source of Truth:** Treat the static mockup as a structural or visual baseline only. The ultimate source of truth for the interaction model, dynamic state (e.g., "side-by-side editing", "draggable cards"), and workflow is the user's transcript. Do not blindly copy the static code if the verbal intent demands a more complex, interactive state.
 2. **Strict Minimalist Aesthetic:** Adhere to the "Ponytail" minimalist philosophy. **NEVER use emojis in the UI** (e.g., no ✏️, 📋, 💾). Exclusively use `lucide-react` SVG icons for all UI elements requiring iconography. Maintain a clean, native-feeling aesthetic without bloat.
 </RULE>
+
+<RULE>
+---
+name: Design System Immortality
+description: >
+  Prevents agents from altering the design tokens, fonts, or colors of The Mainframe without explicit permission.
+---
+# Design System Immortality
+NEVER modify the CSS variables, color tokens, or font families defined in `src/index.css` or `05_AGENT_KICKOFF_PROMPT.md` unless the user EXPLICITLY asks you to "change the theme" or "update the design tokens". 
+Do not "modernize" or "make it premium" by changing these base colors or fonts (e.g. do not switch from Inter to Satoshi, or from Blue to Amber) just because it looks subjectively better.
+</RULE>
+
+<RULE>
+---
+name: Tauri Android Network Binding
+description: >
+  Prevents WebView connection failures (chrome-error://chromewebdata/) during Tauri Android development by enforcing global host binding in Vite.
+---
+# Tauri Android Network Binding
+When configuring or troubleshooting a Tauri v2 project for Android development on Windows, you MUST ensure that the underlying frontend dev server (e.g., Vite) is bound to all network interfaces. 
+In `vite.config.ts`, you must set `server.host: true` instead of `host: process.env.TAURI_DEV_HOST || false`. 
+This is strictly required to allow physical Android devices and emulators to reliably connect to the dev server over the local network or ADB reverse proxy.
+</RULE>
+
+<RULE>
+---
+name: Tauri-First Architecture
+description: >
+  Prioritizes Tauri (Rust + React/web frontend) for all new desktop and mobile application development to ensure superior performance, low overhead, and a single cross-platform codebase.
+---
+# Tauri-First Architecture
+When scaffolding new applications or proposing architecture for re-engineering existing projects (like Eleviewer), you MUST default to a single-codebase, multi-platform approach using **Tauri v2**. 
+- Leverage Rust for the backend/system-level operations to guarantee low resource consumption.
+- Ensure the architecture natively targets both Desktop (Windows/macOS/Linux) and Mobile (Android/iOS) from day one.
+</RULE>
+
+<RULE>
+---
+name: Non-Destructive Bidirectional Sync
+description: >
+  Strict constraints on how data synchronization should be implemented across devices, forbidding automated local data erasure.
+---
+# Non-Destructive Bidirectional Sync
+When implementing device-to-device data synchronization (e.g., between PC and Mobile):
+1. **Never auto-erase**: Never implement destructive syncs that automatically overwrite or erase local data upon connection without explicit consent.
+2. **Explicit Directional Control**: Always provide the user with explicit UI options to choose the sync direction (e.g., `PC -> Mobile`, `Mobile -> PC`, or `Merge`) similar to professional audio mixing consoles.
+3. **Transport Agnostic**: Support multiple localized transfer protocols where possible (Wired/USB via ADB reverse, Local Wi-Fi, QR code, Bluetooth) to prevent ecosystem lock-in and ensure offline capability.
+</RULE>

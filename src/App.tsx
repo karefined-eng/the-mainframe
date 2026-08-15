@@ -8,7 +8,7 @@ import Settings from "./components/Settings";
 import BackupExport from "./components/BackupExport";
 import SyncPanel from "./components/SyncPanel";
 import ToastContainer from "./components/Toast";
-import { Award, Wrench, ShoppingCart, Target, Rocket, Feather, Zap, Compass, X, ClipboardPaste, ArrowRight } from "lucide-react";
+import { Award, Wrench, ShoppingCart, Target, Rocket, Feather, Zap, Compass, X, ClipboardPaste, ArrowRight, Menu } from "lucide-react";
 import { runUrgencyCheck } from "./engine/urgency";
 import CalendarView from "./components/CalendarView";
 import FocusDraftingMode from "./components/FocusDraftingMode";
@@ -81,6 +81,7 @@ function App() {
   });
   const [period, setPeriod] = useState<Period>("daily");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showIngest, setShowIngest] = useState(false);
   const [draftingItem, setDraftingItem] = useState<{item: BaseItem, domain: DomainKey} | null>(null);
 
@@ -111,7 +112,7 @@ function App() {
 
   return (
     <div
-      className={`grid min-h-screen transition-[grid-template-columns] duration-200 ${sidebarCollapsed ? "grid-cols-[64px_1fr]" : "grid-cols-[260px_1fr]"}`}
+      className={`relative flex flex-col md:grid min-h-screen transition-[grid-template-columns] duration-200 ${sidebarCollapsed ? "md:grid-cols-[64px_1fr]" : "md:grid-cols-[260px_1fr]"}`}
     >
       <Sidebar
         domains={domains}
@@ -122,22 +123,34 @@ function App() {
         onSelectDomain={(key) => {
           setActiveView(key);
           setShowIngest(false);
+          setMobileMenuOpen(false);
         }}
         onNavigate={(view: string) => {
           setActiveView((view || null) as View);
           setShowIngest(false);
+          setMobileMenuOpen(false);
         }}
         activeView={activeView}
+        mobileOpen={mobileMenuOpen}
+        onCloseMobile={() => setMobileMenuOpen(false)}
       />
 
-      <main className="flex flex-col gap-7 p-8 overflow-y-auto">
+      <main className="flex-1 flex flex-col gap-4 p-4 pt-4 overflow-y-auto pb-[env(safe-area-inset-bottom,16px)]">
         {/* Top strip */}
-        <header className="flex items-center justify-between gap-5">
-          <h1 className="m-0 text-3xl font-bold tracking-tight">
-            {viewTitle()}
-          </h1>
+        <header className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-5">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="md:hidden p-2 -ml-2 rounded-lg text-text-muted hover:text-text hover:bg-surface-alt transition-colors cursor-pointer"
+            >
+              <Menu className="w-6 h-6" />
+            </button>
+            <h1 className="m-0 text-2xl sm:text-3xl font-bold tracking-tight">
+              {viewTitle()}
+            </h1>
+          </div>
           {activeDomain && (
-            <div className="flex gap-2.5">
+            <div className="flex gap-2.5 overflow-x-auto pb-1 sm:pb-0">
               {(["daily", "weekly", "monthly"] as Period[]).map((p) => (
                 <button
                   key={p}
@@ -212,24 +225,24 @@ function App() {
           />
         ) : (
           /* Dashboard summary cards */
-          <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <section className="grid grid-cols-2 gap-3 lg:grid-cols-3">
             {domains.map((d) => (
               <button
                 key={d.key}
                 onClick={() => setActiveView(d.key)}
-                className="group rounded-2xl border border-border bg-surface-alt p-6 text-left transition-all hover:border-accent/60 hover:bg-surface cursor-pointer"
+                className="group rounded-2xl border border-border bg-surface-alt p-3 text-left transition-all hover:border-accent/60 hover:bg-surface cursor-pointer"
               >
-                <div className="flex flex-col gap-3 mb-3">
-                  <d.icon className="w-8 h-8 text-accent" />
-                  <h2 className="m-0 text-base font-semibold">{d.label}</h2>
+                <div className="flex flex-col gap-2 mb-2">
+                  <d.icon className="w-6 h-6 text-accent" />
+                  <h2 className="m-0 text-sm font-semibold leading-tight">{d.label}</h2>
                 </div>
                 {counts[d.key] > 0 ? (
                   <p className="m-0 text-text-muted text-sm">
                     {counts[d.key]} item{counts[d.key] !== 1 ? "s" : ""}
                   </p>
                 ) : (
-                  <p className="m-0 text-accent/70 text-sm">
-                    Paste your {d.label.toLowerCase()} list to get started <ArrowRight className="w-4 h-4 inline-block ml-1" />
+                  <p className="m-0 text-accent/70 text-xs">
+                    Empty <ArrowRight className="w-3 h-3 inline-block ml-0.5" />
                   </p>
                 )}
               </button>

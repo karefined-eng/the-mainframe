@@ -9,6 +9,9 @@ const domainImportance: Record<DomainKey, number> = {
   goals: 1,
   build_ideas: 1,
   ventures: 2,
+  writing: 0,
+  skills: 1,
+  experiences: 0,
 };
 
 // Score thresholds scaled by density setting

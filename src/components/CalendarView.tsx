@@ -112,7 +112,7 @@ export default function CalendarView() {
   };
 
   return (
-    <div className="bg-surface-alt rounded-2xl border border-border p-5 flex flex-col" style={{ minHeight: "80vh" }}>
+    <div className="bg-surface-alt rounded-2xl border border-border p-3 sm:p-5 flex flex-col overflow-hidden" style={{ minHeight: "80vh" }}>
       <style>{`
         .fc {
           --fc-page-bg-color: transparent;
@@ -143,6 +143,20 @@ export default function CalendarView() {
           border: none;
           box-shadow: 0 1px 2px rgba(0,0,0,0.2);
           cursor: pointer;
+        }
+        @media (max-width: 640px) {
+          .fc-header-toolbar.fc-toolbar {
+            flex-direction: column;
+            gap: 12px;
+          }
+          .fc-toolbar-title {
+            font-size: 1.25rem !important;
+          }
+          .fc-toolbar-chunk {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+          }
         }
       `}</style>
       <div className="flex-1 w-full h-full">

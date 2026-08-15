@@ -11,6 +11,8 @@ interface SidebarProps {
   onSelectDomain: (key: DomainKey) => void;
   onNavigate: (view: string) => void;
   activeView: string | null;
+  mobileOpen: boolean;
+  onCloseMobile: () => void;
 }
 
 const bottomNav = [
@@ -30,9 +32,23 @@ export default function Sidebar({
   onSelectDomain,
   onNavigate,
   activeView,
+  mobileOpen,
+  onCloseMobile,
 }: SidebarProps) {
   return (
-    <aside className="flex flex-col gap-6 border-r border-border bg-sidebar px-5 py-8 overflow-hidden">
+    <>
+      {/* Mobile Overlay */}
+      {mobileOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={onCloseMobile}
+        />
+      )}
+      <aside className={`flex flex-col gap-6 border-r border-border bg-sidebar px-5 py-8 pt-12 sm:pt-8 overflow-hidden
+        fixed inset-y-0 left-0 z-50 md:relative w-[260px] md:w-auto h-full
+        transition-transform duration-300 ease-in-out
+        ${mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
+      `}>
       {/* Brand + collapse toggle */}
       <div className="flex items-center justify-between">
         {!collapsed && (
@@ -111,5 +127,6 @@ export default function Sidebar({
         </button>
       </div>
     </aside>
+    </>
   );
 }

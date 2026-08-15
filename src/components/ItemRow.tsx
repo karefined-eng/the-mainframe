@@ -57,27 +57,27 @@ export default function ItemRow({
 
         {/* Domain-specific extras */}
         <div className="flex gap-3 mt-0.5 flex-wrap">
-          {domain === "certifications" && item.platform && (
-            <small className="text-xs text-text-muted">{item.platform as string}</small>
+          {domain === "certifications" && Boolean(item.platform) && (
+            <small className="text-xs text-text-muted">{String(item.platform)}</small>
           )}
-          {domain === "acquisitions" && item.priority && (
+          {domain === "acquisitions" && Boolean(item.priority) && (
             <small className={`text-xs font-medium ${
               item.priority === "high" ? "text-danger" : item.priority === "low" ? "text-text-muted" : "text-warning"
             }`}>
-              {(item.priority as string).toUpperCase()}
+              {String(item.priority).toUpperCase()}
             </small>
           )}
           {domain === "acquisitions" && item.estimated_cost != null && (
-            <small className="text-xs text-text-muted">${item.estimated_cost as number}</small>
+            <small className="text-xs text-text-muted">${String(item.estimated_cost)}</small>
           )}
-          {domain === "ventures" && item.stage && (
-            <small className="text-xs text-accent/80">{item.stage as string}</small>
+          {domain === "ventures" && Boolean(item.stage) && (
+            <small className="text-xs text-accent/80">{String(item.stage)}</small>
           )}
-          {domain === "goals" && item.timeframe && (
-            <small className="text-xs text-text-muted">{item.timeframe as string}</small>
+          {domain === "goals" && Boolean(item.timeframe) && (
+            <small className="text-xs text-text-muted">{String(item.timeframe)}</small>
           )}
-          {domain === "build_ideas" && item.category && (
-            <small className="text-xs text-text-muted">{item.category as string}</small>
+          {domain === "build_ideas" && Boolean(item.category) && (
+            <small className="text-xs text-text-muted">{String(item.category)}</small>
           )}
           {item.notes && (
             <small className="text-xs text-text-muted/60 truncate max-w-48">{item.notes}</small>

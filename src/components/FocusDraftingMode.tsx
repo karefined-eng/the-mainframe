@@ -180,16 +180,27 @@ export default function FocusDraftingMode({ item, domain, onClose }: FocusDrafti
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-bg flex flex-col overflow-hidden">
+    <div className="fixed inset-0 z-50 bg-bg flex flex-col overflow-hidden pt-12 sm:pt-0">
       {/* Header */}
-      <header className="flex-none h-14 border-b border-border bg-surface px-6 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <h1 className="text-lg font-semibold m-0 truncate max-w-md">{item.title}</h1>
-          <span className={`text-xs ${saveError ? "text-danger" : "text-text-muted"}`}>
+      <header className="flex-none min-h-[56px] border-b border-border bg-surface px-4 sm:px-6 py-2 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
+        <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
+          {/* Mobile Back Button to list when a card is selected */}
+          <div className="md:hidden">
+             {selectedCardId && (
+               <button 
+                 onClick={() => selectCard(0)} 
+                 className="p-1.5 -ml-2 rounded-lg bg-surface-alt border border-border text-text hover:bg-surface transition-all cursor-pointer"
+               >
+                 <X className="w-4 h-4" />
+               </button>
+             )}
+          </div>
+          <h1 className="text-base sm:text-lg font-semibold m-0 truncate flex-1 sm:max-w-md">{item.title}</h1>
+          <span className={`text-[10px] sm:text-xs shrink-0 ${saveError ? "text-danger" : "text-text-muted"}`}>
             {saveError ? "Save Failed" : saving ? "Saving..." : "Saved"}
           </span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           <button 
             onClick={handleExport}
             className="rounded-lg border border-border px-3 py-1.5 text-xs text-text-muted hover:text-text hover:border-accent/50 transition-all cursor-pointer"
@@ -208,7 +219,7 @@ export default function FocusDraftingMode({ item, domain, onClose }: FocusDrafti
       {/* Main Dual Pane */}
       <main className="flex-1 flex overflow-hidden">
         {/* Left Pane (Cards List) */}
-        <section className="w-1/3 min-w-[320px] max-w-[400px] border-r border-border bg-surface-alt overflow-y-auto p-4 flex flex-col gap-3">
+        <section className={`w-full md:w-1/3 md:min-w-[320px] md:max-w-[400px] border-r border-border bg-surface-alt overflow-y-auto p-4 flex flex-col gap-3 ${selectedCardId ? 'hidden md:flex' : 'flex'}`}>
           <div className="flex justify-between items-center mb-2 px-1">
             <h2 className="text-sm font-semibold text-accent m-0">Cards</h2>
             <button
@@ -269,7 +280,7 @@ export default function FocusDraftingMode({ item, domain, onClose }: FocusDrafti
         </section>
 
         {/* Right Pane (Drafting Canvas) */}
-        <section className="flex-1 bg-bg p-8">
+        <section className={`flex-1 bg-bg p-4 sm:p-8 overflow-y-auto ${!selectedCardId ? 'hidden md:block' : 'block'}`}>
           {selectedCardId ? (
             <div className="h-full flex flex-col max-w-4xl mx-auto">
               <h2 className="text-xl font-bold text-text mb-6">
