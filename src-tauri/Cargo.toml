@@ -26,3 +26,5 @@ serde_json = "1"
 tiny_http = "0.12"
 ureq = "2.9"
 local-ip-address = "0.6.3"
+rand = "0.8"
+rusqlite = { version = "0.31", features = ["bundled"] }

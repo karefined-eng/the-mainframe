@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { getDb, type BaseItem, type DomainKey } from "../App";
-import { Copy, Download, X, Plus, GripVertical, FileText } from "lucide-react";
+import { Download, X, Plus, GripVertical, FileText } from "lucide-react";
+import { useSyncContext } from "../context/SyncContext";
 
 interface FocusDraftingModeProps {
   item: BaseItem;
@@ -19,6 +20,7 @@ interface Card {
 }
 
 export default function FocusDraftingMode({ item, domain, onClose }: FocusDraftingModeProps) {
+  const { syncInProgress } = useSyncContext();
   const [cards, setCards] = useState<Card[]>([]);
   const [selectedCardId, setSelectedCardId] = useState<number | null>(null);
   
@@ -98,7 +100,11 @@ export default function FocusDraftingMode({ item, domain, onClose }: FocusDrafti
     if (!selectedCardId) return;
     const val = e.target.value;
     setDraft(val);
-    
+
+    // Don't schedule auto-save during an active sync — prevents SQLite BUSY collisions.
+    // The page reloads after sync completes, so state is naturally reset.
+    if (syncInProgress) return;
+
     if (saveTimeout.current) clearTimeout(saveTimeout.current);
     saveTimeout.current = window.setTimeout(() => {
       saveDraft(val, selectedCardId);
@@ -119,7 +125,9 @@ export default function FocusDraftingMode({ item, domain, onClose }: FocusDrafti
       [domain, item.id, newOrder]
     );
     await loadCards();
-    selectCard(res.lastInsertId);
+    if (res.lastInsertId !== undefined) {
+      selectCard(res.lastInsertId);
+    }
   };
 
   // --- Drag and Drop Handlers ---
@@ -196,8 +204,8 @@ export default function FocusDraftingMode({ item, domain, onClose }: FocusDrafti
              )}
           </div>
           <h1 className="text-base sm:text-lg font-semibold m-0 truncate flex-1 sm:max-w-md">{item.title}</h1>
-          <span className={`text-[10px] sm:text-xs shrink-0 ${saveError ? "text-danger" : "text-text-muted"}`}>
-            {saveError ? "Save Failed" : saving ? "Saving..." : "Saved"}
+          <span className={`text-[10px] sm:text-xs shrink-0 ${saveError ? "text-danger" : syncInProgress ? "text-warning" : "text-text-muted"}`}>
+            {saveError ? "Save Failed" : syncInProgress ? "Sync in progress" : saving ? "Saving..." : "Saved"}
           </span>
         </div>
         <div className="flex items-center gap-2 sm:gap-3 shrink-0">

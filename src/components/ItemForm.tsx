@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import type { DomainKey, BaseItem } from "../App";
 import { getDb } from "../App";
 import { Pen, Plus, X } from "lucide-react";
@@ -76,21 +76,17 @@ export default function ItemForm({ domain, item, onSave, onCancel, onEnterDrafti
   const [cards, setCards] = useState<{ id?: number; title: string; isDeleted?: boolean }[]>([
     { title: "" }
   ]);
-  const [cardsLoaded, setCardsLoaded] = useState(false);
 
   useEffect(() => {
     if (isTier1 && item) {
       getDb().then(db => {
-        db.select<{id: number, title: string}>("SELECT id, title FROM cards WHERE domain = $1 AND row_id = $2 ORDER BY order_index ASC", [domain, item.id])
+        db.select<{id: number, title: string}[]>("SELECT id, title FROM cards WHERE domain = $1 AND row_id = $2 ORDER BY order_index ASC", [domain, item.id])
           .then(res => {
             if (res.length > 0) {
               setCards(res);
             }
-            setCardsLoaded(true);
           });
       });
-    } else {
-      setCardsLoaded(true);
     }
   }, [item, domain, isTier1]);
 

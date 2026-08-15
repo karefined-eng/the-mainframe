@@ -15,7 +15,6 @@ interface DomainViewProps {
 export default function DomainView({
   domain,
   domainInfo,
-  period,
   onCountChange,
   onEnterDraftingMode,
 }: DomainViewProps) {

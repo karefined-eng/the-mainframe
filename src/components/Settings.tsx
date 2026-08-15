@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getDb, domains, type DomainKey } from "../App";
+import { getDb, domains } from "../App";
 import { showToast } from "./Toast";
 import { Bell, Database as DbIcon, Info } from "lucide-react";
 
@@ -47,7 +47,7 @@ export default function Settings() {
       setSaved(true);
       setTimeout(() => setSaved(false), 1500);
     } catch (err) {
-      showToast("error", "Failed to save setting");
+      showToast("Failed to save setting", "error");
     }
   };
 
@@ -63,7 +63,7 @@ export default function Settings() {
   };
 
   const testNotification = () => {
-    showToast("info", "This is a test notification!");
+    showToast("This is a test notification!", "info");
   };
 
   return (

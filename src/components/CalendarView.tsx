@@ -73,7 +73,7 @@ export default function CalendarView() {
         }
         setEvents(allEvents);
       } catch (err) {
-        showToast("error", "Failed to load calendar events.");
+        showToast("Failed to load calendar events.", "error");
         console.error(err);
       }
     }
@@ -104,9 +104,9 @@ export default function CalendarView() {
         `UPDATE ${domain} SET target_date = $1, target_time = $2, updated_at = datetime('now') WHERE id = $3`,
         [newDate, newTime, originalId]
       );
-      showToast("success", "Item rescheduled.");
+      showToast("Item rescheduled.", "success");
     } catch (err) {
-      showToast("error", "Failed to update item date.");
+      showToast("Failed to update item date.", "error");
       dropInfo.revert();
     }
   };
