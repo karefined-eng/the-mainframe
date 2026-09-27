@@ -47,3 +47,8 @@ npm run tauri android dev
 ```
 
 **Note:** See the detailed `.md` files in the root directory for in-depth architectural and design decisions (`00_PROJECT_BRIEF.md`, `01_DATA_SCHEMA.md`, etc.).
+
+### Android documentation
+
+- [Android and cross-device sync architecture](09_ANDROID_SYNC_ARCHITECTURE.md)
+- [Android production-readiness guide](10_ANDROID_PRODUCTION_READINESS.md)
