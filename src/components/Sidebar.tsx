@@ -44,8 +44,8 @@ export default function Sidebar({
           onClick={onCloseMobile}
         />
       )}
-      <aside className={`flex flex-col gap-6 border-r border-border bg-sidebar px-5 py-8 pt-12 sm:pt-8 overflow-hidden
-        fixed inset-y-0 left-0 z-50 md:relative w-[260px] md:w-auto h-full
+      <aside className={`flex h-dvh min-h-0 flex-col gap-6 overflow-hidden border-r border-border bg-sidebar px-5 py-5 pt-12 sm:py-8 sm:pt-8
+        fixed inset-y-0 left-0 z-50 md:relative w-[260px] md:w-auto
         transition-transform duration-300 ease-in-out
         ${mobileOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
       `}>
@@ -68,8 +68,9 @@ export default function Sidebar({
         </button>
       </div>
 
+      <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto overscroll-contain pr-1">
       {/* Domain nav */}
-      <nav className="grid gap-2.5">
+      <nav className="grid shrink-0 gap-2.5">
         {domains.map((d) => {
           const isActive = d.key === activeDomain;
           return (
@@ -97,7 +98,7 @@ export default function Sidebar({
       </nav>
 
       {/* Bottom nav — notifications, export, settings */}
-      <div className="mt-auto flex flex-col gap-2">
+      <div className="flex shrink-0 flex-col gap-2">
         {bottomNav.map((item) => (
           <button
             key={item.key}
@@ -125,6 +126,7 @@ export default function Sidebar({
           <Home className="w-4 h-4 shrink-0" />
           {!collapsed && <span>Dashboard</span>}
         </button>
+      </div>
       </div>
     </aside>
     </>

@@ -2,14 +2,16 @@ import { useEffect, useState, useCallback } from "react";
 import Database from "@tauri-apps/plugin-sql";
 import Sidebar from "./components/Sidebar";
 import DomainView from "./components/DomainView";
+import DashboardHome from "./components/DashboardHome";
 import PasteIngest from "./components/PasteIngest";
 import NotificationLog from "./components/NotificationLog";
 import Settings from "./components/Settings";
 import BackupExport from "./components/BackupExport";
 import SyncPanel from "./components/SyncPanel";
 import ToastContainer from "./components/Toast";
-import { Award, Wrench, ShoppingCart, Target, Rocket, Feather, Zap, Compass, X, ClipboardPaste, ArrowRight, Menu } from "lucide-react";
+import { Award, Wrench, ShoppingCart, Target, Rocket, Feather, Zap, Compass, X, ClipboardPaste, Menu } from "lucide-react";
 import { runUrgencyCheck } from "./engine/urgency";
+import { buildDashboardModel, type HotItem, type ReentrySummary } from "./engine/dashboardModel";
 import CalendarView from "./components/CalendarView";
 import FocusDraftingMode from "./components/FocusDraftingMode";
 import NotificationEngine from "./components/NotificationEngine";
@@ -51,18 +53,17 @@ export async function getDb(): Promise<Database> {
   return _db;
 }
 
-async function loadCounts(): Promise<DomainCounts> {
+async function loadDashboardModel(previousVisitAt: string | null) {
   const db = await getDb();
-  const counts = {} as DomainCounts;
-  await Promise.all(
-    domains.map(async (d) => {
-      const rows = await db.select<{ count: number }[]>(
-        `SELECT COUNT(*) AS count FROM ${d.key}`,
-      );
-      counts[d.key] = rows[0]?.count ?? 0;
-    }),
+  const snapshots = await Promise.all(domains.map(async (domain) => ({
+    key: domain.key,
+    label: domain.label,
+    items: await db.select<BaseItem[]>(`SELECT * FROM ${domain.key}`),
+  })));
+  const settings = await db.select<{ value: string }[]>(
+    `SELECT value FROM app_settings WHERE key = 'notification_density'`,
   );
-  return counts;
+  return buildDashboardModel(snapshots, previousVisitAt, settings[0]?.value || "balanced");
 }
 
 type View = DomainKey | "notifications" | "settings" | "export" | "calendar" | "sync" | "drafting_mode" | null;
@@ -79,21 +80,37 @@ function App() {
     skills: 0,
     experiences: 0,
   });
+  const [hotItems, setHotItems] = useState<HotItem[]>([]);
+  const [reentry, setReentry] = useState<ReentrySummary | null>(null);
+  const [dashboardLoaded, setDashboardLoaded] = useState(false);
   const [period, setPeriod] = useState<Period>("daily");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showIngest, setShowIngest] = useState(false);
   const [draftingItem, setDraftingItem] = useState<{item: BaseItem, domain: DomainKey} | null>(null);
+  const [spotlight, setSpotlight] = useState<{ domain: DomainKey; itemId: number } | null>(null);
 
-  const refreshCounts = useCallback(() => {
-    loadCounts().then(setCounts).catch(console.error);
+  const refreshDashboard = useCallback(async (previousVisitAt?: string | null) => {
+    const model = await loadDashboardModel(previousVisitAt ?? null);
+    setCounts(model.counts);
+    setHotItems(model.hotItems);
+    if (previousVisitAt !== undefined) setReentry(model.reentry);
+    setDashboardLoaded(true);
   }, []);
 
+  const refreshCounts = useCallback(() => {
+    refreshDashboard().catch(console.error);
+  }, [refreshDashboard]);
+
   useEffect(() => {
-    refreshCounts();
+    const previousVisitAt = window.localStorage.getItem("mainframe.lastOpenedAt");
+    const openedAt = new Date().toISOString();
+    refreshDashboard(previousVisitAt)
+      .then(() => window.localStorage.setItem("mainframe.lastOpenedAt", openedAt))
+      .catch(console.error);
     // Run urgency check on app open (doc 06 §5)
     runUrgencyCheck().catch(console.error);
-  }, [refreshCounts]);
+  }, [refreshDashboard]);
 
   const activeDomain = (activeView && !["notifications", "settings", "export", "calendar", "sync", "drafting_mode"].includes(activeView))
     ? (activeView as DomainKey)
@@ -123,12 +140,15 @@ function App() {
         onSelectDomain={(key) => {
           setActiveView(key);
           setShowIngest(false);
+          setSpotlight(null);
           setMobileMenuOpen(false);
         }}
         onNavigate={(view: string) => {
           setActiveView((view || null) as View);
           setShowIngest(false);
+          setSpotlight(null);
           setMobileMenuOpen(false);
+          if (!view) refreshCounts();
         }}
         activeView={activeView}
         mobileOpen={mobileMenuOpen}
@@ -154,7 +174,11 @@ function App() {
               {(["daily", "weekly", "monthly"] as Period[]).map((p) => (
                 <button
                   key={p}
-                  onClick={() => setPeriod(p)}
+                  aria-pressed={period === p}
+                  onClick={() => {
+                    setPeriod(p);
+                    setSpotlight(null);
+                  }}
                   className={`rounded-full border px-4 py-2.5 text-sm font-medium capitalize transition-all cursor-pointer ${
                     period === p
                       ? "bg-accent text-bg border-accent"
@@ -195,6 +219,7 @@ function App() {
               domain={activeDomain}
               domainInfo={activeDomainInfo}
               period={period}
+              spotlightItemId={spotlight?.domain === activeDomain ? spotlight.itemId : null}
               onCountChange={refreshCounts}
               onEnterDraftingMode={(item) => {
                 if (activeDomain) {
@@ -224,30 +249,23 @@ function App() {
             }} 
           />
         ) : (
-          /* Dashboard summary cards */
-          <section className="grid grid-cols-2 gap-3 lg:grid-cols-3">
-            {domains.map((d) => (
-              <button
-                key={d.key}
-                onClick={() => setActiveView(d.key)}
-                className="group rounded-2xl border border-border bg-surface-alt p-3 text-left transition-all hover:border-accent/60 hover:bg-surface cursor-pointer"
-              >
-                <div className="flex flex-col gap-2 mb-2">
-                  <d.icon className="w-6 h-6 text-accent" />
-                  <h2 className="m-0 text-sm font-semibold leading-tight">{d.label}</h2>
-                </div>
-                {counts[d.key] > 0 ? (
-                  <p className="m-0 text-text-muted text-sm">
-                    {counts[d.key]} item{counts[d.key] !== 1 ? "s" : ""}
-                  </p>
-                ) : (
-                  <p className="m-0 text-accent/70 text-xs">
-                    Empty <ArrowRight className="w-3 h-3 inline-block ml-0.5" />
-                  </p>
-                )}
-              </button>
-            ))}
-          </section>
+          <DashboardHome
+            domains={domains}
+            counts={counts}
+            hotItems={hotItems}
+            reentry={reentry}
+            loaded={dashboardLoaded}
+            onSelectDomain={(domain) => {
+              setActiveView(domain);
+              setShowIngest(false);
+              setSpotlight(null);
+            }}
+            onOpenItem={(domain, itemId) => {
+              setActiveView(domain);
+              setSpotlight({ domain, itemId });
+              setShowIngest(false);
+            }}
+          />
         )}
       </main>
 

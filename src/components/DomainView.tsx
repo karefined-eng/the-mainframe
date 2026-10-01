@@ -3,11 +3,13 @@ import type { DomainKey, DomainInfo, Period, BaseItem, Status } from "../App";
 import { getDb } from "../App";
 import ItemRow from "./ItemRow";
 import ItemForm from "./ItemForm";
+import { getPeriodDateRange, isOverdueDate, isVisibleInPeriod } from "../utils/dateWindow";
 
 interface DomainViewProps {
   domain: DomainKey;
   domainInfo: DomainInfo;
   period: Period;
+  spotlightItemId: number | null;
   onCountChange: () => void;
   onEnterDraftingMode?: (item: BaseItem) => void;
 }
@@ -15,6 +17,8 @@ interface DomainViewProps {
 export default function DomainView({
   domain,
   domainInfo,
+  period,
+  spotlightItemId,
   onCountChange,
   onEnterDraftingMode,
 }: DomainViewProps) {
@@ -42,13 +46,28 @@ export default function DomainView({
     setEditingItem(null);
   }, [loadItems]);
 
+  const now = new Date();
   const filtered = items.filter((item) => {
     const q = search.toLowerCase();
     if (q && !item.title.toLowerCase().includes(q) && !(item.notes ?? "").toLowerCase().includes(q)) {
       return false;
     }
-    return true;
+    if (item.id === spotlightItemId) return true;
+    return isVisibleInPeriod(item.target_date, period, now, item.status !== "done");
   });
+
+  const overdueCount = items.filter((item) => item.status !== "done" && isOverdueDate(item.target_date, now)).length;
+  const undatedCount = items.filter((item) => !item.target_date).length;
+  const range = getPeriodDateRange(period, now);
+  const periodDescription = period === "daily"
+    ? `today · ${range.start}`
+    : period === "weekly"
+      ? `this week · ${range.start}–${range.end}`
+      : `this month · ${range.start}–${range.end}`;
+  const spotlightItem = items.find((item) => item.id === spotlightItemId);
+  const spotlightOutsidePeriod = Boolean(
+    spotlightItem && !isVisibleInPeriod(spotlightItem.target_date, period, now, spotlightItem.status !== "done"),
+  );
 
   const handleStatusChange = async (id: number, newStatus: Status) => {
     const db = await getDb();
@@ -114,7 +133,7 @@ export default function DomainView({
   };
 
   return (
-    <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4">
       {/* Definition Banner */}
       {(domain === "goals" || domain === "skills" || domain === "experiences") && (
         <div className="rounded-xl bg-accent/5 border border-accent/20 p-4 mb-2 text-sm text-text-muted">
@@ -122,6 +141,15 @@ export default function DomainView({
           {domain === "skills" && <p className="m-0"><strong className="text-accent">Skills:</strong> An ongoing capability to master (e.g. "Coding", "Running"). No finish line, just proficiency.</p>}
           {domain === "experiences" && <p className="m-0"><strong className="text-accent">Experiences:</strong> A one-time life event to enjoy (e.g. "Skydiving"). No ongoing mastery, just do it once.</p>}
         </div>
+      )}
+
+      <div className="rounded-xl border border-border bg-surface-alt/70 px-3 py-2.5 text-xs text-text-muted" role="status">
+        Showing items due {periodDescription}. Active overdue items and undated items remain visible ({overdueCount} overdue · {undatedCount} undated).
+      </div>
+      {spotlightOutsidePeriod && spotlightItem && (
+        <p className="m-0 rounded-lg border border-accent/30 bg-accent/5 px-3 py-2 text-xs text-text-muted">
+          {spotlightItem.title} is shown from the dashboard, outside this date window.
+        </p>
       )}
 
       {/* Search + Add */}
@@ -165,7 +193,9 @@ export default function DomainView({
             <p className="text-text-muted text-sm">
               {items.length === 0
                 ? `No ${domainInfo.label.toLowerCase()} yet. Add one or paste import a list.`
-                : "No items match your search."}
+                : search
+                  ? "No items match your search."
+                  : "No items are due in this window. Undated and active overdue items remain visible."}
             </p>
           </div>
         ) : (
@@ -174,6 +204,7 @@ export default function DomainView({
               key={item.id}
               item={item}
               domain={domain}
+              isHighlighted={item.id === spotlightItemId}
               onStatusChange={handleStatusChange}
               onDelete={handleDelete}
               onEdit={(item) => {

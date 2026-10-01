@@ -1,5 +1,6 @@
 import type { DomainKey, BaseItem, Status } from "../App";
 import { X } from "lucide-react";
+import { formatTargetDate, isOverdueDate } from "../utils/dateWindow";
 
 const statusCycle: Status[] = ["not_started", "in_progress", "done", "paused"];
 const statusLabels: Record<Status, string> = {
@@ -18,6 +19,7 @@ const statusColors: Record<Status, string> = {
 interface ItemRowProps {
   item: BaseItem;
   domain: DomainKey;
+  isHighlighted?: boolean;
   onStatusChange: (id: number, status: Status) => void;
   onDelete: (id: number) => void;
   onEdit: (item: BaseItem) => void;
@@ -26,6 +28,7 @@ interface ItemRowProps {
 export default function ItemRow({
   item,
   domain,
+  isHighlighted = false,
   onStatusChange,
   onDelete,
   onEdit,
@@ -36,7 +39,7 @@ export default function ItemRow({
   };
 
   return (
-    <div className="group flex items-center gap-3 rounded-xl border border-border bg-surface-alt px-4 py-3 transition-all hover:border-accent/30">
+    <div className={`group flex items-center gap-3 rounded-xl border bg-surface-alt px-4 py-3 transition-all hover:border-accent/30 ${isHighlighted ? "border-accent/60 ring-1 ring-accent/20" : "border-border"}`}>
       {/* Status toggle */}
       <button
         onClick={() => onStatusChange(item.id, nextStatus())}
@@ -56,7 +59,12 @@ export default function ItemRow({
         </span>
 
         {/* Domain-specific extras */}
-        <div className="flex gap-3 mt-0.5 flex-wrap">
+        <div className="mt-0.5 flex flex-wrap gap-x-3 gap-y-0.5">
+          {item.target_date && (
+            <small className={`text-xs ${item.status !== "done" && isOverdueDate(item.target_date) ? "font-medium text-warning" : "text-text-muted"}`}>
+              {item.status !== "done" && isOverdueDate(item.target_date) ? "Overdue" : "Due"} · {formatTargetDate(item.target_date)}
+            </small>
+          )}
           {domain === "certifications" && Boolean(item.platform) && (
             <small className="text-xs text-text-muted">{String(item.platform)}</small>
           )}
@@ -81,6 +89,9 @@ export default function ItemRow({
           )}
           {item.notes && (
             <small className="text-xs text-text-muted/60 truncate max-w-48">{item.notes}</small>
+          )}
+          {Boolean(item.action_trigger) && (
+            <small className="w-full border-l-2 border-accent/40 pl-2 text-xs text-text-muted">{String(item.action_trigger)}</small>
           )}
         </div>
       </div>
