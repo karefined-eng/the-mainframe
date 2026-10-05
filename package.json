@@ -1,7 +1,26 @@
 {
   "name": "the-mainframe",
-  "private": true,
+  "private": false,
   "version": "0.1.0",
+  "description": "A private, local-first life management app for desktop and Android.",
+  "keywords": [
+    "local-first",
+    "offline",
+    "productivity",
+    "life-management",
+    "sqlite",
+    "privacy",
+    "tauri",
+    "cross-platform"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/karefined-eng/the-mainframe.git"
+  },
+  "homepage": "https://github.com/karefined-eng/the-mainframe",
+  "bugs": {
+    "url": "https://github.com/karefined-eng/the-mainframe/issues"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
