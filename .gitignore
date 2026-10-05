@@ -25,3 +25,5 @@ dist-ssr
 
 # Import Directory
 imports/
+
+dist-installers/
