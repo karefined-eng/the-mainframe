@@ -134,25 +134,23 @@ The Android signing key must be backed up securely. Never store it in the reposi
 The current sync server uses:
 
 - HTTP on port `9377`.
-- A PIN in the URL query string.
-- An unauthenticated `/info` endpoint.
+- A one-time PIN in an `Authorization: Bearer` header.
+- The PIN expires after 10 minutes and is consumed after one successful transfer.
+- UDP broadcast discovery on port `9378`, with advertised IP/source matching.
+- Private/local peer checks and a 64 MiB database transfer limit.
 
 The Android manifest grants Internet access and release builds explicitly allow
 cleartext traffic because this protocol is currently HTTP. The PIN is a useful
-one-time pairing check on a trusted LAN, but it is not encryption and query
-parameters may be visible to network observers. Treat sync as local-network-only
-and do not use it across untrusted Wi-Fi, the public Internet, or a forwarded
-port.
+one-time pairing check on a trusted LAN, but it is not encryption. Treat sync
+as local-network-only and do not use it across untrusted Wi-Fi, the public
+Internet, or a forwarded port.
 
 Before release, the sync protocol should:
 
 - Replace local HTTP with HTTPS or an authenticated encrypted transport.
-- Send the PIN in an `Authorization` header rather than `?pin=...`.
 - Add failed-attempt rate limiting.
-- Expire the PIN after a short time, not only after a successful transfer.
-- Require a pairing confirmation on both devices.
+- Require a user confirmation on both devices before transfer.
 - Add database hash and schema/version checks before transferring.
-- Avoid exposing unnecessary information through unauthenticated `/info`.
 - Validate the remote device identity before accepting a database.
 
 This is the most important technical production blocker in the current implementation.
