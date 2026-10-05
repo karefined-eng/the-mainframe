@@ -4,7 +4,42 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>The Mainframe</title>
+
+    <!--
+      Metadata below describes the public landing page (/welcome), which is the
+      surface search engines and link previews should index. The in-app dashboard
+      route sets its own title at runtime. Keep these in sync with
+      src/landing/content.ts -> pageMeta.
+    -->
+    <title>The Mainframe — Local-First Life Management</title>
+    <meta
+      name="description"
+      content="A private, offline-first life management app for courses, projects, goals, ideas, purchases, and ventures. Built with Tauri, React, Rust, and SQLite."
+    />
+    <meta
+      name="keywords"
+      content="local-first productivity app, offline life management, private personal dashboard, cross-platform desktop and Android, SQLite productivity app"
+    />
+    <meta name="theme-color" content="#0E0E10" />
+    <link rel="canonical" href="/welcome" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="The Mainframe" />
+    <meta property="og:title" content="The Mainframe — Local-First Life Management" />
+    <meta
+      property="og:description"
+      content="A private, offline-first life management app for courses, projects, goals, ideas, purchases, and ventures. Built with Tauri, React, Rust, and SQLite."
+    />
+    <meta property="og:url" content="/welcome" />
+    <meta property="og:image" content="/landing/social-preview.svg" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="The Mainframe — Local-First Life Management" />
+    <meta
+      name="twitter:description"
+      content="A private, offline-first life management app for courses, projects, goals, ideas, purchases, and ventures."
+    />
+    <meta name="twitter:image" content="/landing/social-preview.svg" />
   </head>
 
   <body>
