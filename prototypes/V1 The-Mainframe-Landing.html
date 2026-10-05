@@ -1,0 +1,1409 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Mainframe â€” Local-First Life Management</title>
+    <meta
+      name="description"
+      content="A private, offline-first life management app for courses, projects, goals, ideas, purchases, and ventures. Built with Tauri, React, Rust, and SQLite."
+    />
+    <style>
+      /* Review mirror of the in-repo landing page. The source of truth is the
+         React route at src/landing/LandingPage.tsx; regenerate this file from it
+         rather than editing copy here. Project tokens mirror src/index.css. */
+      :root {
+        --color-bg: #0e0e10;
+        --color-surface: #1a1a1d;
+        --color-surface-alt: #141518;
+        --color-text: #f2f2f0;
+        --color-text-muted: #b1b3b7;
+        --color-accent: #4a9eff;
+        --color-border: #1f2024;
+        --color-danger: #ff5e5e;
+        --color-success: #34d399;
+        --color-warning: #fbbf24;
+        color-scheme: dark;
+      }
+      /*
+ * Styles for the public landing page (/welcome).
+ *
+ * Uses the same locked design tokens as the application (see src/index.css and
+ * 00_PROJECT_BRIEF.md): near-black background, off-white text, a single
+ * electric-blue accent used sparingly. Accent appears on the primary CTA,
+ * the step numerals/rails, the live status dot, and the closing call to
+ * action â€” nowhere else.
+ */
+
+.lp {
+  --lp-max: 1140px;
+  --lp-gutter: clamp(20px, 5vw, 40px);
+  --lp-accent: var(--color-accent, #4a9eff);
+  --lp-surface: var(--color-surface, #1a1a1d);
+  --lp-surface-alt: var(--color-surface-alt, #141518);
+  --lp-border: var(--color-border, #1f2024);
+  --lp-text: var(--color-text, #f2f2f0);
+  --lp-muted: var(--color-text-muted, #b1b3b7);
+  --lp-danger: var(--color-danger, #ff5e5e);
+  --lp-warning: var(--color-warning, #fbbf24);
+
+  background: var(--color-bg, #0e0e10);
+  color: var(--lp-text);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+.lp--mono,
+.lp-mono {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+.lp-skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 50;
+  padding: 10px 16px;
+  background: var(--lp-surface);
+  color: var(--lp-text);
+  border: 1px solid var(--lp-accent);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.lp-skip:focus {
+  left: 12px;
+  top: 12px;
+}
+
+.lp-wrap {
+  width: 100%;
+  max-width: var(--lp-max);
+  margin: 0 auto;
+  padding: 0 var(--lp-gutter);
+}
+
+.lp-section {
+  padding: clamp(48px, 7vw, 84px) 0;
+  border-top: 1px solid var(--lp-border);
+}
+
+.lp-section:first-of-type {
+  border-top: 0;
+}
+
+.lp-eyebrow {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--lp-muted);
+  margin: 0 0 14px;
+}
+
+.lp-h2 {
+  font-size: clamp(24px, 3.2vw, 34px);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  font-weight: 700;
+  margin: 0 0 14px;
+  max-width: 30ch;
+}
+
+.lp-lede {
+  font-size: clamp(15px, 1.5vw, 17px);
+  line-height: 1.65;
+  color: var(--lp-muted);
+  margin: 0;
+  max-width: 64ch;
+}
+
+/* â”€â”€ Header â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+.lp-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: color-mix(in srgb, var(--color-bg, #0e0e10) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--lp-border);
+}
+
+.lp-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-height: 62px;
+}
+
+.lp-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--lp-text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.lp-brand svg {
+  display: block;
+}
+
+.lp-nav {
+  display: none;
+  gap: 22px;
+  margin-left: auto;
+}
+
+.lp-nav a {
+  font-size: 13.5px;
+  color: var(--lp-muted);
+  text-decoration: none;
+  padding: 6px 0;
+  border-bottom: 1px solid transparent;
+}
+
+.lp-nav a:hover {
+  color: var(--lp-text);
+  border-bottom-color: var(--lp-accent);
+}
+
+.lp-header-cta {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--lp-text);
+  text-decoration: none;
+  padding: 8px 14px;
+  border: 1px solid var(--lp-border);
+  border-radius: 8px;
+}
+
+.lp-header-cta:hover {
+  border-color: var(--lp-accent);
+  color: var(--lp-accent);
+}
+
+@media (min-width: 900px) {
+  .lp-nav {
+    display: flex;
+  }
+
+  .lp-header-cta {
+    margin-left: 0;
+  }
+}
+
+/* â”€â”€ Hero â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+.lp-hero {
+  padding: clamp(52px, 8vw, 104px) 0 clamp(44px, 6vw, 76px);
+}
+
+.lp-hero-grid {
+  display: grid;
+  gap: clamp(32px, 5vw, 56px);
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .lp-hero-grid {
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  }
+}
+
+.lp-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 6px 12px 6px 10px;
+  border: 1px solid var(--lp-border);
+  border-radius: 999px;
+  background: var(--lp-surface-alt);
+  font-size: 12.5px;
+  color: var(--lp-muted);
+  margin-bottom: 24px;
+}
+
+.lp-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--lp-accent);
+  flex: none;
+}
+
+.lp-h1 {
+  font-size: clamp(30px, 4.6vw, 54px);
+  line-height: 1.08;
+  letter-spacing: -0.022em;
+  font-weight: 700;
+  margin: 0 0 20px;
+  max-width: 22ch;
+}
+
+.lp-sub {
+  font-size: clamp(15px, 1.6vw, 17.5px);
+  line-height: 1.65;
+  color: var(--lp-muted);
+  margin: 0 0 30px;
+  max-width: 56ch;
+}
+
+.lp-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.lp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 0 20px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+/* Accent use 1 of 3 */
+.lp-btn--primary {
+  background: var(--lp-accent);
+  color: #071018;
+  border-color: var(--lp-accent);
+}
+
+.lp-btn--primary:hover {
+  filter: brightness(1.08);
+}
+
+.lp-btn--ghost {
+  background: transparent;
+  color: var(--lp-text);
+  border-color: var(--lp-border);
+}
+
+.lp-btn--ghost:hover {
+  border-color: var(--lp-accent);
+  color: var(--lp-accent);
+}
+
+.lp-cta-note {
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--lp-muted);
+  margin: 16px 0 0;
+  max-width: 52ch;
+}
+
+.lp-cta-note a {
+  color: var(--lp-text);
+}
+
+/* Hero product panel â€” real DOM, no screenshot asset */
+
+.lp-panel {
+  border: 1px solid var(--lp-border);
+  border-radius: 14px;
+  background: var(--lp-surface);
+  overflow: hidden;
+}
+
+.lp-panel-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--lp-border);
+  background: var(--lp-surface-alt);
+}
+
+.lp-panel-title {
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--lp-muted);
+}
+
+.lp-panel-live {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  color: var(--lp-muted);
+}
+
+.lp-panel-title--inline {
+  margin-left: 6px;
+  text-transform: none;
+  letter-spacing: 0.04em;
+}
+
+.lp-panel-body {
+  padding: 14px;
+  display: grid;
+  gap: 14px;
+}
+
+.lp-panel-block {
+  border: 1px solid var(--lp-border);
+  border-radius: 10px;
+  background: var(--lp-surface-alt);
+  padding: 12px;
+}
+
+.lp-panel-label {
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--lp-muted);
+  margin: 0 0 9px;
+}
+
+.lp-raw {
+  margin: 0;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11.5px;
+  line-height: 1.75;
+  color: var(--lp-muted);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.lp-rows {
+  display: grid;
+  gap: 8px;
+}
+
+.lp-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border: 1px solid var(--lp-border);
+  border-radius: 8px;
+  background: var(--lp-surface);
+}
+
+.lp-row-title {
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lp-row-meta {
+  font-size: 11px;
+  color: var(--lp-muted);
+  white-space: nowrap;
+}
+
+.lp-tick {
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+  background: var(--lp-muted);
+  flex: none;
+}
+
+.lp-tick--accent {
+  background: var(--lp-accent);
+}
+
+.lp-badge {
+  font-size: 10.5px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  border: 1px solid var(--lp-border);
+  color: var(--lp-muted);
+  white-space: nowrap;
+}
+
+.lp-hot {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lp-hot li {
+  display: grid;
+  gap: 2px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--lp-surface);
+  border: 1px solid var(--lp-border);
+}
+
+.lp-hot strong {
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.lp-hot span {
+  font-size: 11px;
+  color: var(--lp-muted);
+}
+
+/* â”€â”€ Audience â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+.lp-aud-grid {
+  display: grid;
+  gap: 1px;
+  background: var(--lp-border);
+  border: 1px solid var(--lp-border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 26px;
+}
+
+@media (min-width: 700px) {
+  .lp-aud-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.lp-aud {
+  background: var(--lp-surface-alt);
+  padding: 20px;
+}
+
+.lp-aud h3 {
+  font-size: 14.5px;
+  font-weight: 600;
+  margin: 0 0 7px;
+}
+
+.lp-aud p {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--lp-muted);
+  margin: 0;
+}
+
+.lp-note {
+  margin: 22px 0 0;
+  padding: 14px 16px;
+  border: 1px solid var(--lp-border);
+  border-radius: 10px;
+  background: var(--lp-surface-alt);
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--lp-muted);
+  max-width: 72ch;
+}
+
+.lp-note strong {
+  color: var(--lp-text);
+  font-weight: 600;
+}
+
+/* â”€â”€ Walkthrough â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+.lp-steps {
+  display: grid;
+  gap: 1px;
+  background: var(--lp-border);
+  border: 1px solid var(--lp-border);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-top: 28px;
+}
+
+.lp-step {
+  background: var(--lp-surface-alt);
+  display: grid;
+  gap: 20px;
+  padding: 22px 20px;
+}
+
+@media (min-width: 880px) {
+  .lp-step {
+    grid-template-columns: 62px minmax(0, 1fr);
+    align-items: start;
+    padding: 24px;
+  }
+}
+
+.lp-step-num {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  /* Accent use 2 of 3 */
+  color: var(--lp-accent);
+}
+
+.lp-step-body h3 {
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+
+.lp-step-body p {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--lp-muted);
+  margin: 0;
+  max-width: 66ch;
+}
+
+.lp-figure {
+  margin: 16px 0 0;
+  border: 1px dashed var(--lp-border);
+  border-radius: 10px;
+  background: var(--lp-surface);
+  padding: 14px;
+}
+
+.lp-figure-tag {
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--lp-muted);
+  margin: 0 0 6px;
+}
+
+.lp-figure p {
+  font-size: 12.5px;
+  line-height: 1.6;
+  color: var(--lp-muted);
+  margin: 0;
+}
+
+.lp-figure-note {
+  margin-top: 6px;
+}
+
+.lp-figure-note code {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11.5px;
+  color: var(--lp-text);
+}
+
+.lp-table-status {
+  display: block;
+  margin-top: 6px;
+  color: var(--lp-muted);
+}
+
+.lp-stack-label {
+  margin: 0 0 14px;
+}
+
+.lp-figure code {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 11.5px;
+  color: var(--lp-text);
+  background: var(--lp-surface-alt);
+  border: 1px solid var(--lp-border);
+  border-radius: 5px;
+  padding: 1px 5px;
+}
+
+/* â”€â”€ Pillars â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+.lp-pillar-grid {
+  display: grid;
+  gap: 16px;
+  margin-top: 28px;
+}
+
+@media (min-width: 640px) {
+  .lp-pillar-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1040px) {
+  .lp-pillar-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.lp-pillar {
+  border: 1px solid var(--lp-border);
+  border-radius: 12px;
+  background: var(--lp-surface-alt);
+  padding: 20px;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.lp-pillar svg {
+  color: var(--lp-text);
+}
+
+.lp-pillar h3 {
+  font-size: 14.5px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.lp-pillar p {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--lp-muted);
+  margin: 0;
+}
+
+/* â”€â”€ Platform table â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+.lp-table-wrap {
+  margin-top: 26px;
+  border: 1px solid var(--lp-border);
+  border-radius: 12px;
+  overflow-x: auto;
+}
+
+.lp-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 620px;
+}
+
+.lp-table caption {
+  text-align: left;
+  font-size: 12px;
+  color: var(--lp-muted);
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--lp-border);
+}
+
+.lp-table th,
+.lp-table td {
+  text-align: left;
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--lp-border);
+  vertical-align: top;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+.lp-table thead th {
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--lp-muted);
+  font-weight: 500;
+  background: var(--lp-surface-alt);
+}
+
+.lp-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.lp-table td:first-child {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.lp-table td:nth-child(2) {
+  color: var(--lp-muted);
+}
+
+.lp-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  border: 1px solid var(--lp-border);
+  color: var(--lp-muted);
+  white-space: nowrap;
+}
+
+.lp-tag--accent {
+  color: var(--lp-accent);
+  border-color: color-mix(in srgb, var(--lp-accent) 45%, var(--lp-border));
+}
+
+.lp-download {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-top: 18px;
+}
+
+.lp-download-note {
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--lp-muted);
+  margin: 14px 0 0;
+  max-width: 74ch;
+}
+
+.lp-download-note strong {
+  color: var(--lp-text);
+  font-weight: 600;
+}
+
+/* â”€â”€ Trust â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+.lp-trust-grid {
+  display: grid;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+@media (min-width: 760px) {
+  .lp-trust-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.lp-trust {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  padding: 18px;
+  border: 1px solid var(--lp-border);
+  border-radius: 12px;
+  background: var(--lp-surface-alt);
+}
+
+.lp-trust svg {
+  color: var(--lp-warning);
+  margin-top: 1px;
+}
+
+.lp-trust h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 6px;
+}
+
+.lp-trust p {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--lp-muted);
+  margin: 0;
+}
+
+/* â”€â”€ Contribute â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+.lp-contrib {
+  display: grid;
+  gap: 28px;
+  margin-top: 26px;
+}
+
+@media (min-width: 940px) {
+  .lp-contrib {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: start;
+  }
+}
+
+.lp-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 12px;
+}
+
+.lp-list li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 10px;
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--lp-muted);
+}
+
+.lp-list svg {
+  color: var(--lp-muted);
+  margin-top: 2px;
+}
+
+.lp-stack {
+  border: 1px solid var(--lp-border);
+  border-radius: 12px;
+  background: var(--lp-surface-alt);
+  padding: 18px;
+}
+
+.lp-stack dl {
+  margin: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.lp-stack dt {
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--lp-muted);
+}
+
+.lp-stack dd {
+  margin: 3px 0 0;
+  font-size: 13.5px;
+  color: var(--lp-text);
+}
+
+.lp-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+/* â”€â”€ Closing CTA â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+.lp-final {
+  padding: clamp(44px, 6vw, 72px) 0;
+  background: var(--lp-surface-alt);
+  border-top: 1px solid var(--lp-border);
+}
+
+.lp-final h2 {
+  font-size: clamp(23px, 3vw, 32px);
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  font-weight: 700;
+  margin: 0 0 12px;
+  max-width: 36ch;
+}
+
+.lp-final p {
+  font-size: 14.5px;
+  line-height: 1.65;
+  color: var(--lp-muted);
+  margin: 0 0 24px;
+  max-width: 62ch;
+}
+
+/* â”€â”€ Footer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+.lp-footer {
+  border-top: 1px solid var(--lp-border);
+  padding: 26px 0 40px;
+}
+
+.lp-footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px 24px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lp-footer p {
+  font-size: 12.5px;
+  color: var(--lp-muted);
+  margin: 0;
+}
+
+.lp-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+}
+
+.lp-footer a {
+  font-size: 12.5px;
+  color: var(--lp-muted);
+  text-decoration: none;
+}
+
+.lp-footer a:hover {
+  color: var(--lp-accent);
+}
+
+/* â”€â”€ Shared focus treatment â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */
+
+.lp a:focus-visible,
+.lp button:focus-visible {
+  outline: 2px solid var(--lp-accent);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lp * {
+    transition: none !important;
+    animation: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+    </style>
+  </head>
+  <body>
+    <div class="lp">
+      <a class="lp-skip" href="#hero">Skip to main content</a>
+
+      <header class="lp-header">
+        <div class="lp-wrap lp-header-inner">
+          <a class="lp-brand" href="#hero">
+            <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+              <rect x="2.5" y="4" width="15" height="2.6" rx="1.3" fill="currentColor" />
+              <rect x="2.5" y="8.7" width="15" height="2.6" rx="1.3" fill="#4A9EFF" />
+              <rect x="2.5" y="13.4" width="15" height="2.6" rx="1.3" fill="currentColor" />
+            </svg>
+            The Mainframe
+          </a>
+          <nav class="lp-nav" aria-label="Page sections">
+            <a href="#why">Why</a>
+            <a href="#walkthrough">How it works</a>
+            <a href="#features">Features</a>
+            <a href="#platforms">Platforms</a>
+            <a href="#trust">Limitations</a>
+          </nav>
+          <a class="lp-header-cta" href="https://github.com/karefined-eng/the-mainframe" target="_blank" rel="noreferrer noopener">
+            GitHub
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></svg>
+          </a>
+        </div>
+      </header>
+
+      <main id="main">
+        <!-- 1. Hero -->
+        <section class="lp-hero" id="hero" aria-labelledby="hero-heading">
+          <div class="lp-wrap lp-hero-grid">
+            <div>
+              <p class="lp-status">
+                <span class="lp-dot" aria-hidden="true"></span>
+                Early public release Â· v0.1.0 Â· no versioned releases yet
+              </p>
+              <h1 class="lp-h1" id="hero-heading">
+                Your calm command center for everything you&apos;re learning, building, pursuing, and
+                acquiring.
+              </h1>
+              <p class="lp-sub">
+                The Mainframe is a private, local-first life management app for scattered projects,
+                goals, courses, ideas, and purchases. Work offline, keep your data on your devices,
+                and bring order to the lists already spread across your life.
+              </p>
+              <div class="lp-cta-row">
+                <a class="lp-btn lp-btn--primary" href="https://github.com/karefined-eng/the-mainframe/actions" target="_blank" rel="noreferrer noopener">
+                  Download the latest build
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+                </a>
+                <a class="lp-btn lp-btn--ghost" href="https://github.com/karefined-eng/the-mainframe" target="_blank" rel="noreferrer noopener">
+                  View the source on GitHub
+                </a>
+              </div>
+              <p class="lp-cta-note">
+                <strong>Read this first:</strong> there are no versioned public releases yet. Builds
+                live as GitHub Actions artifacts, and CI artifacts are not release downloads. Android
+                ships a signed release APK or an unsigned debug APK; desktop builds are unsigned until
+                platform signing is configured. <a href="#platforms">See platform status</a>.
+              </p>
+            </div>
+
+            <div class="lp-panel" aria-hidden="true">
+              <div class="lp-panel-bar">
+                <span class="lp-tick"></span>
+                <span class="lp-tick"></span>
+                <span class="lp-tick lp-tick--accent"></span>
+                <span class="lp-panel-title lp-mono lp-panel-title--inline">mainframe Â· local</span>
+                <span class="lp-panel-live lp-mono">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+                  offline
+                </span>
+              </div>
+              <div class="lp-panel-body">
+                <div class="lp-panel-block">
+                  <p class="lp-panel-label lp-mono">1 Â· pasted text</p>
+                  <pre class="lp-raw">cert: AWS SAA - book exam slot
+build: LAN snapshot diff viewer
+buy: 27" 4K monitor
+goal: run 10k under 50 min
+write: post on offline-first storage</pre>
+                </div>
+                <div class="lp-panel-block">
+                  <p class="lp-panel-label lp-mono">2 Â· structured items</p>
+                  <div class="lp-rows">
+                    <div class="lp-row">
+                      <span class="lp-tick lp-tick--accent"></span>
+                      <span class="lp-row-title">AWS SAA</span>
+                      <span class="lp-row-meta lp-mono">Certifications Â· Mar 14</span>
+                    </div>
+                    <div class="lp-row">
+                      <span class="lp-tick"></span>
+                      <span class="lp-row-title">LAN snapshot diff viewer</span>
+                      <span class="lp-row-meta lp-mono">Build Ideas Â· no date</span>
+                    </div>
+                    <div class="lp-row">
+                      <span class="lp-tick"></span>
+                      <span class="lp-row-title">27" 4K monitor</span>
+                      <span class="lp-row-meta lp-mono">Acquisitions Â· watching</span>
+                    </div>
+                    <div class="lp-row">
+                      <span class="lp-tick"></span>
+                      <span class="lp-row-title">Run 10k under 50 min</span>
+                      <span class="lp-row-meta lp-mono">Goals Â· Jun 02</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="lp-panel-block">
+                  <p class="lp-panel-label lp-mono">3 Â· what&apos;s hot</p>
+                  <ul class="lp-hot">
+                    <li><strong>AWS SAA study block</strong><span>3 sessions behind schedule</span></li>
+                    <li><strong>Client deliverable draft</strong><span>Recurring weekly item is due</span></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. Problem and audience -->
+        <section class="lp-section" id="why" aria-labelledby="why-heading">
+          <div class="lp-wrap">
+            <p class="lp-eyebrow lp-mono">Why it exists</p>
+            <h2 class="lp-h2" id="why-heading">Built for people whose work does not fit in one list</h2>
+            <p class="lp-lede">
+              Most life management tools are either a generic task list that has to be reshaped around
+              your life, or a workspace so broad that maintaining it becomes the work. The Mainframe
+              starts from the domains a person actually has: studies, builds, acquisitions, long-term
+              goals, and ventures.
+            </p>
+            <div class="lp-aud-grid">
+              <div class="lp-aud">
+                <h3>Developers and solo builders</h3>
+                <p>Several builds, courses, and side projects running in parallel with no single place that shows all of them.</p>
+              </div>
+              <div class="lp-aud">
+                <h3>Students and career switchers</h3>
+                <p>Certification tracks, study material, and application deadlines spread across notes, browsers, and messages.</p>
+              </div>
+              <div class="lp-aud">
+                <h3>Freelancers and creators</h3>
+                <p>Client deliverables that recur, personal work that keeps getting postponed, and ideas that need somewhere to land.</p>
+              </div>
+              <div class="lp-aud">
+                <h3>Anyone whose lists are everywhere</h3>
+                <p>Task content split across note apps, chat threads, spreadsheets, and memory. The Mainframe is built to be the one place those lists come to rest.</p>
+              </div>
+            </div>
+            <p class="lp-note">
+              <strong>What this is not.</strong> The Mainframe is not a medical or therapeutic product
+              and makes no claim about treating any condition. What it does aim at is narrower and
+              honest: a dashboard that opens collapsed so nothing unfinished is thrown at you at once,
+              and a blunt re-entry summary that tells you how far behind you are instead of hiding it.
+            </p>
+          </div>
+        </section>
+
+        <!-- 3. Product walkthrough -->
+        <section class="lp-section" id="walkthrough" aria-labelledby="walkthrough-heading">
+          <div class="lp-wrap">
+            <p class="lp-eyebrow lp-mono">The core loop</p>
+            <h2 class="lp-h2" id="walkthrough-heading">Paste, structure, decide, continue</h2>
+            <p class="lp-lede">Four steps, no setup ritual. The loop works the same offline as it does on a local network.</p>
+            <div class="lp-steps">
+              <article class="lp-step">
+                <p class="lp-step-num lp-mono">01</p>
+                <div class="lp-step-body">
+                  <h3>Paste the list you already have</h3>
+                  <p>Copy a wall of unstructured text from wherever it currently lives and paste it in. Plain text is the only input path â€” there is no file-upload workflow and no format-specific parser to satisfy.</p>
+                  <figure class="lp-figure">
+                    <figcaption class="lp-figure-tag lp-mono">Asset pending Â· List ingestion</figcaption>
+                    <p>The paste-ingestion panel of The Mainframe accepting an unstructured block of plain text and preparing it for parsing.</p>
+                    <p class="lp-figure-note">Capture from sample data only. Never include a real database, a pairing code, a LAN address, or keystore material. See <code>docs/LANDING_PAGE_PLAN.md</code>.</p>
+                  </figure>
+                </div>
+              </article>
+              <article class="lp-step">
+                <p class="lp-step-num lp-mono">02</p>
+                <div class="lp-step-body">
+                  <h3>Watch it become structured items</h3>
+                  <p>Each pasted line becomes an item with a status, an optional target date, and the original text preserved alongside it. The raw paste stays attached, so nothing is silently dropped in the transform.</p>
+                  <figure class="lp-figure">
+                    <figcaption class="lp-figure-tag lp-mono">Asset pending Â· Parsed items in a domain</figcaption>
+                    <p>A domain list showing parsed items with status labels and target dates, each still linked to its original pasted text.</p>
+                    <p class="lp-figure-note">Capture from sample data only. Never include a real database, a pairing code, a LAN address, or keystore material. See <code>docs/LANDING_PAGE_PLAN.md</code>.</p>
+                  </figure>
+                </div>
+              </article>
+              <article class="lp-step">
+                <p class="lp-step-num lp-mono">03</p>
+                <div class="lp-step-body">
+                  <h3>See what matters right now</h3>
+                  <p>The dashboard surfaces a short cross-domain shortlist and states why each entry surfaced. It is a suggestion you can ignore, not a queue you are failing to clear.</p>
+                  <figure class="lp-figure">
+                    <figcaption class="lp-figure-tag lp-mono">Asset pending Â· Cross-domain attention view</figcaption>
+                    <p>The What&apos;s Hot dashboard showing a short list of items pulled from different domains, each with the reason it surfaced.</p>
+                    <p class="lp-figure-note">Capture from sample data only. Never include a real database, a pairing code, a LAN address, or keystore material. See <code>docs/LANDING_PAGE_PLAN.md</code>.</p>
+                  </figure>
+                </div>
+              </article>
+              <article class="lp-step">
+                <p class="lp-step-num lp-mono">04</p>
+                <div class="lp-step-body">
+                  <h3>Stay offline, sync only when you choose</h3>
+                  <p>The app reads and writes a local SQLite database on each device. When you want the same snapshot on a second device, pair once on a trusted local network and transfer a validated snapshot.</p>
+                  <figure class="lp-figure">
+                    <figcaption class="lp-figure-tag lp-mono">Asset pending Â· LAN sync pairing</figcaption>
+                    <p>The sync pairing screen with a one-time pairing code, with all network addresses and pairing values redacted.</p>
+                    <p class="lp-figure-note">Capture from sample data only. Never include a real database, a pairing code, a LAN address, or keystore material. See <code>docs/LANDING_PAGE_PLAN.md</code>.</p>
+                  </figure>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. Feature pillars -->
+        <section class="lp-section" id="features" aria-labelledby="features-heading">
+          <div class="lp-wrap">
+            <p class="lp-eyebrow lp-mono">Feature pillars</p>
+            <h2 class="lp-h2" id="features-heading">Four things it does, and nothing else</h2>
+            <p class="lp-lede">Each pillar is a commitment about behavior, not a feature count. Technical detail belongs further down the page.</p>
+            <div class="lp-pillar-grid">
+              <article class="lp-pillar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="M9 12h6" /><path d="M9 16h4" /></svg>
+                <h3>Bring in a list</h3>
+                <p>Paste messy plain text and start with structure. No template to fill in, no import wizard, and the source text stays attached to the items it produced.</p>
+              </article>
+              <article class="lp-pillar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" /></svg>
+                <h3>See what matters now</h3>
+                <p>One combined view across every domain so parallel tracks stop competing for attention in your head. Each suggestion explains why it appeared.</p>
+              </article>
+              <article class="lp-pillar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" x2="2" y1="12" y2="12" /><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" /><line x1="6" x2="6.01" y1="16" y2="16" /><line x1="10" x2="10.01" y1="16" y2="16" /></svg>
+                <h3>Keep it local</h3>
+                <p>Offline-first SQLite storage with no required account. Your database is a file on your own device, not a row in someone else&apos;s service.</p>
+              </article>
+              <article class="lp-pillar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3 4 7l4 4" /><path d="M4 7h16" /><path d="m16 21 4-4-4-4" /><path d="M20 17H4" /></svg>
+                <h3>Move a snapshot when you choose</h3>
+                <p>Opt-in transfer between your own trusted devices with one-time pairing, bounded to a validated snapshot rather than continuous background sync.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. Platform and download -->
+        <section class="lp-section" id="platforms" aria-labelledby="platforms-heading">
+          <div class="lp-wrap">
+            <p class="lp-eyebrow lp-mono">Platform status</p>
+            <h2 class="lp-h2" id="platforms-heading">What you can actually run today</h2>
+            <p class="lp-lede">One Tauri v2 codebase, built by GitHub Actions for four platforms. Everything below is a build target, not a tested release.</p>
+            <div class="lp-table-wrap">
+              <table class="lp-table">
+                <caption>Platform status as documented in the repository README. No platform is marked as tested or released.</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Platform</th>
+                    <th scope="col">Current deliverable</th>
+                    <th scope="col">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Windows 10/11</td>
+                    <td>Desktop installer artifacts from GitHub Actions</td>
+                    <td><span class="lp-tag lp-tag--accent">Build target</span><span class="lp-table-status">Build target</span></td>
+                  </tr>
+                  <tr>
+                    <td>macOS</td>
+                    <td>.app / .dmg artifacts from GitHub Actions</td>
+                    <td><span class="lp-tag lp-tag--accent">Build target</span><span class="lp-table-status">Build target; signing and notarization still required for distribution</span></td>
+                  </tr>
+                  <tr>
+                    <td>Linux</td>
+                    <td>AppImage / deb artifacts from GitHub Actions</td>
+                    <td><span class="lp-tag lp-tag--accent">Build target</span><span class="lp-table-status">Build target; test on target distributions before release</span></td>
+                  </tr>
+                  <tr>
+                    <td>Android</td>
+                    <td>Signed release APK or unsigned debug APK artifact</td>
+                    <td><span class="lp-tag lp-tag--accent">Build target</span><span class="lp-table-status">Build target; Play Store bundle and device testing remain</span></td>
+                  </tr>
+                  <tr>
+                    <td>iOS</td>
+                    <td>Not currently configured</td>
+                    <td><span class="lp-tag">Not configured</span><span class="lp-table-status">Planned evaluation</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="lp-download">
+              <a class="lp-btn lp-btn--primary" href="https://github.com/karefined-eng/the-mainframe/actions" target="_blank" rel="noreferrer noopener">
+                Open the Actions tab
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></svg>
+              </a>
+              <a class="lp-btn lp-btn--ghost" href="https://github.com/karefined-eng/the-mainframe#quick-start-for-contributors" target="_blank" rel="noreferrer noopener">
+                Build it locally instead
+              </a>
+            </div>
+            <p class="lp-download-note">
+              <strong>How to get a build:</strong> open the Actions tab, pick a <em>successful</em> run
+              of the desktop or Android workflow, and download the artifact for your platform. Links to
+              runs are not published here on purpose â€” an artifact only exists after a successful build,
+              and this page will not point you at a build that failed. Later, once versioning, signing,
+              and device testing are done, these will be replaced by versioned GitHub Releases.
+            </p>
+          </div>
+        </section>
+
+        <!-- 6. Trust and limitations -->
+        <section class="lp-section" id="trust" aria-labelledby="trust-heading">
+          <div class="lp-wrap">
+            <p class="lp-eyebrow lp-mono">Trust and limitations</p>
+            <h2 class="lp-h2" id="trust-heading">The parts most landing pages leave out</h2>
+            <p class="lp-lede">You should know these before you put anything real into the app. They are stated here rather than buried in a footer.</p>
+            <div class="lp-trust-grid">
+              <article class="lp-trust">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+                <div>
+                  <h3>No required account or cloud service</h3>
+                  <p>The core workflow never calls a hosted backend. There is no sign-up, no subscription, and no telemetry service in the loop.</p>
+                </div>
+              </article>
+              <article class="lp-trust">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+                <div>
+                  <h3>Data is local to each device by default</h3>
+                  <p>Every device holds its own SQLite database. Installing the app twice does not automatically merge two sets of data.</p>
+                </div>
+              </article>
+              <article class="lp-trust">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+                <div>
+                  <h3>LAN sync is not cloud sync</h3>
+                  <p>It moves a bounded snapshot of up to 64 MiB between your own devices, validated before it atomically replaces the target.</p>
+                </div>
+              </article>
+              <article class="lp-trust">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+                <div>
+                  <h3>The current LAN transport is cleartext</h3>
+                  <p>Sync is HTTP on the local network, restricted to private addresses on port 9377 (discovery on 9378). Do not expose it to the public internet, use it on an untrusted network, or treat it as a backup.</p>
+                </div>
+              </article>
+              <article class="lp-trust">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+                <div>
+                  <h3>Pairing is short-lived by design</h3>
+                  <p>Pairing uses a one-time six-digit token that expires after 10 minutes. If pairing fails, start over rather than reusing a token.</p>
+                </div>
+              </article>
+              <article class="lp-trust">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+                <div>
+                  <h3>Back up before replacing a local database</h3>
+                  <p>A snapshot transfer replaces the target database. Export a backup first if the device holds anything you have not duplicated elsewhere.</p>
+                </div>
+              </article>
+              <article class="lp-trust">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+                <div>
+                  <h3>Desktop builds are unsigned</h3>
+                  <p>Until platform signing is configured, desktop artifacts are unsigned and will trigger an operating-system warning on first launch.</p>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. Open source and contribution -->
+        <section class="lp-section" id="contribute" aria-labelledby="contribute-heading">
+          <div class="lp-wrap">
+            <p class="lp-eyebrow lp-mono">Open source</p>
+            <h2 class="lp-h2" id="contribute-heading">Read the code before you trust it</h2>
+            <p class="lp-lede">The source is public. Issues and focused pull requests are welcome, and the limitations above are as open to discussion as the features.</p>
+            <div class="lp-contrib">
+              <ul class="lp-list">
+                <li>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
+                  <span>Include the platform, the app version or commit, reproduction steps, and relevant logs.</span>
+                </li>
+                <li>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
+                  <span>Keep reports specific â€” a narrow bug with clear steps is more useful than a broad feature wish.</span>
+                </li>
+                <li>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
+                  <span>Do not attach database files or other private data to an issue. Sanitize screenshots first.</span>
+                </li>
+                <li>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
+                  <span>Ideas and limitations are equally welcome. This is an early public release and the roadmap is still open.</span>
+                </li>
+                <li>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z" /><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" /></svg>
+                  <span>Report a problem or ask a question in the <a href="https://github.com/karefined-eng/the-mainframe/issues" target="_blank" rel="noreferrer noopener">issue tracker</a>.</span>
+                </li>
+              </ul>
+              <div class="lp-stack">
+                <p class="lp-panel-label lp-mono lp-stack-label">Technical stack</p>
+                <dl>
+                  <div><dt class="lp-mono">Shell and native core</dt><dd>Tauri v2 with Rust</dd></div>
+                  <div><dt class="lp-mono">Interface</dt><dd>React, TypeScript, Vite, Tailwind CSS</dd></div>
+                  <div><dt class="lp-mono">Storage</dt><dd>SQLite through tauri-plugin-sql</dd></div>
+                  <div><dt class="lp-mono">Device transfer</dt><dd>Local-network sync implemented in Rust</dd></div>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Closing CTA -->
+        <section class="lp-final" aria-labelledby="final-heading">
+          <div class="lp-wrap">
+            <h2 id="final-heading">Try it on one list you already have</h2>
+            <p>
+              Copy the messiest list you are currently carrying around, paste it in, and see whether
+              the structure it produces matches how you actually think about the work. If it does not,
+              that is useful feedback too.
+            </p>
+            <div class="lp-cta-row">
+              <a class="lp-btn lp-btn--primary" href="https://github.com/karefined-eng/the-mainframe/actions" target="_blank" rel="noreferrer noopener">
+                Download the latest build
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+              </a>
+              <a class="lp-btn lp-btn--ghost" href="https://github.com/karefined-eng/the-mainframe" target="_blank" rel="noreferrer noopener">
+                View the source on GitHub
+              </a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="lp-footer">
+        <div class="lp-wrap lp-footer-inner">
+          <p>The Mainframe Â· v0.1.0 Â· early public release. Local-first, no required account, no telemetry service.</p>
+          <nav aria-label="Footer links">
+            <a href="https://github.com/karefined-eng/the-mainframe" target="_blank" rel="noreferrer noopener">GitHub</a>
+            <a href="https://github.com/karefined-eng/the-mainframe/issues" target="_blank" rel="noreferrer noopener">Issues</a>
+            <a href="#trust">Limitations</a>
+            <a href="#main">Back to top</a>
+          </nav>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
