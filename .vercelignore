@@ -1,0 +1,14 @@
+# Deployed site is the Vite frontend only. The Tauri/Rust tree (including
+# multi-GB target/ build artifacts, which the CLI would otherwise upload because
+# it does not read src-tauri/.gitignore), mobile generation, installers, and
+# design artifacts are irrelevant to `npm run build` and must not be uploaded.
+src-tauri
+gen
+dist
+dist-installers
+prototypes
+docs
+.github
+.zcode
+.impeccable
+imports
