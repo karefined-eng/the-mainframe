@@ -22,10 +22,10 @@ val hasReleaseSigning = keystorePropertiesFile.exists()
 
 android {
     compileSdk = 36
-    namespace = "com.kwadw.the_mainframe"
+    namespace = "com.karefined.the_mainframe"
     defaultConfig {
         manifestPlaceholders["usesCleartextTraffic"] = "false"
-        applicationId = "com.kwadw.the_mainframe"
+        applicationId = "com.karefined.the_mainframe"
         minSdk = 24
         targetSdk = 36
         versionCode = tauriProperties.getProperty("tauri.android.versionCode", "1").toInt()

@@ -1,4 +1,4 @@
-package com.kwadw.the_mainframe
+package com.karefined.the_mainframe
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
