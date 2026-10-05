@@ -75,20 +75,20 @@ export const walkthrough = [
     step: "01",
     title: "Paste the list you already have",
     body: "Copy a wall of unstructured text from wherever it currently lives and paste it in. Plain text is the only input path — there is no file-upload workflow and no format-specific parser to satisfy.",
-    asset: "List ingestion",
+    asset: "Paste panel with a real list",
     alt: "The paste panel accepting an unstructured block of plain text, with the detected line count shown before import.",
   },
   {
     step: "02",
-    title: "Watch it become structured items",
-    body: "Each pasted line becomes one item, with the original line kept alongside it as raw import text — nothing is silently dropped in the transform. The app does not guess which domain a line belongs to, and it does not invent a due date for you.",
-    asset: "Parsed items in a domain",
+    title: "Watch it become rows",
+    body: "Each non-empty line becomes one item, with the original line kept alongside it as raw import text. That is the whole transform: the app does not guess which domain a line belongs to, and it does not invent a due date for you.",
+    asset: "Rows in a domain list",
     alt: "A domain list showing one row per pasted line, each with its status and its original text preserved.",
   },
   {
     step: "03",
-    title: "See what matters right now",
-    body: "The dashboard surfaces a short cross-domain shortlist and states why each entry surfaced. It is a suggestion you can ignore, not a queue you are failing to clear.",
+    title: "See what needs attention",
+    body: "The dashboard pulls a short cross-domain shortlist and says why each entry surfaced, using plain reasons such as being overdue, being due this week, or not having been touched in a while.",
     asset: "Cross-domain attention view",
     alt: "The What's Hot dashboard showing a few items pulled from different domains, each with the plain reason it surfaced.",
   },
@@ -211,14 +211,6 @@ export const contributionNotes = [
   "Do not attach database files or other private data to an issue. Sanitize screenshots first.",
   "Ideas and limitations are equally welcome. This is an early public release and the roadmap is still open.",
 ];
-
-/**
- * Scope statement for the "Why" section, kept next to the audience claims so the
- * page never implies more than the product does. No medical or health benefit is
- * claimed anywhere on the page; this paragraph states that boundary explicitly.
- */
-export const whatThisIsNot =
-  "The Mainframe is not a medical or therapeutic product and makes no claim about treating any condition. What it does aim at is narrower and honest: a dashboard that opens collapsed so nothing unfinished is thrown at you at once, and a blunt re-entry summary that tells you how far behind you are instead of hiding it.";
 
 export const techStack = [
   { label: "Shell and native core", value: "Tauri v2 with Rust" },

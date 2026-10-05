@@ -1,0 +1,1527 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Mainframe — Local-First Life Management</title>
+    <meta
+      name="description"
+      content="A private, offline-first life management app for courses, projects, goals, ideas, purchases, and ventures. Built with Tauri, React, Rust, and SQLite."
+    />
+    <style>
+      /*
+ * Styles for the public landing page (/welcome).
+ *
+ * Uses the same locked design tokens as the application (src/index.css,
+ * 00_PROJECT_BRIEF.md): near-black background, off-white text, one electric-blue
+ * accent used sparingly.
+ *
+ * Revised against Impeccable's craft floor (reference/craft-floor.md):
+ *   - Eyebrow/kicker labels above headings removed (absolute ban, no brief earns
+ *     it back). Headings carry their own weight.
+ *   - Card soup replaced with a ruled/lined structure: no repeated same-size
+ *     icon+heading+text cards, and no nested cards anywhere.
+ *   - Monospace restricted to code, data, and measurement. Decorative "technical"
+ *     monospace removed.
+ *   - No functional text below 11px; uppercase limited to short labels.
+ *   - Browser surfaces (selection, caret, scrollbar, underline offset) themed
+ *     from the palette instead of left at vendor defaults.
+ *   - One authored motion moment, disabled under prefers-reduced-motion.
+ *   - Depth declared once per element: borders only, no shadow-plus-border
+ *     "ghost card", no zero-offset halos.
+ *
+ * Documented intentional exceptions are listed at the end of this file.
+ */
+
+.lp {
+  --lp-max: 1140px;
+  --lp-gutter: clamp(20px, 5vw, 40px);
+  --lp-accent: var(--color-accent, #4a9eff);
+  --lp-surface: var(--color-surface, #1a1a1d);
+  --lp-surface-alt: var(--color-surface-alt, #141518);
+  --lp-border: var(--color-border, #1f2024);
+  --lp-text: var(--color-text, #f2f2f0);
+  --lp-muted: var(--color-text-muted, #b1b3b7);
+  --lp-bg: var(--color-bg, #0e0e10);
+  --lp-warning: var(--color-warning, #fbbf24);
+  --lp-rule: 1px solid var(--lp-border);
+
+  background: var(--lp-bg);
+  color: var(--lp-text);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  min-height: 100dvh;
+  scrollbar-color: var(--lp-border) transparent;
+  scrollbar-width: thin;
+  caret-color: var(--lp-accent);
+}
+
+/* Monospace is reserved for code, data, and measurement. */
+.lp-mono {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Browser surfaces ───────────────────────────────────── */
+
+.lp ::selection {
+  background: color-mix(in srgb, var(--lp-accent) 34%, transparent);
+  color: var(--lp-text);
+}
+
+.lp ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.lp ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.lp ::-webkit-scrollbar-thumb {
+  background: var(--lp-border);
+  border-radius: 999px;
+}
+
+.lp a {
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.lp a:focus-visible,
+.lp button:focus-visible {
+  outline: 2px solid var(--lp-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.lp-skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 50;
+  padding: 10px 16px;
+  background: var(--lp-surface);
+  color: var(--lp-text);
+  border: 1px solid var(--lp-accent);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.lp-skip:focus {
+  left: 12px;
+  top: 12px;
+}
+
+/* ── Layout primitives ──────────────────────────────────── */
+
+.lp-wrap {
+  width: 100%;
+  max-width: var(--lp-max);
+  margin: 0 auto;
+  padding: 0 var(--lp-gutter);
+}
+
+.lp-section {
+  padding: clamp(52px, 7vw, 88px) 0;
+  border-top: var(--lp-rule);
+}
+
+.lp-h2 {
+  font-size: clamp(24px, 3.2vw, 34px);
+  line-height: 1.16;
+  letter-spacing: -0.022em;
+  font-weight: 700;
+  margin: 0 0 16px;
+  max-width: 34ch;
+  text-wrap: balance;
+}
+
+.lp-lede {
+  font-size: clamp(15px, 1.5vw, 17px);
+  line-height: 1.68;
+  color: var(--lp-muted);
+  margin: 0;
+  max-width: 68ch;
+}
+
+/* A ruled block: dividers carry the structure, so no card chrome repeats.
+ * Rules are drawn as cell borders on transparent cells rather than as a 1px
+ * background gap. The gap technique painted a non-transparent layer behind the
+ * text, which meant edge-aligned copy sat flush against a visible background
+ * boundary. Borders give the same continuous rule with no painted surface. */
+.lp-ruled {
+  display: grid;
+  border-bottom: var(--lp-rule);
+}
+
+.lp-ruled > * {
+  border-top: var(--lp-rule);
+  background: transparent;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+
+.lp-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: color-mix(in srgb, var(--lp-bg) 90%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: var(--lp-rule);
+}
+
+.lp-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-height: 62px;
+}
+
+.lp-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--lp-text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.lp-brand svg {
+  display: block;
+}
+
+.lp-nav {
+  display: none;
+  gap: 22px;
+  margin-left: auto;
+}
+
+.lp-nav a {
+  font-size: 13.5px;
+  color: var(--lp-muted);
+  text-decoration: none;
+  padding: 6px 0;
+  border-bottom: 1px solid transparent;
+}
+
+.lp-nav a:hover {
+  color: var(--lp-text);
+  border-bottom-color: var(--lp-accent);
+}
+
+.lp-header-cta {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--lp-text);
+  text-decoration: none;
+  padding: 8px 14px;
+  border: var(--lp-rule);
+  border-radius: 8px;
+}
+
+.lp-header-cta:hover {
+  border-color: var(--lp-accent);
+  color: var(--lp-accent);
+}
+
+@media (min-width: 900px) {
+  .lp-nav {
+    display: flex;
+  }
+
+  .lp-header-cta {
+    margin-left: 0;
+  }
+}
+
+/* ── Hero ───────────────────────────────────────────────── */
+
+.lp-hero {
+  padding: clamp(56px, 8vw, 108px) 0 clamp(48px, 6vw, 80px);
+}
+
+.lp-hero-grid {
+  display: grid;
+  gap: clamp(34px, 5vw, 60px);
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .lp-hero-grid {
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  }
+}
+
+.lp-h1 {
+  font-size: clamp(31px, 4.6vw, 55px);
+  line-height: 1.06;
+  letter-spacing: -0.026em;
+  font-weight: 700;
+  margin: 0 0 22px;
+  max-width: 24ch;
+  text-wrap: balance;
+}
+
+.lp-sub {
+  font-size: clamp(15.5px, 1.6vw, 17.5px);
+  line-height: 1.68;
+  color: var(--lp-muted);
+  margin: 0 0 24px;
+  max-width: 62ch;
+}
+
+.lp-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 13px 7px 11px;
+  border: var(--lp-rule);
+  border-radius: 999px;
+  font-size: 12.5px;
+  color: var(--lp-muted);
+  margin: 0 0 26px;
+}
+
+.lp-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--lp-accent);
+  flex: none;
+}
+
+.lp-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.lp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 0 20px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+/* Accent use 1 of 3 */
+.lp-btn--primary {
+  background: var(--lp-accent);
+  color: #071018;
+  border-color: var(--lp-accent);
+}
+
+.lp-btn--primary:hover {
+  background: #6bb0ff;
+  border-color: #6bb0ff;
+}
+
+.lp-btn--ghost {
+  background: transparent;
+  color: var(--lp-text);
+  border-color: var(--lp-border);
+}
+
+.lp-btn--ghost:hover {
+  border-color: var(--lp-accent);
+  color: var(--lp-accent);
+}
+
+.lp-cta-note {
+  font-size: 13.5px;
+  line-height: 1.62;
+  color: var(--lp-muted);
+  margin: 20px 0 0;
+  max-width: 54ch;
+}
+
+.lp-cta-note strong {
+  color: var(--lp-text);
+  font-weight: 600;
+}
+
+.lp-cta-note a {
+  color: var(--lp-text);
+}
+
+/*
+ * Hero product panel — the page's single card, and the one authored motion
+ * moment. Real DOM built from the app's own vocabulary, not a screenshot.
+ */
+.lp-panel {
+  border: var(--lp-rule);
+  border-radius: 14px;
+  background: var(--lp-surface);
+  overflow: hidden;
+}
+
+.lp-panel-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border-bottom: var(--lp-rule);
+  background: var(--lp-surface-alt);
+}
+
+.lp-panel-title {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--lp-muted);
+}
+
+.lp-panel-live {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--lp-muted);
+}
+
+.lp-panel-body {
+  padding: 4px 16px 0;
+}
+
+.lp-panel-disclosure {
+  margin: 0;
+  padding: 12px 16px 14px;
+  border-top: 1px solid var(--lp-border);
+  font-size: 12px;
+  color: var(--lp-muted);
+}
+
+/* Steps are separated by rules, not by nested card chrome. */
+.lp-step-block {
+  padding: 16px 0;
+  border-top: var(--lp-rule);
+}
+
+.lp-step-block:first-child {
+  border-top: 0;
+}
+
+.lp-step-block:first-child {
+  animation: lp-rise 620ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.lp-step-block:nth-child(2) {
+  animation: lp-rise 620ms cubic-bezier(0.16, 1, 0.3, 1) 90ms backwards;
+}
+
+.lp-step-block:nth-child(3) {
+  animation: lp-rise 620ms cubic-bezier(0.16, 1, 0.3, 1) 180ms backwards;
+}
+
+@keyframes lp-rise {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.lp-panel-label {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--lp-muted);
+  margin: 0 0 10px;
+}
+
+.lp-panel-num {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--lp-text);
+}
+
+.lp-raw {
+  margin: 0;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--lp-muted);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.lp-rows {
+  display: grid;
+}
+
+.lp-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-top: 1px solid var(--lp-border);
+}
+
+.lp-row:first-child {
+  border-top: 0;
+}
+
+.lp-row-title {
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lp-row-meta {
+  font-size: 12px;
+  color: var(--lp-muted);
+  white-space: nowrap;
+  text-align: right;
+}
+
+.lp-tick {
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+  background: var(--lp-muted);
+  flex: none;
+}
+
+.lp-tick--accent {
+  background: var(--lp-accent);
+}
+
+.lp-hot {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lp-hot li {
+  display: grid;
+  gap: 2px;
+  padding: 9px 0;
+  border-top: 1px solid var(--lp-border);
+}
+
+.lp-hot li:first-child {
+  border-top: 0;
+}
+
+.lp-hot strong {
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.lp-hot span {
+  font-size: 12px;
+  color: var(--lp-muted);
+}
+
+/* ── Audience ───────────────────────────────────────────── */
+
+.lp-aud-grid {
+  margin-top: 30px;
+}
+
+.lp-aud {
+  padding: 22px 0;
+}
+
+.lp-aud h3 {
+  font-size: 14.5px;
+  font-weight: 600;
+  margin: 0 0 7px;
+}
+
+.lp-aud p {
+  font-size: 13.5px;
+  line-height: 1.62;
+  color: var(--lp-muted);
+  margin: 0;
+  max-width: 44ch;
+}
+
+@media (min-width: 700px) {
+  .lp-aud-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lp-aud {
+    padding: 22px 26px;
+  }
+
+  .lp-aud:nth-child(odd) {
+    padding-left: 0;
+  }
+
+  .lp-aud:nth-child(even) {
+    padding-right: 0;
+  }
+}
+
+.lp-note {
+  margin: 26px 0 0;
+  padding: 16px 18px;
+  border: var(--lp-rule);
+  border-radius: 12px;
+  font-size: 13.5px;
+  line-height: 1.62;
+  color: var(--lp-muted);
+  max-width: 78ch;
+}
+
+.lp-note strong {
+  color: var(--lp-text);
+  font-weight: 600;
+}
+
+/* ── Walkthrough ────────────────────────────────────────── */
+
+.lp-steps {
+  margin-top: 30px;
+}
+
+.lp-step {
+  display: grid;
+  gap: 20px;
+  padding: 24px 0;
+}
+
+.lp-step-num {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  /* Accent use 2 of 3 */
+  color: var(--lp-accent);
+}
+
+.lp-step-body h3 {
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0 0 9px;
+  letter-spacing: -0.008em;
+}
+
+.lp-step-body > p {
+  font-size: 14px;
+  line-height: 1.68;
+  color: var(--lp-muted);
+  margin: 0;
+  max-width: 70ch;
+}
+
+@media (min-width: 880px) {
+  .lp-step {
+    grid-template-columns: 56px minmax(0, 1fr);
+    align-items: start;
+    padding: 26px 0;
+  }
+}
+
+.lp-figure {
+  margin: 18px 0 0;
+  border-top: 1px dashed var(--lp-border);
+  padding-top: 14px;
+}
+
+.lp-figure-tag {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--lp-text);
+  margin: 0 0 6px;
+}
+
+.lp-figure p {
+  font-size: 13px;
+  line-height: 1.62;
+  color: var(--lp-muted);
+  margin: 0;
+  max-width: 74ch;
+}
+
+.lp-figure-note {
+  margin-top: 8px;
+}
+
+.lp-figure code {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 12px;
+  color: var(--lp-text);
+}
+
+/* ── Pillars ────────────────────────────────────────────── */
+
+.lp-pillar-grid {
+  margin-top: 30px;
+}
+
+.lp-pillar {
+  padding: 26px 0;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.lp-pillar svg {
+  color: var(--lp-text);
+}
+
+.lp-pillar h3 {
+  font-size: 14.5px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.lp-pillar p {
+  font-size: 13.5px;
+  line-height: 1.62;
+  color: var(--lp-muted);
+  margin: 0;
+}
+
+@media (min-width: 640px) {
+  .lp-pillar-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lp-pillar {
+    padding: 26px 26px;
+  }
+
+  .lp-pillar:nth-child(odd) {
+    padding-left: 0;
+  }
+
+  .lp-pillar:nth-child(even) {
+    padding-right: 0;
+  }
+}
+
+@media (min-width: 1040px) {
+  .lp-pillar-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .lp-pillar {
+    padding: 26px 22px;
+  }
+
+  .lp-pillar:first-child {
+    padding-left: 0;
+  }
+
+  .lp-pillar:last-child {
+    padding-right: 0;
+  }
+
+  .lp-pillar:nth-child(even) {
+    padding-right: 22px;
+  }
+}
+
+/* ── Platform table ─────────────────────────────────────── */
+
+.lp-table-wrap {
+  margin-top: 30px;
+  border-top: var(--lp-rule);
+  border-bottom: var(--lp-rule);
+  overflow-x: auto;
+}
+
+.lp-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+.lp-table caption {
+  text-align: left;
+  font-size: 12.5px;
+  color: var(--lp-muted);
+  padding: 14px 0;
+  border-bottom: var(--lp-rule);
+}
+
+.lp-table th,
+.lp-table td {
+  text-align: left;
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--lp-border);
+  vertical-align: top;
+  font-size: 13.5px;
+  line-height: 1.58;
+}
+
+.lp-table th:first-child,
+.lp-table td:first-child {
+  padding-left: 0;
+}
+
+.lp-table th:last-child,
+.lp-table td:last-child {
+  padding-right: 0;
+}
+
+.lp-table thead th {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--lp-muted);
+  font-weight: 500;
+}
+
+.lp-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.lp-table td:first-child {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.lp-table td:nth-child(2) {
+  color: var(--lp-muted);
+}
+
+.lp-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: var(--lp-rule);
+  color: var(--lp-muted);
+  white-space: nowrap;
+}
+
+.lp-tag--accent {
+  color: var(--lp-accent);
+  border-color: color-mix(in srgb, var(--lp-accent) 45%, var(--lp-border));
+}
+
+.lp-table-status {
+  display: block;
+  margin-top: 7px;
+  color: var(--lp-muted);
+}
+
+.lp-download {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.lp-download-note {
+  font-size: 13.5px;
+  line-height: 1.62;
+  color: var(--lp-muted);
+  margin: 18px 0 0;
+  max-width: 78ch;
+}
+
+.lp-download-note strong {
+  color: var(--lp-text);
+  font-weight: 600;
+}
+
+/* ── Trust ──────────────────────────────────────────────── */
+
+.lp-trust-grid {
+  margin-top: 30px;
+}
+
+.lp-trust {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  padding: 20px 0;
+}
+
+.lp-trust svg {
+  color: var(--lp-warning);
+  margin-top: 2px;
+}
+
+.lp-trust h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 6px;
+}
+
+.lp-trust p {
+  font-size: 13.5px;
+  line-height: 1.62;
+  color: var(--lp-muted);
+  margin: 0;
+  max-width: 46ch;
+}
+
+@media (min-width: 760px) {
+  .lp-trust-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lp-trust {
+    padding: 20px 26px;
+  }
+
+  .lp-trust:nth-child(odd) {
+    padding-left: 0;
+  }
+
+  .lp-trust:nth-child(even) {
+    padding-right: 0;
+  }
+}
+
+/* ── Contribute ─────────────────────────────────────────── */
+
+.lp-contrib {
+  display: grid;
+  gap: 34px;
+  margin-top: 30px;
+}
+
+@media (min-width: 940px) {
+  .lp-contrib {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: start;
+    gap: 44px;
+  }
+}
+
+.lp-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 13px;
+}
+
+.lp-list li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 11px;
+  font-size: 13.5px;
+  line-height: 1.62;
+  color: var(--lp-muted);
+}
+
+.lp-list svg {
+  color: var(--lp-muted);
+  margin-top: 2px;
+}
+
+.lp-list a {
+  color: var(--lp-text);
+}
+
+.lp-stack {
+  border-top: var(--lp-rule);
+  border-bottom: var(--lp-rule);
+  padding: 18px 0;
+}
+
+.lp-stack-label {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--lp-muted);
+  margin: 0 0 16px;
+}
+
+.lp-stack dl {
+  margin: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.lp-stack dt {
+  font-size: 12.5px;
+  color: var(--lp-muted);
+}
+
+.lp-stack dd {
+  margin: 3px 0 0;
+  font-size: 13.5px;
+  color: var(--lp-text);
+}
+
+/* ── Closing CTA ────────────────────────────────────────── */
+
+/*
+ * The closing band is full-bleed and coloured. Its content sits in the page's
+ * shared .lp-wrap, so text is inset from the band edge by the page gutter and by
+ * this section's own vertical padding; the detector cannot see through the
+ * nested wrap and reports the direct child as flush. Kept deliberately: a
+ * full-bleed band aligned to the page grid is the intended composition.
+ */
+.lp-final {
+  padding: clamp(48px, 6vw, 76px) 0;
+  background: var(--lp-surface-alt);
+  border-top: var(--lp-rule);
+}
+
+.lp-final h2 {
+  font-size: clamp(23px, 3vw, 32px);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  margin: 0 0 14px;
+  max-width: 38ch;
+  text-wrap: balance;
+}
+
+.lp-final p {
+  font-size: 14.5px;
+  line-height: 1.68;
+  color: var(--lp-muted);
+  margin: 0 0 26px;
+  max-width: 64ch;
+}
+
+/* ── Footer ─────────────────────────────────────────────── */
+
+.lp-footer {
+  border-top: var(--lp-rule);
+  padding: 28px 0 44px;
+}
+
+.lp-footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 24px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lp-footer p {
+  font-size: 12.5px;
+  color: var(--lp-muted);
+  margin: 0;
+}
+
+.lp-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.lp-footer a {
+  font-size: 12.5px;
+  color: var(--lp-muted);
+  text-decoration: none;
+}
+
+.lp-footer a:hover {
+  color: var(--lp-accent);
+  text-decoration: underline;
+}
+
+/* ── Motion preference ──────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .lp *,
+  .lp-step-block:first-child,
+  .lp-step-block:nth-child(2),
+  .lp-step-block:nth-child(3) {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/*
+ * Intentional exceptions, documented per polish.md step 5:
+ *
+ * 1. Inter is the project's brand face, pinned by 00_PROJECT_BRIEF.md for the
+ *    application. The craft floor's overused-font rule is overridden here by its
+ *    own "the brief wins" clause: a landing page that does not match the product's
+ *    typography would break brand continuity. Changing it is a brand decision for
+ *    the owner, not a polish fix.
+ * 2. The closing band is full-bleed and coloured, with content aligned to the
+ *    page grid inside .lp-wrap. The detector reads the nested wrap's direct child
+ *    as flush against the band; the intended composition is kept (see above).
+ * 3. The walkthrough keeps 01-04 step numerals because the sequence itself
+ *    carries information the reader needs (an ordered loop).
+ *
+ * No border-left accent above 1px, no gradient text, no hard offset shadows, no
+ * decorative blur, no emoji icons, no nested cards, and no shadow-plus-border
+ * ghost cards appear in this file.
+ */
+
+    </style>
+  </head>
+  <body>
+    <div class="lp">
+      <a class="lp-skip" href="#hero">Skip to main content</a>
+
+      <header class="lp-header">
+        <div class="lp-wrap lp-header-inner">
+          <a class="lp-brand" href="#hero">
+            <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false">
+              <rect x="2.5" y="4" width="15" height="2.6" rx="1.3" fill="currentColor" />
+              <rect x="2.5" y="8.7" width="15" height="2.6" rx="1.3" fill="#4A9EFF" />
+              <rect x="2.5" y="13.4" width="15" height="2.6" rx="1.3" fill="currentColor" />
+            </svg>
+            The Mainframe
+          </a>
+          <nav class="lp-nav" aria-label="Page sections">
+            <a href="#why">Why</a>
+            <a href="#walkthrough">How it works</a>
+            <a href="#features">Features</a>
+            <a href="#platforms">Platforms</a>
+            <a href="#trust">Limitations</a>
+          </nav>
+          <a class="lp-header-cta" href="https://github.com/karefined-eng/the-mainframe" target="_blank" rel="noreferrer noopener">
+            GitHub
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></svg>
+          </a>
+        </div>
+      </header>
+
+      <main id="main">
+        <!-- 1. Hero -->
+        <section class="lp-hero" id="hero" aria-labelledby="hero-heading">
+          <div class="lp-wrap lp-hero-grid">
+            <div>
+              <h1 class="lp-h1" id="hero-heading">
+                Your calm command center for everything you&apos;re learning, building, pursuing, and
+                acquiring.
+              </h1>
+              <p class="lp-sub">
+                The Mainframe is a private, local-first life management app for scattered projects,
+                goals, courses, ideas, and purchases. Work offline, keep your data on your devices,
+                and bring order to the lists already spread across your life.
+              </p>
+              <p class="lp-status">
+                <span class="lp-dot" aria-hidden="true"></span>
+                Early public release · no versioned releases yet
+              </p>
+              <div class="lp-cta-row">
+                <a class="lp-btn lp-btn--primary" href="https://github.com/karefined-eng/the-mainframe/actions" target="_blank" rel="noreferrer noopener">
+                  Download the latest build
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+                </a>
+                <a class="lp-btn lp-btn--ghost" href="https://github.com/karefined-eng/the-mainframe" target="_blank" rel="noreferrer noopener">
+                  View the source on GitHub
+                </a>
+              </div>
+              <p class="lp-cta-note">
+                <strong>Read this first:</strong> there are no versioned public releases yet. Builds
+                live as GitHub Actions artifacts, and CI artifacts are not release downloads. Android
+                ships a signed release APK or an unsigned debug APK; desktop builds are unsigned until
+                platform signing is configured. <a href="#platforms">See platform status</a>.
+              </p>
+            </div>
+
+            <div class="lp-panel">
+              <div class="lp-panel-bar">
+                <span class="lp-tick"></span>
+                <span class="lp-tick"></span>
+                <span class="lp-tick lp-tick--accent"></span>
+                <span class="lp-panel-title">mainframe · local</span>
+                <span class="lp-panel-live">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>
+                  offline
+                </span>
+              </div>
+              <div class="lp-panel-body" aria-hidden="true">
+                <div class="lp-step-block">
+                  <p class="lp-panel-label"><span class="lp-panel-num lp-mono">01</span>Pasted text</p>
+                  <pre class="lp-raw">cert: AWS SAA - book exam slot
+build: LAN snapshot diff viewer
+buy: 27" 4K monitor
+goal: run 10k under 50 min
+write: post on offline-first storage</pre>
+                </div>
+                <div class="lp-step-block">
+                  <p class="lp-panel-label"><span class="lp-panel-num lp-mono">02</span>Structured items</p>
+                  <div class="lp-rows">
+                    <div class="lp-row">
+                      <span class="lp-tick lp-tick--accent"></span>
+                      <span class="lp-row-title">AWS SAA</span>
+                      <span class="lp-row-meta">Certifications · Mar 14</span>
+                    </div>
+                    <div class="lp-row">
+                      <span class="lp-tick"></span>
+                      <span class="lp-row-title">LAN snapshot diff viewer</span>
+                      <span class="lp-row-meta">Build Ideas · no date</span>
+                    </div>
+                    <div class="lp-row">
+                      <span class="lp-tick"></span>
+                      <span class="lp-row-title">27" 4K monitor</span>
+                      <span class="lp-row-meta">Acquisitions · watching</span>
+                    </div>
+                    <div class="lp-row">
+                      <span class="lp-tick"></span>
+                      <span class="lp-row-title">Run 10k under 50 min</span>
+                      <span class="lp-row-meta">Goals · Jun 02</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="lp-step-block">
+                  <p class="lp-panel-label"><span class="lp-panel-num lp-mono">03</span>What&apos;s hot</p>
+                  <ul class="lp-hot">
+                    <li><strong>AWS SAA study block</strong><span>3 sessions behind schedule</span></li>
+                    <li><strong>Client deliverable draft</strong><span>Recurring weekly item is due</span></li>
+                  </ul>
+                </div>
+              </div>
+              <p class="lp-panel-disclosure">Illustrative sample data, not a recorded session.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- 2. Problem and audience -->
+        <section class="lp-section" id="why" aria-labelledby="why-heading">
+          <div class="lp-wrap">
+            <h2 class="lp-h2" id="why-heading">Built for people whose work does not fit in one list</h2>
+            <p class="lp-lede">
+              Most life management tools are either a generic task list that has to be reshaped around
+              your life, or a workspace so broad that maintaining it becomes the work. The Mainframe
+              starts from the domains a person actually has: studies, builds, acquisitions, long-term
+              goals, and ventures.
+            </p>
+            <div class="lp-ruled lp-aud-grid">
+              <div class="lp-aud">
+                <h3>Developers and solo builders</h3>
+                <p>Several builds, courses, and side projects running in parallel with no single place that shows all of them.</p>
+              </div>
+              <div class="lp-aud">
+                <h3>Students and career switchers</h3>
+                <p>Certification tracks, study material, and application deadlines spread across notes, browsers, and messages.</p>
+              </div>
+              <div class="lp-aud">
+                <h3>Freelancers and creators</h3>
+                <p>Client deliverables that recur, personal work that keeps getting postponed, and ideas that need somewhere to land.</p>
+              </div>
+              <div class="lp-aud">
+                <h3>Anyone whose lists are everywhere</h3>
+                <p>Task content split across note apps, chat threads, spreadsheets, and memory. The Mainframe is built to be the one place those lists come to rest.</p>
+              </div>
+            </div>
+            <p class="lp-note">
+              <strong>What this is not.</strong> The Mainframe is not a medical or therapeutic product
+              and makes no claim about treating any condition. What it does aim at is narrower and
+              honest: a dashboard that opens collapsed so nothing unfinished is thrown at you at once,
+              and a blunt re-entry summary that tells you how far behind you are instead of hiding it.
+            </p>
+          </div>
+        </section>
+
+        <!-- 3. Product walkthrough -->
+        <section class="lp-section" id="walkthrough" aria-labelledby="walkthrough-heading">
+          <div class="lp-wrap">
+            <h2 class="lp-h2" id="walkthrough-heading">Paste, structure, decide, continue</h2>
+            <p class="lp-lede">Four steps, no setup ritual. The loop works the same offline as it does on a local network.</p>
+            <div class="lp-ruled lp-steps">
+              <article class="lp-step">
+                <p class="lp-step-num lp-mono">01</p>
+                <div class="lp-step-body">
+                  <h3>Paste the list you already have</h3>
+                  <p>Copy a wall of unstructured text from wherever it currently lives and paste it in. Plain text is the only input path — there is no file-upload workflow and no format-specific parser to satisfy.</p>
+                  <figure class="lp-figure">
+                    <figcaption class="lp-figure-tag">Asset pending: List ingestion</figcaption>
+                    <p>The paste-ingestion panel of The Mainframe accepting an unstructured block of plain text and preparing it for parsing.</p>
+                    <p class="lp-figure-note">Capture from sample data only. Never include a real database, a pairing code, a LAN address, or keystore material. See <code>docs/LANDING_PAGE_PLAN.md</code>.</p>
+                  </figure>
+                </div>
+              </article>
+              <article class="lp-step">
+                <p class="lp-step-num lp-mono">02</p>
+                <div class="lp-step-body">
+                  <h3>Watch it become structured items</h3>
+                  <p>Each pasted line becomes an item with a status, an optional target date, and the original text preserved alongside it. The raw paste stays attached, so nothing is silently dropped in the transform.</p>
+                  <figure class="lp-figure">
+                    <figcaption class="lp-figure-tag">Asset pending: Parsed items in a domain</figcaption>
+                    <p>A domain list showing parsed items with status labels and target dates, each still linked to its original pasted text.</p>
+                    <p class="lp-figure-note">Capture from sample data only. Never include a real database, a pairing code, a LAN address, or keystore material. See <code>docs/LANDING_PAGE_PLAN.md</code>.</p>
+                  </figure>
+                </div>
+              </article>
+              <article class="lp-step">
+                <p class="lp-step-num lp-mono">03</p>
+                <div class="lp-step-body">
+                  <h3>See what matters right now</h3>
+                  <p>The dashboard surfaces a short cross-domain shortlist and states why each entry surfaced. It is a suggestion you can ignore, not a queue you are failing to clear.</p>
+                  <figure class="lp-figure">
+                    <figcaption class="lp-figure-tag">Asset pending: Cross-domain attention view</figcaption>
+                    <p>The What&apos;s Hot dashboard showing a short list of items pulled from different domains, each with the reason it surfaced.</p>
+                    <p class="lp-figure-note">Capture from sample data only. Never include a real database, a pairing code, a LAN address, or keystore material. See <code>docs/LANDING_PAGE_PLAN.md</code>.</p>
+                  </figure>
+                </div>
+              </article>
+              <article class="lp-step">
+                <p class="lp-step-num lp-mono">04</p>
+                <div class="lp-step-body">
+                  <h3>Stay offline, sync only when you choose</h3>
+                  <p>The app reads and writes a local SQLite database on each device. When you want the same snapshot on a second device, pair once on a trusted local network and transfer a validated snapshot.</p>
+                  <figure class="lp-figure">
+                    <figcaption class="lp-figure-tag">Asset pending: LAN sync pairing</figcaption>
+                    <p>The sync pairing screen with a one-time pairing code, with all network addresses and pairing values redacted.</p>
+                    <p class="lp-figure-note">Capture from sample data only. Never include a real database, a pairing code, a LAN address, or keystore material. See <code>docs/LANDING_PAGE_PLAN.md</code>.</p>
+                  </figure>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. Feature pillars -->
+        <section class="lp-section" id="features" aria-labelledby="features-heading">
+          <div class="lp-wrap">
+            <h2 class="lp-h2" id="features-heading">Four things it does, and nothing else</h2>
+            <p class="lp-lede">Each pillar is a commitment about behavior, not a feature count. Technical detail belongs further down the page.</p>
+            <div class="lp-ruled lp-pillar-grid">
+              <article class="lp-pillar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" /><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" /><path d="M9 12h6" /><path d="M9 16h4" /></svg>
+                <h3>Bring in a list</h3>
+                <p>Paste messy plain text and start with structure. No template to fill in, no import wizard, and the source text stays attached to the items it produced.</p>
+              </article>
+              <article class="lp-pillar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" /></svg>
+                <h3>See what matters now</h3>
+                <p>One combined view across every domain so parallel tracks stop competing for attention in your head. Each suggestion explains why it appeared.</p>
+              </article>
+              <article class="lp-pillar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="22" x2="2" y1="12" y2="12" /><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" /><line x1="6" x2="6.01" y1="16" y2="16" /><line x1="10" x2="10.01" y1="16" y2="16" /></svg>
+                <h3>Keep it local</h3>
+                <p>Offline-first SQLite storage with no required account. Your database is a file on your own device, not a row in someone else&apos;s service.</p>
+              </article>
+              <article class="lp-pillar">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3 4 7l4 4" /><path d="M4 7h16" /><path d="m16 21 4-4-4-4" /><path d="M20 17H4" /></svg>
+                <h3>Move a snapshot when you choose</h3>
+                <p>Opt-in transfer between your own trusted devices with one-time pairing, bounded to a validated snapshot rather than continuous background sync.</p>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- 5. Platform and download -->
+        <section class="lp-section" id="platforms" aria-labelledby="platforms-heading">
+          <div class="lp-wrap">
+            <h2 class="lp-h2" id="platforms-heading">What you can actually run today</h2>
+            <p class="lp-lede">One Tauri v2 codebase, built by GitHub Actions for four platforms. Everything below is a build target, not a tested release.</p>
+            <div class="lp-table-wrap">
+              <table class="lp-table">
+                <caption>Platform status as documented in the repository README. No platform is marked as tested or released.</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Platform</th>
+                    <th scope="col">Current deliverable</th>
+                    <th scope="col">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Windows 10/11</td>
+                    <td>Desktop installer artifacts from GitHub Actions</td>
+                    <td><span class="lp-tag lp-tag--accent">Build target</span><span class="lp-table-status">Build target</span></td>
+                  </tr>
+                  <tr>
+                    <td>macOS</td>
+                    <td>.app / .dmg artifacts from GitHub Actions</td>
+                    <td><span class="lp-tag lp-tag--accent">Build target</span><span class="lp-table-status">Build target; signing and notarization still required for distribution</span></td>
+                  </tr>
+                  <tr>
+                    <td>Linux</td>
+                    <td>AppImage / deb artifacts from GitHub Actions</td>
+                    <td><span class="lp-tag lp-tag--accent">Build target</span><span class="lp-table-status">Build target; test on target distributions before release</span></td>
+                  </tr>
+                  <tr>
+                    <td>Android</td>
+                    <td>Signed release APK or unsigned debug APK artifact</td>
+                    <td><span class="lp-tag lp-tag--accent">Build target</span><span class="lp-table-status">Build target; Play Store bundle and device testing remain</span></td>
+                  </tr>
+                  <tr>
+                    <td>iOS</td>
+                    <td>Not currently configured</td>
+                    <td><span class="lp-tag">Not configured</span><span class="lp-table-status">Planned evaluation</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="lp-download">
+              <a class="lp-btn lp-btn--primary" href="https://github.com/karefined-eng/the-mainframe/actions" target="_blank" rel="noreferrer noopener">
+                Open the Actions tab
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></svg>
+              </a>
+              <a class="lp-btn lp-btn--ghost" href="https://github.com/karefined-eng/the-mainframe#quick-start-for-contributors" target="_blank" rel="noreferrer noopener">
+                Build it locally instead
+              </a>
+            </div>
+            <p class="lp-download-note">
+              <strong>How to get a build:</strong> open the Actions tab, pick a <em>successful</em> run
+              of the desktop or Android workflow, and download the artifact for your platform. Links to
+              runs are not published here on purpose — an artifact only exists after a successful build,
+              and this page will not point you at a build that failed. Later, once versioning, signing,
+              and device testing are done, these will be replaced by versioned GitHub Releases.
+            </p>
+          </div>
+        </section>
+
+        <!-- 6. Trust and limitations -->
+        <section class="lp-section" id="trust" aria-labelledby="trust-heading">
+          <div class="lp-wrap">
+            <h2 class="lp-h2" id="trust-heading">The parts most landing pages leave out</h2>
+            <p class="lp-lede">You should know these before you put anything real into the app. They are stated here rather than buried in a footer.</p>
+            <div class="lp-ruled lp-trust-grid">
+              <article class="lp-trust">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+                <div>
+                  <h3>No required account or cloud service</h3>
+                  <p>The core workflow never calls a hosted backend. There is no sign-up, no subscription, and no telemetry service in the loop.</p>
+                </div>
+              </article>
+              <article class="lp-trust">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+                <div>
+                  <h3>Data is local to each device by default</h3>
+                  <p>Every device holds its own SQLite database. Installing the app twice does not automatically merge two sets of data.</p>
+                </div>
+              </article>
+              <article class="lp-trust">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+                <div>
+                  <h3>LAN sync is not cloud sync</h3>
+                  <p>It moves a bounded snapshot of up to 64 MiB between your own devices, validated before it atomically replaces the target.</p>
+                </div>
+              </article>
+              <article class="lp-trust">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+                <div>
+                  <h3>The current LAN transport is cleartext</h3>
+                  <p>Sync is HTTP on the local network, restricted to private addresses on port 9377 (discovery on 9378). Do not expose it to the public internet, use it on an untrusted network, or treat it as a backup.</p>
+                </div>
+              </article>
+              <article class="lp-trust">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+                <div>
+                  <h3>Pairing is short-lived by design</h3>
+                  <p>Pairing uses a one-time six-digit token that expires after 10 minutes. If pairing fails, start over rather than reusing a token.</p>
+                </div>
+              </article>
+              <article class="lp-trust">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+                <div>
+                  <h3>Back up before replacing a local database</h3>
+                  <p>A snapshot transfer replaces the target database. Export a backup first if the device holds anything you have not duplicated elsewhere.</p>
+                </div>
+              </article>
+              <article class="lp-trust">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg>
+                <div>
+                  <h3>Desktop builds are unsigned</h3>
+                  <p>Until platform signing is configured, desktop artifacts are unsigned and will trigger an operating-system warning on first launch.</p>
+                </div>
+              </article>
+            </div>
+          </div>
+        </section>
+
+        <!-- 7. Open source and contribution -->
+        <section class="lp-section" id="contribute" aria-labelledby="contribute-heading">
+          <div class="lp-wrap">
+            <h2 class="lp-h2" id="contribute-heading">Read the code before you trust it</h2>
+            <p class="lp-lede">The source is public. Issues and focused pull requests are welcome, and the limitations above are as open to discussion as the features.</p>
+            <div class="lp-contrib">
+              <ul class="lp-list">
+                <li>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
+                  <span>Include the platform, the app version or commit, reproduction steps, and relevant logs.</span>
+                </li>
+                <li>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
+                  <span>Keep reports specific — a narrow bug with clear steps is more useful than a broad feature wish.</span>
+                </li>
+                <li>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
+                  <span>Do not attach database files or other private data to an issue. Sanitize screenshots first.</span>
+                </li>
+                <li>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg>
+                  <span>Ideas and limitations are equally welcome. This is an early public release and the roadmap is still open.</span>
+                </li>
+                <li>
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z" /><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" /></svg>
+                  <span>Report a problem or ask a question in the <a href="https://github.com/karefined-eng/the-mainframe/issues" target="_blank" rel="noreferrer noopener">issue tracker</a>.</span>
+                </li>
+              </ul>
+              <div class="lp-stack">
+                <p class="lp-stack-label">Technical stack</p>
+                <dl>
+                  <div><dt>Shell and native core</dt><dd>Tauri v2 with Rust</dd></div>
+                  <div><dt>Interface</dt><dd>React, TypeScript, Vite, Tailwind CSS</dd></div>
+                  <div><dt>Storage</dt><dd>SQLite through tauri-plugin-sql</dd></div>
+                  <div><dt>Device transfer</dt><dd>Local-network sync implemented in Rust</dd></div>
+                </dl>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Closing CTA -->
+        <section class="lp-final" aria-labelledby="final-heading">
+          <div class="lp-wrap">
+            <h2 id="final-heading">Try it on one list you already have</h2>
+            <p>
+              Copy the messiest list you are currently carrying around, paste it in, and see whether
+              the structure it produces matches how you actually think about the work. If it does not,
+              that is useful feedback too.
+            </p>
+            <div class="lp-cta-row">
+              <a class="lp-btn lp-btn--primary" href="https://github.com/karefined-eng/the-mainframe/actions" target="_blank" rel="noreferrer noopener">
+                Download the latest build
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14" /><path d="m12 5 7 7-7 7" /></svg>
+              </a>
+              <a class="lp-btn lp-btn--ghost" href="https://github.com/karefined-eng/the-mainframe" target="_blank" rel="noreferrer noopener">
+                View the source on GitHub
+              </a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="lp-footer">
+        <div class="lp-wrap lp-footer-inner">
+          <p>The Mainframe · early public release. Local-first, no required account, no telemetry service.</p>
+          <nav aria-label="Footer links">
+            <a href="https://github.com/karefined-eng/the-mainframe" target="_blank" rel="noreferrer noopener">GitHub</a>
+            <a href="https://github.com/karefined-eng/the-mainframe/issues" target="_blank" rel="noreferrer noopener">Issues</a>
+            <a href="#trust">Limitations</a>
+            <a href="#main">Back to top</a>
+          </nav>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>

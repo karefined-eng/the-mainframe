@@ -9,16 +9,16 @@
  * Factual discipline for this file:
  *   - Every platform claim mirrors README.md and is labeled as a build target,
  *     never as a tested or shipped release.
- *   - No medical or health claim is made. Cognitive load and re-entry friction
- *     are described as product design goals, not as treatment.
- *   - No product screenshot or mock asserts a capability the app does not have.
- *     The hero panel is built from the real ingestion contract.
- *   - Screenshot slots are honest placeholders. No stock productivity imagery.
- *
- * Screenshot production rule (deliberately NOT rendered into the page, because
- * public marketing copy should not carry our internal checklist): every capture
- * must come from sanitized sample data and must never include a real database, a
- * pairing code, a LAN address, or keystore material.
+ *   - No medical or health claim is made, and the page does not pre-argue
+ *     against one either: the plan forbids claiming treatment, not defending
+ *     against a claim nobody made.
+ *   - No product depiction asserts a capability the app does not have. The hero
+ *     panel is built from the real ingestion contract (src/components/PasteIngest.tsx):
+ *     split on newlines, one row per non-empty line into the open domain,
+ *     original line preserved, nothing else inferred. Attention reasons are the
+ *     strings src/engine/urgencyScoring.ts can actually emit.
+ *   - Walkthrough figures are honest placeholders; internal capture checklists
+ *     stay in the plan document, not in public copy.
  *
  * `data-od-id` anchors mark the major regions so the page can be patched
  * section by section.
@@ -28,7 +28,6 @@ import { useEffect, type ReactNode } from "react";
 import {
   AlertTriangle,
   ArrowLeftRight,
-  ArrowRight,
   Check,
   ClipboardPaste,
   ExternalLink,
@@ -53,7 +52,6 @@ import {
   platformRows,
   techStack,
   walkthrough,
-  whatThisIsNot,
 } from "./content";
 import "./landing.css";
 
@@ -78,12 +76,10 @@ function BrandMark({ size = 20 }: { size?: number }) {
 }
 
 /**
- * Hero demo data. This mirrors what the real ingestion path actually does
- * (src/components/PasteIngest.tsx): split on newlines, insert one row per
- * non-empty line into the domain the user already had open, store the original
- * line as `raw_import_text`, and infer nothing else. Titles below are the
- * literal pasted lines for that reason. Attention reasons are quoted from the
- * strings src/engine/urgencyScoring.ts can actually emit.
+ * Hero demo data, constrained to what the real ingestion path produces.
+ * Titles are the literal pasted lines (no prefix parsing, no title inference),
+ * every row carries the same honest meta, and the attention reasons are quoted
+ * from the string set in src/engine/urgencyScoring.ts.
  */
 const pastedLines = [
   "AWS SAA - book exam slot",
@@ -127,16 +123,13 @@ function Section({
 }
 
 /**
- * Honest placeholder for a product screenshot. Publishing real captures is
- * blocked on sanitized sample data, so the slot names the capture that is
- * coming and what it will show, rather than a stand-in image. The internal
- * capture checklist stays out of public copy by design.
+ * Honest placeholder for a product screenshot: says the capture is coming
+ * rather than showing a stand-in image or exposing the internal checklist.
  */
-function ScreenshotSlot({ name, description }: { name: string; description: string }) {
+function ScreenshotSlot({ name }: { name: string }) {
   return (
     <figure className="lp-figure">
-      <figcaption className="lp-figure-tag">Asset pending: {name}</figcaption>
-      <p>{description}</p>
+      <figcaption className="lp-figure-tag">{name}</figcaption>
       <p className="lp-figure-note">Screenshot coming with the first release.</p>
     </figure>
   );
@@ -164,7 +157,12 @@ export default function LandingPage() {
               </a>
             ))}
           </nav>
-          <a className="lp-header-cta" href={REPO_URL} target="_blank" rel="noreferrer noopener">
+          <a
+            className="lp-textlink lp-header-cta"
+            href={REPO_URL}
+            target="_blank"
+            rel="noreferrer noopener"
+          >
             GitHub
             <ExternalLink size={13} aria-hidden="true" />
           </a>
@@ -177,13 +175,13 @@ export default function LandingPage() {
           <div className="lp-wrap lp-hero-grid">
             <div>
               <h1 className="lp-h1" id="hero-heading">
-                Your calm command center for everything you&apos;re learning, building, pursuing,
-                and acquiring.
+                A local-first home for every list you are already keeping.
               </h1>
               <p className="lp-sub">
-                The Mainframe is a private, local-first life management app for scattered projects,
-                goals, courses, ideas, and purchases. Work offline, keep your data on your devices,
-                and bring order to the lists already spread across your life.
+                The Mainframe is a private, offline life-management app for scattered projects,
+                goals, courses, ideas, and purchases. Paste the lists you already have, keep the
+                database on your own devices, and bring some order to what is currently spread
+                across notes, messages, and memory.
               </p>
               <p className="lp-status">
                 <span className="lp-dot" aria-hidden="true" />
@@ -197,24 +195,22 @@ export default function LandingPage() {
                   rel="noreferrer noopener"
                   data-od-id="cta-download"
                 >
-                  Download the latest build
-                  <ArrowRight size={16} aria-hidden="true" />
+                  Get a build from CI
+                  <ExternalLink size={15} aria-hidden="true" />
                 </a>
                 <a
-                  className="lp-btn lp-btn--ghost"
+                  className="lp-textlink"
                   href={REPO_URL}
                   target="_blank"
                   rel="noreferrer noopener"
                   data-od-id="cta-source"
                 >
-                  View the source on GitHub
+                  Read the source first
                 </a>
               </div>
               <p className="lp-cta-note">
-                <strong>Read this first:</strong> there are no versioned public releases yet. Builds
-                live as GitHub Actions artifacts, and CI artifacts are not release downloads. Android
-                ships a signed release APK or an unsigned debug APK; desktop builds are unsigned
-                until platform signing is configured. <a href="#platforms">See platform status</a>.
+                Builds are unsigned CI artifacts, not releases — no accounts, no downloads page.{" "}
+                <a href="#platforms">See platform status</a>.
               </p>
             </div>
 
@@ -233,14 +229,14 @@ export default function LandingPage() {
                 <div className="lp-step-block">
                   <p className="lp-panel-label">
                     <span className="lp-panel-num lp-mono">01</span>
-                    Pasted text
+                    You paste 4 lines
                   </p>
                   <pre className="lp-raw">{pastedLines.join("\n")}</pre>
                 </div>
                 <div className="lp-step-block">
                   <p className="lp-panel-label">
                     <span className="lp-panel-num lp-mono">02</span>
-                    Structured items
+                    You get 4 rows
                   </p>
                   <div className="lp-rows">
                     {insertedRows.map((row) => (
@@ -255,7 +251,7 @@ export default function LandingPage() {
                 <div className="lp-step-block">
                   <p className="lp-panel-label">
                     <span className="lp-panel-num lp-mono">03</span>
-                    What&apos;s hot
+                    Which need attention
                   </p>
                   <ul className="lp-hot">
                     {attentionRows.map((item) => (
@@ -289,9 +285,6 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
-          <p className="lp-note">
-            <strong>What this is not.</strong> {whatThisIsNot}
-          </p>
         </Section>
 
         {/* 3. Product walkthrough */}
@@ -307,7 +300,7 @@ export default function LandingPage() {
                 <div className="lp-step-body">
                   <h3>{step.title}</h3>
                   <p>{step.body}</p>
-                  <ScreenshotSlot name={step.asset} description={step.alt} />
+                  <ScreenshotSlot name={step.asset} />
                 </div>
               </article>
             ))}
@@ -402,8 +395,8 @@ export default function LandingPage() {
         {/* 6. Trust: two registers, because these are not the same kind of claim */}
         <Section
           id="trust"
-          title="The parts most landing pages leave out"
-          lede="You should know these before you put anything real into the app. They are stated here rather than buried in a footer — split into what the app will never do to you, and what is genuinely limited today."
+          title="What it will not do, and what you should know"
+          lede="Two different lists. The first is what the app will never do to you. The second is what is genuinely limited today — stated plainly, because you should know it before you put real work in."
         >
           <h3 className="lp-subhead" id="guarantees-heading">
             What it will not do
@@ -440,7 +433,7 @@ export default function LandingPage() {
         <Section
           id="contribute"
           title="Read the code before you trust it"
-          lede="The source is public. Issues and focused pull requests are welcome, and the limitations above are as open to discussion as the features."
+          lede="The source is public, and the claims above are checkable in it. Issues and focused pull requests are welcome — the limitations are as open to discussion as the features."
         >
           <div className="lp-contrib">
             <ul className="lp-list">
@@ -482,8 +475,8 @@ export default function LandingPage() {
             <h2 id="final-heading">Try it on one list you already have</h2>
             <p>
               Copy the messiest list you are currently carrying around, paste it in, and see whether
-              the structure it produces matches how you actually think about the work. If it does
-              not, that is useful feedback too.
+              the rows it produces match how you actually think about the work. If they do not, that
+              is useful feedback too.
             </p>
             <div className="lp-cta-row">
               <a
@@ -492,8 +485,8 @@ export default function LandingPage() {
                 target="_blank"
                 rel="noreferrer noopener"
               >
-                Download the latest build
-                <ArrowRight size={16} aria-hidden="true" />
+                Get a build from CI
+                <ExternalLink size={15} aria-hidden="true" />
               </a>
               <a
                 className="lp-btn lp-btn--ghost"
@@ -501,7 +494,7 @@ export default function LandingPage() {
                 target="_blank"
                 rel="noreferrer noopener"
               >
-                View the source on GitHub
+                Read the source first
               </a>
             </div>
           </div>
@@ -522,7 +515,7 @@ export default function LandingPage() {
               Issues
             </a>
             <a href="#trust">Limitations</a>
-            <a href="#main">Back to top</a>
+            <a href="#hero">Back to top</a>
           </nav>
         </div>
       </footer>
