@@ -1,4 +1,4 @@
-[package]
+﻿[package]
 name = "tauri-app"
 version = "0.1.0"
 description = "A private, local-first life management app for desktop and Android."
@@ -27,4 +27,5 @@ tiny_http = "0.12"
 ureq = "2.9"
 local-ip-address = "0.6.3"
 rand = "0.8"
-rusqlite = { version = "0.31", features = ["bundled"] }
+rusqlite = { version = "0.32", features = ["bundled"] }
+
