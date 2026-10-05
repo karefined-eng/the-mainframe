@@ -55,3 +55,4 @@ npm run tauri android dev
 The checked-in `src-tauri/gen/android` project is the generated Android project used by
 local and GitHub Actions builds. Regenerate it only when changing the Tauri Android
 configuration, then review the generated diff before committing it.
+- [Market and product research](11_MARKET_AND_PRODUCT_RESEARCH.md)
