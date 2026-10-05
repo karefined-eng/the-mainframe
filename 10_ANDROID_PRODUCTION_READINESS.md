@@ -267,7 +267,7 @@ The preferred Google Play artifact is an Android App Bundle after signing is
 configured:
 
 ```bash
-npm run tauri android build -- --release --target aarch64 --aab
+npm run tauri android build -- --target aarch64 --aab
 ```
 
 Do not upload the debug APK to Google Play.
@@ -277,7 +277,7 @@ Do not upload the debug APK to Google Play.
 For a signed release APK after configuring the local keystore:
 
 ```bash
-npm run tauri android build -- --release --target aarch64 --apk
+npm run tauri android build -- --target aarch64 --apk
 ```
 
 Verify the resulting APK:

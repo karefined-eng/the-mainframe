@@ -59,7 +59,7 @@ jobs:
 
       - name: Build signed Android release APK
         if: env.SIGNING_ENABLED == 'true'
-        run: npm run tauri android build -- --release --apk --target aarch64
+        run: npm run tauri android build -- --apk --target aarch64
 
       - name: Build unsigned Android debug APK
         if: env.SIGNING_ENABLED != 'true'
