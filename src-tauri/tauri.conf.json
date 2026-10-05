@@ -18,7 +18,7 @@
       }
     ],
     "security": {
-      "csp": "default-src 'self' asset: http://asset.localhost https://asset.localhost; img-src 'self' asset: http://asset.localhost https://asset.localhost data: blob:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; script-src 'self' asset: http://asset.localhost https://asset.localhost; connect-src 'self' ipc: tauri: asset: http://asset.localhost https://asset.localhost http://localhost:1420"
+      "csp": "default-src 'self' tauri: asset: http://asset.localhost https://asset.localhost; script-src 'self' tauri: asset: http://asset.localhost https://asset.localhost 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' tauri: asset: http://asset.localhost https://asset.localhost data: blob:; font-src 'self' data:; connect-src 'self' ipc: tauri: asset: http://asset.localhost https://asset.localhost ws://localhost:1421"
     }
   },
   "plugins": {
