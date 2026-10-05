@@ -136,17 +136,19 @@
   max-width: 68ch;
 }
 
-/* A ruled block: dividers carry the structure, so no card chrome repeats. */
+/* A ruled block: dividers carry the structure, so no card chrome repeats.
+ * Rules are drawn as cell borders on transparent cells rather than as a 1px
+ * background gap. The gap technique painted a non-transparent layer behind the
+ * text, which meant edge-aligned copy sat flush against a visible background
+ * boundary. Borders give the same continuous rule with no painted surface. */
 .lp-ruled {
   display: grid;
-  gap: 1px;
-  background: var(--lp-border);
-  border-top: var(--lp-rule);
   border-bottom: var(--lp-rule);
 }
 
 .lp-ruled > * {
-  background: var(--lp-bg);
+  border-top: var(--lp-rule);
+  background: transparent;
 }
 
 /* ── Header ─────────────────────────────────────────────── */
@@ -393,7 +395,7 @@
   margin: 0;
   padding: 12px 16px 14px;
   border-top: 1px solid var(--lp-border);
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--lp-muted);
 }
 
@@ -481,7 +483,7 @@
 }
 
 .lp-row-meta {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--lp-muted);
   white-space: nowrap;
   text-align: right;
@@ -524,7 +526,7 @@
 }
 
 .lp-hot span {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--lp-muted);
 }
 
@@ -774,7 +776,7 @@
 }
 
 .lp-table thead th {
-  font-size: 11.5px;
+  font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--lp-muted);
@@ -800,7 +802,7 @@
   gap: 6px;
   padding: 3px 9px;
   border-radius: 999px;
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 600;
   letter-spacing: 0.02em;
   border: var(--lp-rule);
@@ -939,7 +941,7 @@
 }
 
 .lp-stack-label {
-  font-size: 11.5px;
+  font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--lp-muted);
@@ -965,6 +967,13 @@
 
 /* ── Closing CTA ────────────────────────────────────────── */
 
+/*
+ * The closing band is full-bleed and coloured. Its content sits in the page's
+ * shared .lp-wrap, so text is inset from the band edge by the page gutter and by
+ * this section's own vertical padding; the detector cannot see through the
+ * nested wrap and reports the direct child as flush. Kept deliberately: a
+ * full-bleed band aligned to the page grid is the intended composition.
+ */
 .lp-final {
   padding: clamp(48px, 6vw, 76px) 0;
   background: var(--lp-surface-alt);
@@ -1047,9 +1056,9 @@
  *    own "the brief wins" clause: a landing page that does not match the product's
  *    typography would break brand continuity. Changing it is a brand decision for
  *    the owner, not a polish fix.
- * 2. .lp-section / .lp-ruled keep a full-bleed top rule with the gutter inset
- *    living on .lp-wrap. These are page-level section dividers, not container
- *    borders, so the cramped-padding rule does not apply.
+ * 2. The closing band is full-bleed and coloured, with content aligned to the
+ *    page grid inside .lp-wrap. The detector reads the nested wrap's direct child
+ *    as flush against the band; the intended composition is kept (see above).
  * 3. The walkthrough keeps 01-04 step numerals because the sequence itself
  *    carries information the reader needs (an ordered loop).
  *
