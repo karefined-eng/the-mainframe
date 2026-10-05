@@ -71,7 +71,7 @@ jobs:
         with:
           name: mainframe-android-release-aarch64
           if-no-files-found: error
-          path: src-tauri/gen/android/app/build/outputs/apk/release/*-release.apk
+          path: src-tauri/gen/android/app/build/outputs/apk/universal/release/*-release.apk
 
       - name: Upload unsigned debug APK
         if: env.SIGNING_ENABLED != 'true'
@@ -79,7 +79,7 @@ jobs:
         with:
           name: mainframe-android-debug-aarch64
           if-no-files-found: error
-          path: src-tauri/gen/android/app/build/outputs/apk/debug/*-debug.apk
+          path: src-tauri/gen/android/app/build/outputs/apk/universal/debug/*-debug.apk
 
       - name: Remove signing material
         if: always() && env.SIGNING_ENABLED == 'true'
