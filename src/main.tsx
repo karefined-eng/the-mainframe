@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import LandingPage from "./landing/LandingPage";
+import { readRoute } from "./landing/route";
 import "./index.css";
 import { SyncProvider } from "./context/SyncContext";
 
@@ -28,12 +30,41 @@ class StartupErrorBoundary extends React.Component<
   }
 }
 
+/**
+ * Route shell. The public landing page lives beside the app at `/welcome` and
+ * never replaces the main application route. It renders without the Tauri
+ * database or sync providers so it stays a plain document and cannot be blocked
+ * by a database that is not present.
+ */
+function Root() {
+  const route = readRoute();
+
+  useEffect(() => {
+    if (route === "landing") {
+      const onHashChange = () => {
+        if (readRoute() === "app") window.location.reload();
+      };
+      window.addEventListener("hashchange", onHashChange);
+      return () => window.removeEventListener("hashchange", onHashChange);
+    }
+    // The static document metadata in index.html targets the public landing
+    // page, so the in-app shell restores the product title on mount.
+    document.title = "The Mainframe";
+  }, [route]);
+
+  if (route === "landing") return <LandingPage />;
+
+  return (
+    <SyncProvider>
+      <App />
+    </SyncProvider>
+  );
+}
+
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <StartupErrorBoundary>
-      <SyncProvider>
-        <App />
-      </SyncProvider>
+      <Root />
     </StartupErrorBoundary>
   </React.StrictMode>,
 );
