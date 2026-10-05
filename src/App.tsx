@@ -89,6 +89,7 @@ function App() {
   const [showIngest, setShowIngest] = useState(false);
   const [draftingItem, setDraftingItem] = useState<{item: BaseItem, domain: DomainKey} | null>(null);
   const [spotlight, setSpotlight] = useState<{ domain: DomainKey; itemId: number } | null>(null);
+  const [startupError, setStartupError] = useState<string | null>(null);
 
   const refreshDashboard = useCallback(async (previousVisitAt?: string | null) => {
     const model = await loadDashboardModel(previousVisitAt ?? null);
@@ -107,7 +108,10 @@ function App() {
     const openedAt = new Date().toISOString();
     refreshDashboard(previousVisitAt)
       .then(() => window.localStorage.setItem("mainframe.lastOpenedAt", openedAt))
-      .catch(console.error);
+      .catch((err) => {
+        console.error(err);
+        setStartupError(err instanceof Error ? err.message : String(err));
+      });
     // Run urgency check on app open (doc 06 §5)
     runUrgencyCheck().catch(console.error);
   }, [refreshDashboard]);
@@ -240,14 +244,22 @@ function App() {
         ) : activeView === "calendar" ? (
           <CalendarView />
         ) : activeView === "drafting_mode" && draftingItem ? (
-          <FocusDraftingMode 
-            item={draftingItem.item} 
+          <FocusDraftingMode
+            item={draftingItem.item}
             domain={draftingItem.domain}
             onClose={() => {
               setActiveView(draftingItem.domain);
               setDraftingItem(null);
-            }} 
+            }}
           />
+        ) : startupError ? (
+          <div className="rounded-xl border border-red-500/40 bg-red-500/10 p-5">
+            <p className="m-0 font-semibold text-red-300">Could not load your data</p>
+            <p className="m-0 mt-2 text-text-muted">
+              The window started, but the local database did not respond. Restart the app; if this keeps happening, share the details below.
+            </p>
+            <pre className="mt-3 overflow-x-auto whitespace-pre-wrap rounded-lg bg-surface-alt p-3 text-xs text-red-200">{startupError}</pre>
+          </div>
         ) : (
           <DashboardHome
             domains={domains}
