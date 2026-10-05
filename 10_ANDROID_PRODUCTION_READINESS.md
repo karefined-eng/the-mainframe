@@ -1,6 +1,47 @@
-# The Mainframe Android Production Readiness Guide
+# The Mainframe Android Distribution Guide
 
-The current APK is a **debug APK for testing**, not a production release. Before publishing or distributing it broadly, complete the items below.
+The repository includes a reproducible GitHub Actions debug APK build for internal
+testing. It is not a signed store release. The Android project under
+`src-tauri/gen/android` is intentionally committed because Tauri uses it directly
+for builds and it contains the Android manifest and Gradle configuration.
+
+## Local Android setup
+
+Install Node.js 18+, Rust with `rustup`, Android Studio, and the Android SDK
+platform/build tools required by the checked-in Gradle project. Add the Android
+Rust target once:
+
+```bash
+rustup target add aarch64-linux-android
+npm ci
+npm run tauri android dev
+```
+
+For a local debug APK:
+
+```bash
+npm run tauri android build -- --debug --target aarch64
+```
+
+The generated APK is under
+`src-tauri/gen/android/app/build/outputs/apk/debug/`.
+
+The project is not regenerated in CI. If `tauri android init` is needed after a
+Tauri configuration change, commit the reviewed `src-tauri/gen/android` changes
+so local and CI builds use the same project.
+
+## GitHub Actions artifacts
+
+`.github/workflows/android.yml` installs Node, Rust, the Android SDK/NDK, and the
+`aarch64-linux-android` target before running `npm ci` and the Android debug build.
+The unsigned/debug APK is uploaded as a workflow artifact for internal testing.
+It is not suitable for Google Play.
+
+The workflow does not sign artifacts. If CI signing is added later, store the
+keystore as a base64-encoded `ANDROID_KEYSTORE_BASE64` repository secret and
+provide `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`, and
+`ANDROID_STORE_PASSWORD` as repository secrets or protected environment
+variables. Do not add those values to the workflow file or commit a keystore.
 
 ## 1. Create a production signing key
 
@@ -32,9 +73,13 @@ Contents:
 
 ```properties
 keyAlias=mainframe-upload
-password=YOUR_KEY_PASSWORD
+keyPassword=change-me
 storeFile=/absolute/path/to/mainframe-upload.jks
+storePassword=change-me
 ```
+
+Use separate `keyPassword` and `storePassword` entries matching the key you
+created. Keep this file and the keystore outside version control.
 
 Then configure the release signing block in:
 
@@ -59,9 +104,9 @@ android {
     signingConfigs {
         create("release") {
             keyAlias = keystoreProperties["keyAlias"] as String
-            keyPassword = keystoreProperties["password"] as String
+            keyPassword = keystoreProperties["keyPassword"] as String
             storeFile = file(keystoreProperties["storeFile"] as String)
-            storePassword = keystoreProperties["password"] as String
+            storePassword = keystoreProperties["storePassword"] as String
         }
     }
 
@@ -84,7 +129,7 @@ src-tauri/gen/android/keystore.properties
 
 The Android signing key must be backed up securely. Never store it in the repository.
 
-## 3. Fix sync security before releasing
+## 3. Sync limitations and security
 
 The current sync server uses:
 
@@ -92,7 +137,12 @@ The current sync server uses:
 - A PIN in the URL query string.
 - An unauthenticated `/info` endpoint.
 
-That is acceptable for early local testing, but it is not ideal for production.
+The Android manifest grants Internet access and release builds explicitly allow
+cleartext traffic because this protocol is currently HTTP. The PIN is a useful
+one-time pairing check on a trusted LAN, but it is not encryption and query
+parameters may be visible to network observers. Treat sync as local-network-only
+and do not use it across untrusted Wi-Fi, the public Internet, or a forwarded
+port.
 
 Before release, the sync protocol should:
 
@@ -194,7 +244,8 @@ Bluetooth is used for discovery, not bulk database transfer. Bulk transfer shoul
 
 ### Google Play
 
-The preferred Google Play artifact is an Android App Bundle:
+The preferred Google Play artifact is an Android App Bundle after signing is
+configured:
 
 ```bash
 npm run tauri android build -- --release --target aarch64 --aab
@@ -204,7 +255,7 @@ Do not upload the debug APK to Google Play.
 
 ### Direct APK distribution
 
-For a signed release APK:
+For a signed release APK after configuring the local keystore:
 
 ```bash
 npm run tauri android build -- --release --target aarch64 --apk
@@ -234,4 +285,9 @@ The `aarch64` build is appropriate for most modern Android phones. Build additio
 
 ## Current status
 
-The current APK is suitable for **internal alpha testing**. It is not yet a production release because release signing, encrypted sync transport, Android lifecycle testing, privacy/data-safety documentation, and final release configuration still need to be completed.
+The current APK is suitable for **internal alpha testing**. It is not yet a
+production release because release signing, encrypted sync transport, Android
+lifecycle testing, privacy/data-safety documentation, and final release
+configuration still need to be completed. The Android sync UI currently
+requires entering the source device's displayed IP and PIN manually; the QR
+code is informational and is not scanned by the app.

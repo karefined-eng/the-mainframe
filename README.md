@@ -50,5 +50,8 @@ npm run tauri android dev
 
 ### Android documentation
 
-- [Android and cross-device sync architecture](09_ANDROID_SYNC_ARCHITECTURE.md)
 - [Android production-readiness guide](10_ANDROID_PRODUCTION_READINESS.md)
+
+The checked-in `src-tauri/gen/android` project is the generated Android project used by
+local and GitHub Actions builds. Regenerate it only when changing the Tauri Android
+configuration, then review the generated diff before committing it.

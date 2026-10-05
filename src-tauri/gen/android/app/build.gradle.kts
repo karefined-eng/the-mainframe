@@ -37,6 +37,9 @@ android {
             }
         }
         getByName("release") {
+            // Sync currently uses authenticated HTTP on the local network.
+            // Keep this enabled until the protocol moves to HTTPS/encrypted transport.
+            manifestPlaceholders["usesCleartextTraffic"] = "true"
             isMinifyEnabled = true
             proguardFiles(
                 *fileTree(".") { include("**/*.pro") }

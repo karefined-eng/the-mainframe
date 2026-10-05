@@ -55,8 +55,11 @@ pub fn start_sync_server(app: AppHandle, state: State<'_, SyncState>) -> Result<
     }
 
     let local_ip = local_ip_address::local_ip().map_err(|e| e.to_string())?;
-    let addr = format!("{}:9377", local_ip);
-    let server = Server::http(&addr).map_err(|e| e.to_string())?;
+    let advertised_addr = format!("{}:9377", local_ip);
+    // Bind all interfaces so Android can accept connections through the active
+    // Wi-Fi or hotspot interface. The advertised address remains the selected
+    // local interface address shown to the peer.
+    let server = Server::http("0.0.0.0:9377").map_err(|e| e.to_string())?;
     let server_arc = Arc::new(server);
     *server_guard = Some(server_arc.clone());
 
@@ -148,7 +151,10 @@ pub fn start_sync_server(app: AppHandle, state: State<'_, SyncState>) -> Result<
         }
     });
 
-    Ok(ServeInfo { addr, pin })
+    Ok(ServeInfo {
+        addr: advertised_addr,
+        pin,
+    })
 }
 
 #[tauri::command]
