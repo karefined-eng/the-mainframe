@@ -9,7 +9,7 @@
 
 import { pageMeta } from "./content";
 
-const SITE_ORIGIN = ""; // e.g. "https://mainframe.example" once a stable URL exists.
+const SITE_ORIGIN = "https://the-mainframe-app.vercel.app";
 
 function upsertMeta(attribute: "name" | "property", key: string, value: string, created: HTMLElement[]) {
   let tag = document.head.querySelector<HTMLMetaElement>(`meta[${attribute}="${key}"]`);
