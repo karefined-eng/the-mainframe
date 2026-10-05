@@ -3,11 +3,16 @@ import { Download } from "lucide-react";
 import type { DomainKey } from "../App";
 import { getDb, domains } from "../App";
 
+const validDomains = new Set(domains.map((d) => d.key));
+
 export default function BackupExport() {
   const [status, setStatus] = useState<string | null>(null);
 
   const exportDomainText = async (domain: DomainKey) => {
     try {
+      if (!validDomains.has(domain)) {
+        throw new Error("Invalid domain");
+      }
       const db = await getDb();
       const rows = await db.select<{ title: string; notes: string | null; status: string }[]>(
         `SELECT title, notes, status FROM ${domain} ORDER BY updated_at DESC`,

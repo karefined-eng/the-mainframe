@@ -14,6 +14,21 @@ export default function PasteIngest({ domain, onImported }: PasteIngestProps) {
   const [result, setResult] = useState<string | null>(null);
 
   const handleImport = async () => {
+    const validDomains = new Set([
+      "certifications",
+      "build_ideas",
+      "acquisitions",
+      "goals",
+      "ventures",
+      "writing",
+      "skills",
+      "experiences",
+    ]);
+    if (!validDomains.has(domain)) {
+      setResult("Error: invalid domain");
+      return;
+    }
+
     const lines = text
       .split("\n")
       .map((l) => l.trim())

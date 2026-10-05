@@ -4,6 +4,7 @@ import { showToast } from "./Toast";
 import { Bell, Database as DbIcon, Info } from "lucide-react";
 
 type Density = "minimal" | "balanced" | "intensive";
+const validSettingKeys = new Set(["notification_density", "notifications_enabled"]);
 
 export default function Settings() {
   const [density, setDensity] = useState<Density>("balanced");
@@ -17,7 +18,7 @@ export default function Settings() {
         const db = await getDb();
         // Load Settings
         const rows = await db.select<{ key: string, value: string }[]>(
-          `SELECT * FROM app_settings WHERE key IN ('notification_density', 'notifications_enabled')`,
+          `SELECT key, value FROM app_settings WHERE key IN ('notification_density', 'notifications_enabled')`,
         );
         for (const row of rows) {
           if (row.key === 'notification_density') setDensity(row.value as Density);
@@ -39,6 +40,9 @@ export default function Settings() {
 
   const saveSetting = async (key: string, val: string) => {
     try {
+      if (!validSettingKeys.has(key)) {
+        throw new Error("Invalid setting key");
+      }
       const db = await getDb();
       await db.execute(
         `INSERT OR REPLACE INTO app_settings (key, value) VALUES ($1, $2)`,
