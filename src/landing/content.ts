@@ -7,9 +7,13 @@
  *   - Sync ports, pairing window, transfer cap, cleartext caveat -> README.md
  *   - Product scope, domains, visual tokens -> 00_PROJECT_BRIEF.md
  *   - Release/signing limitations -> 10_ANDROID_PRODUCTION_READINESS.md
+ *   - Ingestion behaviour (one line in, one row out; no inference) ->
+ *     src/components/PasteIngest.tsx
+ *   - Uniqueness / silent duplicate drop -> src-tauri/src/lib.rs (title UNIQUE)
+ *   - Attention reason strings -> src/engine/urgencyScoring.ts
  *
- * Do not add a claim here that is not backed by one of those sources, and
- * never state a medical or health benefit.
+ * Do not add a claim here that is not backed by one of those sources, and never
+ * state a medical or health benefit.
  */
 
 export const REPO_URL = "https://github.com/karefined-eng/the-mainframe";
@@ -60,27 +64,33 @@ export const audience = [
   },
 ];
 
+/**
+ * The ingestion claim is deliberately narrow. The app splits input on newlines
+ * and writes one row per non-empty line into whichever domain the user already
+ * opened: there is no domain inference, no date extraction, and no status
+ * inference. Any copy here that implies otherwise is false.
+ */
 export const walkthrough = [
   {
     step: "01",
     title: "Paste the list you already have",
     body: "Copy a wall of unstructured text from wherever it currently lives and paste it in. Plain text is the only input path — there is no file-upload workflow and no format-specific parser to satisfy.",
     asset: "List ingestion",
-    alt: "The paste-ingestion panel of The Mainframe accepting an unstructured block of plain text and preparing it for parsing.",
+    alt: "The paste panel accepting an unstructured block of plain text, with the detected line count shown before import.",
   },
   {
     step: "02",
     title: "Watch it become structured items",
-    body: "Each pasted line becomes an item with a status, an optional target date, and the original text preserved alongside it. The raw paste stays attached, so nothing is silently dropped in the transform.",
+    body: "Each pasted line becomes one item, with the original line kept alongside it as raw import text — nothing is silently dropped in the transform. The app does not guess which domain a line belongs to, and it does not invent a due date for you.",
     asset: "Parsed items in a domain",
-    alt: "A domain list showing parsed items with status labels and target dates, each still linked to its original pasted text.",
+    alt: "A domain list showing one row per pasted line, each with its status and its original text preserved.",
   },
   {
     step: "03",
     title: "See what matters right now",
     body: "The dashboard surfaces a short cross-domain shortlist and states why each entry surfaced. It is a suggestion you can ignore, not a queue you are failing to clear.",
     asset: "Cross-domain attention view",
-    alt: "The What's Hot dashboard showing a short list of items pulled from different domains, each with the reason it surfaced.",
+    alt: "The What's Hot dashboard showing a few items pulled from different domains, each with the plain reason it surfaced.",
   },
   {
     step: "04",
@@ -95,7 +105,7 @@ export const pillars = [
   {
     icon: "clipboard-paste",
     title: "Bring in a list",
-    body: "Paste messy plain text and start with structure. No template to fill in, no import wizard, and the source text stays attached to the items it produced.",
+    body: "Paste messy plain text and start with structure. No template to fill in, no import wizard, and the source line stays attached to the row it produced.",
   },
   {
     icon: "flame",
@@ -147,18 +157,35 @@ export const platformRows = [
   },
 ];
 
-export const limitations = [
+/**
+ * Split into two registers, because these are not the same kind of claim.
+ * `guarantees` are things the product will not do to you. `cautions` are real
+ * limitations you should weigh. Rendering both as hazards made the page's
+ * strongest selling points read as warnings.
+ */
+export const guarantees = [
   {
     title: "No required account or cloud service",
     body: "The core workflow never calls a hosted backend. There is no sign-up, no subscription, and no telemetry service in the loop.",
   },
   {
-    title: "Data is local to each device by default",
-    body: "Every device holds its own SQLite database. Installing the app twice does not automatically merge two sets of data.",
+    title: "Data stays on the device by default",
+    body: "Every device holds its own SQLite database and works with no network connection.",
   },
   {
-    title: "LAN sync is not cloud sync",
-    body: "It moves a bounded snapshot of up to 64 MiB between your own devices, validated before it atomically replaces the target.",
+    title: "No background sync",
+    body: "Nothing moves between your devices unless you start a transfer yourself and pair once to authorise it.",
+  },
+  {
+    title: "Nothing is uploaded to build this page",
+    body: "This is a static page. It loads no third-party scripts, no analytics, and no external fonts.",
+  },
+];
+
+export const cautions = [
+  {
+    title: "Devices do not merge automatically",
+    body: "Installing the app on a second machine does not combine the two databases. A snapshot transfer copies one device's database over the other's — it is not a merge.",
   },
   {
     title: "The current LAN transport is cleartext",
@@ -174,7 +201,7 @@ export const limitations = [
   },
   {
     title: "Desktop builds are unsigned",
-    body: "Until platform signing is configured, desktop artifacts are unsigned and will trigger an operating-system warning on first launch.",
+    body: "Until platform signing is configured, desktop artifacts are unsigned and will trigger an operating-system warning on first launch. Only run a build you downloaded from this repository's own Actions tab.",
   },
 ];
 
@@ -184,6 +211,14 @@ export const contributionNotes = [
   "Do not attach database files or other private data to an issue. Sanitize screenshots first.",
   "Ideas and limitations are equally welcome. This is an early public release and the roadmap is still open.",
 ];
+
+/**
+ * Scope statement for the "Why" section, kept next to the audience claims so the
+ * page never implies more than the product does. No medical or health benefit is
+ * claimed anywhere on the page; this paragraph states that boundary explicitly.
+ */
+export const whatThisIsNot =
+  "The Mainframe is not a medical or therapeutic product and makes no claim about treating any condition. What it does aim at is narrower and honest: a dashboard that opens collapsed so nothing unfinished is thrown at you at once, and a blunt re-entry summary that tells you how far behind you are instead of hiding it.";
 
 export const techStack = [
   { label: "Shell and native core", value: "Tauri v2 with Rust" },

@@ -5,19 +5,10 @@
  * 00_PROJECT_BRIEF.md): near-black background, off-white text, one electric-blue
  * accent used sparingly.
  *
- * Revised against Impeccable's craft floor (reference/craft-floor.md):
- *   - Eyebrow/kicker labels above headings removed (absolute ban, no brief earns
- *     it back). Headings carry their own weight.
- *   - Card soup replaced with a ruled/lined structure: no repeated same-size
- *     icon+heading+text cards, and no nested cards anywhere.
- *   - Monospace restricted to code, data, and measurement. Decorative "technical"
- *     monospace removed.
- *   - No functional text below 11px; uppercase limited to short labels.
- *   - Browser surfaces (selection, caret, scrollbar, underline offset) themed
- *     from the palette instead of left at vendor defaults.
- *   - One authored motion moment, disabled under prefers-reduced-motion.
- *   - Depth declared once per element: borders only, no shadow-plus-border
- *     "ghost card", no zero-offset halos.
+ * Structure: dividers carry hierarchy, so the page has one bordered surface (the
+ * hero panel) and no repeated card chrome. Monospace is reserved for code, data,
+ * and measurement. Browser surfaces (selection, caret, scrollbar, underline
+ * offset) are themed from the palette rather than left at vendor defaults.
  *
  * Documented intentional exceptions are listed at the end of this file.
  */
@@ -75,6 +66,25 @@
 .lp a {
   text-underline-offset: 3px;
   text-decoration-thickness: 1px;
+}
+
+/* Low-emphasis link for secondary actions, so the primary button is the only
+ * button-shaped control in view and reads as the single next step. */
+.lp-textlink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--lp-text);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--lp-text) 35%, transparent);
+  padding: 8px 0;
+}
+
+.lp-textlink:hover {
+  color: var(--lp-accent);
+  text-decoration-color: var(--lp-accent);
 }
 
 .lp a:focus-visible,
@@ -224,6 +234,8 @@
   color: var(--lp-accent);
 }
 
+/* Sticky nav is hidden on narrow viewports rather than compressed; the page is
+ * a linear read, so the sections stay reachable by scrolling. */
 @media (min-width: 900px) {
   .lp-nav {
     display: flex;
@@ -855,9 +867,29 @@
   padding: 20px 0;
 }
 
+/* Sub-headings inside a section. Unlike an eyebrow, these sit below a section
+ * heading and label two genuinely different lists of claims. */
+.lp-subhead {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.006em;
+  margin: 34px 0 0;
+  color: var(--lp-text);
+}
+
+.lp-subhead--spaced {
+  margin-top: 46px;
+}
+
 .lp-trust svg {
   color: var(--lp-warning);
   margin-top: 2px;
+}
+
+/* Guarantees are not hazards: accent treatment so the product's strongest
+ * promises do not render in the same alarm register as its real limitations. */
+.lp-trust--good svg {
+  color: var(--lp-accent);
 }
 
 .lp-trust h3 {
@@ -1057,12 +1089,12 @@
  *    typography would break brand continuity. Changing it is a brand decision for
  *    the owner, not a polish fix.
  * 2. The closing band is full-bleed and coloured, with content aligned to the
- *    page grid inside .lp-wrap. The detector reads the nested wrap's direct child
- *    as flush against the band; the intended composition is kept (see above).
+ *    page grid inside .lp-wrap. The detector reports the direct child as flush
+ *    against the band; the intended composition is kept.
  * 3. The walkthrough keeps 01-04 step numerals because the sequence itself
  *    carries information the reader needs (an ordered loop).
- *
- * No border-left accent above 1px, no gradient text, no hard offset shadows, no
- * decorative blur, no emoji icons, no nested cards, and no shadow-plus-border
- * ghost cards appear in this file.
+ * 4. Two hardcoded values remain, both on the primary button (#071018 text on the
+ *    accent fill, #6bb0ff hover). The token set has no on-accent or accent-hover
+ *    value, and inventing tokens for one local exception would be worse than the
+ *    two literals.
  */

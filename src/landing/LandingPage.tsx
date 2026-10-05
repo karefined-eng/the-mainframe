@@ -11,20 +11,14 @@
  *     never as a tested or shipped release.
  *   - No medical or health claim is made. Cognitive load and re-entry friction
  *     are described as product design goals, not as treatment.
- *   - The primary CTA points at the GitHub Actions tab, matching the documented
- *     "download a build" instructions, instead of a release that does not exist.
- *   - Screenshot slots are honest placeholders. No stock productivity imagery
- *     and no fabricated product screenshot is presented as real.
+ *   - No product screenshot or mock asserts a capability the app does not have.
+ *     The hero panel is built from the real ingestion contract.
+ *   - Screenshot slots are honest placeholders. No stock productivity imagery.
  *
- * Revised against Impeccable's craft floor and polish playbook:
- *   - Eyebrow/kicker labels above headings removed (absolute ban).
- *   - Card soup replaced with a ruled/lined structure; no nested cards.
- *   - Monospace limited to code, data, and measurement.
- *   - Functional text floor raised to 11px; uppercase limited to short labels.
- *   - A fabricated version number was removed from the hero and footer. It was
- *     an internal package version, not a shipped artifact, so presenting it as a
- *     release identifier was a claim the project cannot yet support.
- *   - Illustrative hero sample data is labelled with a disclosure line.
+ * Screenshot production rule (deliberately NOT rendered into the page, because
+ * public marketing copy should not carry our internal checklist): every capture
+ * must come from sanitized sample data and must never include a real database, a
+ * pairing code, a LAN address, or keystore material.
  *
  * `data-od-id` anchors mark the major regions so the page can be patched
  * section by section.
@@ -43,6 +37,7 @@ import {
   Info,
   Lock,
   MessagesSquare,
+  ShieldCheck,
 } from "lucide-react";
 import { applyLandingMetadata } from "./metadata";
 import {
@@ -50,13 +45,15 @@ import {
   ISSUES_URL,
   REPO_URL,
   audience,
+  cautions,
   contributionNotes,
-  limitations,
+  guarantees,
   navLinks,
   pillars,
   platformRows,
   techStack,
   walkthrough,
+  whatThisIsNot,
 } from "./content";
 import "./landing.css";
 
@@ -80,24 +77,29 @@ function BrandMark({ size = 20 }: { size?: number }) {
   );
 }
 
-const rawPasteSample = [
-  "cert: AWS SAA - book exam slot",
-  "build: LAN snapshot diff viewer",
-  'buy: 27" 4K monitor',
-  "goal: run 10k under 50 min",
-  "write: post on offline-first storage",
-].join("\n");
-
-const parsedSample = [
-  { title: "AWS SAA", domain: "Certifications", meta: "Mar 14", accent: true },
-  { title: "LAN snapshot diff viewer", domain: "Build Ideas", meta: "no date", accent: false },
-  { title: '27" 4K monitor', domain: "Acquisitions", meta: "watching", accent: false },
-  { title: "Run 10k under 50 min", domain: "Goals", meta: "Jun 02", accent: false },
+/**
+ * Hero demo data. This mirrors what the real ingestion path actually does
+ * (src/components/PasteIngest.tsx): split on newlines, insert one row per
+ * non-empty line into the domain the user already had open, store the original
+ * line as `raw_import_text`, and infer nothing else. Titles below are the
+ * literal pasted lines for that reason. Attention reasons are quoted from the
+ * strings src/engine/urgencyScoring.ts can actually emit.
+ */
+const pastedLines = [
+  "AWS SAA - book exam slot",
+  "LAN snapshot diff viewer",
+  '27" 4K monitor',
+  "Run 10k under 50 min",
 ];
 
-const hotSample = [
-  { title: "AWS SAA study block", why: "3 sessions behind schedule" },
-  { title: "Client deliverable draft", why: "Recurring weekly item is due" },
+const insertedRows = pastedLines.map((line) => ({
+  title: line,
+  meta: "Not started · no date",
+}));
+
+const attentionRows = [
+  { title: "AWS SAA - book exam slot", why: "Due this week" },
+  { title: "LAN snapshot diff viewer", why: "No update in 21 days" },
 ];
 
 function Section({
@@ -126,18 +128,16 @@ function Section({
 
 /**
  * Honest placeholder for a product screenshot. Publishing real captures is
- * blocked on sanitized sample data, so the slot states the required asset and
- * the redaction rule instead of showing a stand-in image.
+ * blocked on sanitized sample data, so the slot names the capture that is
+ * coming and what it will show, rather than a stand-in image. The internal
+ * capture checklist stays out of public copy by design.
  */
-function ScreenshotSlot({ name, alt }: { name: string; alt: string }) {
+function ScreenshotSlot({ name, description }: { name: string; description: string }) {
   return (
     <figure className="lp-figure">
       <figcaption className="lp-figure-tag">Asset pending: {name}</figcaption>
-      <p>{alt}</p>
-      <p className="lp-figure-note">
-        Capture from sample data only. Never include a real database, a pairing code, a LAN address,
-        or keystore material. See <code>docs/LANDING_PAGE_PLAN.md</code>.
-      </p>
+      <p>{description}</p>
+      <p className="lp-figure-note">Screenshot coming with the first release.</p>
     </figure>
   );
 }
@@ -164,15 +164,9 @@ export default function LandingPage() {
               </a>
             ))}
           </nav>
-          <a
-            className="lp-header-cta"
-            href={REPO_URL}
-            target="_blank"
-            rel="noreferrer noopener"
-            data-od-id="nav-github"
-          >
+          <a className="lp-header-cta" href={REPO_URL} target="_blank" rel="noreferrer noopener">
             GitHub
-            <ExternalLink size={14} aria-hidden="true" />
+            <ExternalLink size={13} aria-hidden="true" />
           </a>
         </div>
       </header>
@@ -183,8 +177,8 @@ export default function LandingPage() {
           <div className="lp-wrap lp-hero-grid">
             <div>
               <h1 className="lp-h1" id="hero-heading">
-                Your calm command center for everything you&apos;re learning, building, pursuing, and
-                acquiring.
+                Your calm command center for everything you&apos;re learning, building, pursuing,
+                and acquiring.
               </h1>
               <p className="lp-sub">
                 The Mainframe is a private, local-first life management app for scattered projects,
@@ -219,8 +213,8 @@ export default function LandingPage() {
               <p className="lp-cta-note">
                 <strong>Read this first:</strong> there are no versioned public releases yet. Builds
                 live as GitHub Actions artifacts, and CI artifacts are not release downloads. Android
-                ships a signed release APK or an unsigned debug APK; desktop builds are unsigned until
-                platform signing is configured. <a href="#platforms">See platform status</a>.
+                ships a signed release APK or an unsigned debug APK; desktop builds are unsigned
+                until platform signing is configured. <a href="#platforms">See platform status</a>.
               </p>
             </div>
 
@@ -235,13 +229,13 @@ export default function LandingPage() {
                   offline
                 </span>
               </div>
-              <div className="lp-panel-body" aria-hidden="true">
+              <div className="lp-panel-body">
                 <div className="lp-step-block">
                   <p className="lp-panel-label">
                     <span className="lp-panel-num lp-mono">01</span>
                     Pasted text
                   </p>
-                  <pre className="lp-raw">{rawPasteSample}</pre>
+                  <pre className="lp-raw">{pastedLines.join("\n")}</pre>
                 </div>
                 <div className="lp-step-block">
                   <p className="lp-panel-label">
@@ -249,13 +243,11 @@ export default function LandingPage() {
                     Structured items
                   </p>
                   <div className="lp-rows">
-                    {parsedSample.map((row) => (
+                    {insertedRows.map((row) => (
                       <div className="lp-row" key={row.title}>
-                        <span className={row.accent ? "lp-tick lp-tick--accent" : "lp-tick"} />
+                        <span className="lp-tick" />
                         <span className="lp-row-title">{row.title}</span>
-                        <span className="lp-row-meta">
-                          {row.domain} · {row.meta}
-                        </span>
+                        <span className="lp-row-meta">{row.meta}</span>
                       </div>
                     ))}
                   </div>
@@ -266,7 +258,7 @@ export default function LandingPage() {
                     What&apos;s hot
                   </p>
                   <ul className="lp-hot">
-                    {hotSample.map((item) => (
+                    {attentionRows.map((item) => (
                       <li key={item.title}>
                         <strong>{item.title}</strong>
                         <span>{item.why}</span>
@@ -276,7 +268,8 @@ export default function LandingPage() {
                 </div>
               </div>
               <p className="lp-panel-disclosure">
-                Illustrative sample data, not a recorded session.
+                This is the whole transform. The app splits on newlines and files each line in the
+                list you had open — it does not guess a domain or invent a due date.
               </p>
             </div>
           </div>
@@ -286,7 +279,7 @@ export default function LandingPage() {
         <Section
           id="why"
           title="Built for people whose work does not fit in one list"
-          lede="Most life management tools are either a generic task list that has to be reshaped around your life, or a workspace so broad that maintaining it becomes the work. The Mainframe starts from the domains a person actually has: studies, builds, acquisitions, long-term goals, and ventures."
+          lede="Most life tools are either a generic task list you have to reshape around your life, or a workspace so broad that maintaining it becomes the work. The Mainframe starts from the lists a person actually keeps: studies, builds, acquisitions, long-term goals, and ventures."
         >
           <div className="lp-ruled lp-aud-grid">
             {audience.map((group) => (
@@ -297,10 +290,7 @@ export default function LandingPage() {
             ))}
           </div>
           <p className="lp-note">
-            <strong>What this is not.</strong> The Mainframe is not a medical or therapeutic product
-            and makes no claim about treating any condition. What it does aim at is narrower and
-            honest: a dashboard that opens collapsed so nothing unfinished is thrown at you at once,
-            and a blunt re-entry summary that tells you how far behind you are instead of hiding it.
+            <strong>What this is not.</strong> {whatThisIsNot}
           </p>
         </Section>
 
@@ -317,7 +307,7 @@ export default function LandingPage() {
                 <div className="lp-step-body">
                   <h3>{step.title}</h3>
                   <p>{step.body}</p>
-                  <ScreenshotSlot name={step.asset} alt={step.alt} />
+                  <ScreenshotSlot name={step.asset} description={step.alt} />
                 </div>
               </article>
             ))}
@@ -404,19 +394,37 @@ export default function LandingPage() {
             <strong>How to get a build:</strong> open the Actions tab, pick a <em>successful</em> run
             of the desktop or Android workflow, and download the artifact for your platform. Links to
             runs are not published here on purpose — an artifact only exists after a successful build,
-            and this page will not point you at a build that failed. Later, once versioning, signing,
-            and device testing are done, these will be replaced by versioned GitHub Releases.
+            and this page will not point you at a build that failed. When versioning, signing, and
+            device testing are done, these become versioned GitHub Releases.
           </p>
         </Section>
 
-        {/* 6. Trust and limitations */}
+        {/* 6. Trust: two registers, because these are not the same kind of claim */}
         <Section
           id="trust"
           title="The parts most landing pages leave out"
-          lede="You should know these before you put anything real into the app. They are stated here rather than buried in a footer."
+          lede="You should know these before you put anything real into the app. They are stated here rather than buried in a footer — split into what the app will never do to you, and what is genuinely limited today."
         >
-          <div className="lp-ruled lp-trust-grid">
-            {limitations.map((item) => (
+          <h3 className="lp-subhead" id="guarantees-heading">
+            What it will not do
+          </h3>
+          <div className="lp-ruled lp-trust-grid" aria-labelledby="guarantees-heading">
+            {guarantees.map((item) => (
+              <article className="lp-trust lp-trust--good" key={item.title}>
+                <ShieldCheck size={18} aria-hidden="true" strokeWidth={1.75} />
+                <div>
+                  <h3>{item.title}</h3>
+                  <p>{item.body}</p>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <h3 className="lp-subhead lp-subhead--spaced" id="cautions-heading">
+            What you should know before trusting it
+          </h3>
+          <div className="lp-ruled lp-trust-grid" aria-labelledby="cautions-heading">
+            {cautions.map((item) => (
               <article className="lp-trust" key={item.title}>
                 <AlertTriangle size={18} aria-hidden="true" strokeWidth={1.75} />
                 <div>
@@ -474,8 +482,8 @@ export default function LandingPage() {
             <h2 id="final-heading">Try it on one list you already have</h2>
             <p>
               Copy the messiest list you are currently carrying around, paste it in, and see whether
-              the structure it produces matches how you actually think about the work. If it does not,
-              that is useful feedback too.
+              the structure it produces matches how you actually think about the work. If it does
+              not, that is useful feedback too.
             </p>
             <div className="lp-cta-row">
               <a
