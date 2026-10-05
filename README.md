@@ -52,3 +52,5 @@ npm run tauri android dev
 
 - [Android and cross-device sync architecture](09_ANDROID_SYNC_ARCHITECTURE.md)
 - [Android production-readiness guide](10_ANDROID_PRODUCTION_READINESS.md)
+
+- [Market and product research](11_MARKET_AND_PRODUCT_RESEARCH.md)
