@@ -51,14 +51,17 @@ export default function Sidebar({
       `}>
       {/* Brand + collapse toggle */}
       <div className="flex items-center justify-between">
-        {!collapsed && (
-          <span
-            className="text-lg font-bold tracking-widest uppercase text-text cursor-pointer"
-            onClick={() => onNavigate("")}
-          >
-            The Mainframe
-          </span>
-        )}
+        <span
+          className="flex items-center gap-2 cursor-pointer"
+          onClick={() => onNavigate("")}
+        >
+          <img src="/logo.svg" alt="The Mainframe logo" className="h-5 w-5 shrink-0" draggable={false} />
+          {!collapsed && (
+            <span className="whitespace-nowrap text-base font-bold tracking-widest uppercase text-text">
+              The Mainframe
+            </span>
+          )}
+        </span>
         <button
           onClick={onToggleCollapse}
           className="rounded-lg p-1.5 text-text-muted hover:text-text hover:bg-surface transition-colors cursor-pointer"
