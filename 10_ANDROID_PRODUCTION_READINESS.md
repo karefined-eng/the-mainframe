@@ -33,15 +33,27 @@ so local and CI builds use the same project.
 ## GitHub Actions artifacts
 
 `.github/workflows/android.yml` installs Node, Rust, the Android SDK/NDK, and the
-`aarch64-linux-android` target before running `npm ci` and the Android debug build.
-The unsigned/debug APK is uploaded as a workflow artifact for internal testing.
-It is not suitable for Google Play.
+`aarch64-linux-android` target before running `npm ci`. With no signing secrets,
+it builds and uploads the unsigned/debug APK as the
+`mainframe-android-debug-aarch64` artifact. When all four signing secrets are
+present, it instead builds and uploads the signed release APK as
+`mainframe-android-release-aarch64`.
 
-The workflow does not sign artifacts. If CI signing is added later, store the
-keystore as a base64-encoded `ANDROID_KEYSTORE_BASE64` repository secret and
-provide `ANDROID_KEY_ALIAS`, `ANDROID_KEY_PASSWORD`, and
-`ANDROID_STORE_PASSWORD` as repository secrets or protected environment
-variables. Do not add those values to the workflow file or commit a keystore.
+Configure these exact **repository or protected-environment secrets** to enable
+release signing:
+
+| Secret | Value |
+| --- | --- |
+| `ANDROID_KEYSTORE_BASE64` | Base64 encoding of the `.jks` keystore |
+| `ANDROID_KEYSTORE_PASSWORD` | Keystore password |
+| `ANDROID_KEY_ALIAS` | `mainframe-upload` |
+| `ANDROID_KEY_PASSWORD` | Password for the `mainframe-upload` key |
+
+The workflow writes the keystore only inside the ephemeral GitHub runner,
+does not print secret values, and removes the temporary files after the build.
+If any one of the four secrets is absent, the workflow intentionally falls
+back to the unsigned/debug artifact. Do not commit the keystore or
+`keystore.properties`.
 
 ## 1. Create a production signing key
 
@@ -61,7 +73,7 @@ Do **not** commit `mainframe-upload.jks` to GitHub. Losing this key can prevent 
 
 For Google Play, use **Play App Signing** and treat this key as the upload key.
 
-## 2. Configure release signing
+## 2. Configure local release signing
 
 Create this private file:
 
@@ -127,7 +139,9 @@ src-tauri/gen/android/keystore.properties
 *.keystore
 ```
 
-The Android signing key must be backed up securely. Never store it in the repository.
+The Android signing key must be backed up securely. Never store it in the
+repository. Keep the application ID `com.kwadw.the-mainframe` unchanged so
+updates install over the same app.
 
 ## 3. Sync limitations and security
 
@@ -209,6 +223,13 @@ versionName = 1.0.0
 ```
 
 Every later Google Play release must increase `versionCode`.
+
+Before a release build, update the app version in
+`src-tauri/tauri.conf.json`, regenerate or build the Android project, and verify
+the generated `src-tauri/gen/android/app/tauri.properties` has a strictly
+larger `tauri.android.versionCode`. That generated properties file is ignored
+and must not be committed. The workflow currently builds the configured
+version; it does not auto-increment versions.
 
 Keep this application ID stable:
 

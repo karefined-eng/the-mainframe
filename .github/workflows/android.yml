@@ -10,6 +10,12 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+      SIGNING_ENABLED: ${{ secrets.ANDROID_KEYSTORE_BASE64 != '' && secrets.ANDROID_KEYSTORE_PASSWORD != '' && secrets.ANDROID_KEY_ALIAS != '' && secrets.ANDROID_KEY_PASSWORD != '' }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -39,12 +45,43 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
 
-      - name: Build Android debug APK
+      - name: Configure release signing
+        if: env.SIGNING_ENABLED == 'true'
+        shell: bash
+        run: |
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > src-tauri/gen/android/mainframe-upload-keystore.jks
+          {
+            printf 'keyAlias=%s\n' "$ANDROID_KEY_ALIAS"
+            printf 'keyPassword=%s\n' "$ANDROID_KEY_PASSWORD"
+            printf 'storeFile=%s\n' "$GITHUB_WORKSPACE/src-tauri/gen/android/mainframe-upload-keystore.jks"
+            printf 'storePassword=%s\n' "$ANDROID_KEYSTORE_PASSWORD"
+          } > src-tauri/gen/android/keystore.properties
+
+      - name: Build signed Android release APK
+        if: env.SIGNING_ENABLED == 'true'
+        run: npm run tauri android build -- --release --apk --target aarch64
+
+      - name: Build unsigned Android debug APK
+        if: env.SIGNING_ENABLED != 'true'
         run: npm run tauri android build -- --debug --target aarch64
 
+      - name: Upload signed release APK
+        if: env.SIGNING_ENABLED == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: mainframe-android-release-aarch64
+          if-no-files-found: error
+          path: src-tauri/gen/android/app/build/outputs/apk/release/*-release.apk
+
       - name: Upload unsigned debug APK
+        if: env.SIGNING_ENABLED != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: mainframe-android-debug-aarch64
           if-no-files-found: error
           path: src-tauri/gen/android/app/build/outputs/apk/debug/*-debug.apk
+
+      - name: Remove signing material
+        if: always() && env.SIGNING_ENABLED == 'true'
+        shell: bash
+        run: rm -f src-tauri/gen/android/keystore.properties src-tauri/gen/android/mainframe-upload-keystore.jks
