@@ -16,13 +16,15 @@ This is arguably the single highest-leverage gap, and it's about you specificall
 
 ## 2. Cross-Device Reality Check
 
-The project brief specifies Windows desktop + Android from one Tauri codebase, and defers sync ("last-write-wins is sufficient... single user, 1–2 devices"). What's never been made explicit: **which device is authoritative when they diverge, and what actually happens when you open the Android app having last edited on Windows** (or vice versa) with no sync built yet.
+> **Historical note:** This gap predates the current opt-in LAN snapshot sync implementation. The remaining product question is how users should handle divergent snapshots; sync is not automatic cloud reconciliation.
 
-Without sync, two SQLite files — one per device — will silently diverge the moment you use both. This isn't a "later" problem if you intend to use the Android build at all in v1; it's a day-one problem for anyone using two devices, which you clearly do (Windows Latitude 7390, Android phone, per your existing work patterns across other projects).
+The project brief specifies Windows desktop + Android from one Tauri codebase, and originally deferred sync ("last-write-wins is sufficient... single user, 1–2 devices"). The current implementation provides deliberate, user-triggered transfers, but does not silently decide which device is authoritative.
 
-**This needs an explicit decision, not a deferral by default:**
-- **Option A (recommended for genuine v1 simplicity):** Windows is the sole authoritative device for v1. The Android build is view-only, or simply not built/installed yet, until sync exists. This keeps the "no sync" decision honest instead of quietly creating two independently-diverging data stores.
-- **Option B:** manual export/import between devices (reusing the D1 backup/export mechanism already specified) as a deliberate, user-triggered "sync" — no automatic reconciliation, but at least a known, repeatable way to move state from one device to the other without silent divergence.
+Without a deliberate transfer, two SQLite files — one per device — can diverge the moment you use both. This remains a day-one product concern for anyone using two devices: the current sync flow is user-triggered and snapshot-based, not a background merge service.
+
+**This still needs an explicit product decision, not a deferral by default:**
+- **Option A (recommended for genuine v1 simplicity):** Windows is the sole authoritative device for v1. The Android build is view-only, or transfers are treated as one-way snapshots. This keeps the data authority explicit instead of quietly creating two independently-diverging data stores.
+- **Option B:** user-triggered transfers in either direction — no automatic reconciliation, but a known, repeatable way to move state from one device to the other. The user must back up first and confirm replacement.
 
 Whichever you pick, it should be stated in `00_PROJECT_BRIEF.md`'s decisions table, not left implicit.
 

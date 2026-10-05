@@ -29,8 +29,8 @@ The user currently holds multiple lists across phone and laptop with no single p
 | Platform strategy | ONE codebase → Windows native desktop (.exe) + Android (.apk). No separate mobile framework. |
 | Framework | **Tauri v2** (Rust backend + React/Tailwind frontend). Tauri 2's mobile support covers Android from the same project as the desktop build. |
 | Local storage | **SQLite**, accessed via `tauri-plugin-sql`. Same DB file format across platforms. |
-| Sync/multi-device | **Local Wi-Fi Network Sync** (Last-write-wins resolution) between Windows and Android. Devices sync when connected to the same local network/port. |
-| Auth/security | Not in v1. No DIDs, no Passkeys, no BitLocker/AES-GCM design work. A local passphrase unlocking a SQLCipher-encrypted DB file is the ceiling of what's needed right now. The device disk is already the trust boundary. |
+| Sync/multi-device | **Opt-in local Wi-Fi snapshot sync** between supported desktop and Android builds. Pairing is one-time and time-limited; transfers are bounded and validated before replacement. This is not automatic cloud sync or conflict-free multi-user collaboration. |
+| Auth/security | No accounts, DIDs, Passkeys, or public server. LAN sync uses a one-time bearer pairing token scoped to a trusted private network. The current HTTP transport is cleartext, so the sync port must never be exposed to the public Internet or untrusted networks. Device storage remains the primary trust boundary. |
 | Data ingestion | Plain-text paste only. NOT file upload, NOT format-specific parsers for MD/CSV/XLSX/PDF. User copies existing lists from wherever (Notion, notes app, anywhere) and pastes as plain text into a text box. One parsing code path: plain text → structured rows. This was explicitly simplified down from an earlier multi-format ingestion pipeline concept. |
 | New task entry | Same mechanism as ingestion — type or paste directly into the dashboard. No file round-trip ever, for either bulk import or single new items. |
 | Tagging | Deferred. No semantic tagging system in v1. Structure first, tag later once real usage patterns are known. |

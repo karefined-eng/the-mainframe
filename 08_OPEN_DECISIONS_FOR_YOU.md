@@ -4,6 +4,8 @@ Purpose: this document turns the seven unresolved gaps identified in `07_ADDITIO
 
 How to use this: answer each question in your own words, in whatever length feels right — a sentence is fine, a paragraph is fine. Once you've answered all seven, I'll fold your answers back into `00_PROJECT_BRIEF.md`'s decisions table and update any downstream docs (schema, notification engine) that depend on the outcome.
 
+> **Status note:** This file contains the original product questions and is partly superseded by implementation. LAN sync now exists as an opt-in, one-time-paired local snapshot transfer. The questions below remain useful for product behavior and UX, but should not be read as evidence that sync is absent.
+
 ---
 
 ## Question 1 — What's the "it worked" moment?
@@ -18,7 +20,7 @@ How to use this: answer each question in your own words, in whatever length feel
 
 ## Question 2 — When Windows and Android disagree, which one is right?
 
-**Context:** You're building for both Windows desktop and Android from one Tauri codebase, but v1 deliberately has no sync between devices (this was a scope cut to keep things simple). The problem: if you edit something on your phone, then open the Windows app later, they now have two different, disagreeing versions of your data — and nothing currently decides which version wins, or whether that's even allowed to happen.
+**Context:** You're building for both Windows desktop and Android from one Tauri codebase, with deliberate local snapshot transfers between devices. The current flow does not provide automatic reconciliation: if you edit something on your phone and later transfer a desktop snapshot, you must understand the direction and replacement behavior.
 
 **Your two real options:**
 - **Option A — Windows is boss.** For v1, only the Windows desktop app is where you actually add/edit things. The Android app either isn't built yet, or is view-only (you can look, but not change anything from your phone).
