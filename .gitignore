@@ -27,3 +27,4 @@ dist-ssr
 imports/
 
 dist-installers/
+.zcode/

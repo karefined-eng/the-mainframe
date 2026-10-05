@@ -1,4 +1,4 @@
-﻿[package]
+[package]
 name = "tauri-app"
 version = "0.1.0"
 description = "A private, local-first life management app for desktop and Android."

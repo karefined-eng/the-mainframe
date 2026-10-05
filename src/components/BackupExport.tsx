@@ -3,14 +3,16 @@ import { Download } from "lucide-react";
 import type { DomainKey } from "../App";
 import { getDb, domains } from "../App";
 
-const validDomains = new Set(domains.map((d) => d.key));
+// Resolved lazily: a module-level read of `domains` would run during the
+// App.tsx <-> BackupExport.tsx circular import, before App.tsx initializes it.
+const validDomains = () => new Set(domains.map((d) => d.key));
 
 export default function BackupExport() {
   const [status, setStatus] = useState<string | null>(null);
 
   const exportDomainText = async (domain: DomainKey) => {
     try {
-      if (!validDomains.has(domain)) {
+      if (!validDomains().has(domain)) {
         throw new Error("Invalid domain");
       }
       const db = await getDb();
