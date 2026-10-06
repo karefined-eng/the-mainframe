@@ -178,7 +178,7 @@ export const guarantees = [
   },
   {
     title: "Nothing is uploaded to build this page",
-    body: "This is a static page. It loads no third-party scripts, no analytics, and no external fonts.",
+    body: "This is a static page with no third-party scripts and no external fonts. The only measurement is the host's own cookie-free page-view counter — no accounts, no cross-site tracking, no personal data.",
   },
 ];
 

@@ -25,6 +25,7 @@
  */
 
 import { useEffect, type ReactNode } from "react";
+import { Analytics } from "@vercel/analytics/react";
 import {
   AlertTriangle,
   ArrowLeftRight,
@@ -140,6 +141,10 @@ export default function LandingPage() {
 
   return (
     <div className="lp">
+      {/* First-party, cookie-free page-view counting, served from this site's
+       * own origin. Mounted only here — the packaged app renders no landing
+       * page and collects no telemetry. */}
+      <Analytics />
       <a className="lp-skip" href="#hero">
         Skip to main content
       </a>
