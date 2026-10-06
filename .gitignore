@@ -30,3 +30,5 @@ dist-installers/
 .zcode/
 .vercel
 .vercel/
+
+.env*
