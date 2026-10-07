@@ -20,6 +20,12 @@ pub struct SyncState {
     pub is_broadcasting: Arc<AtomicBool>,
     pub pin: Arc<Mutex<Option<String>>>,
     pub pin_expires_at: Arc<Mutex<Option<Instant>>>,
+    /// When the server was last stopped; start_sync_server waits briefly for
+    /// the OS to release the port (tiny_http closes the listener lazily).
+    pub stopped_at: Arc<Mutex<Option<Instant>>>,
+    /// Set by stop_sync_server; the request loop checks it every iteration so
+    /// the thread (and the listener socket it keeps alive) exits promptly.
+    pub is_stopped: Arc<AtomicBool>,
 }
 
 impl Default for SyncState {
@@ -29,6 +35,8 @@ impl Default for SyncState {
             is_broadcasting: Arc::new(AtomicBool::new(false)),
             pin: Arc::new(Mutex::new(None)),
             pin_expires_at: Arc::new(Mutex::new(None)),
+            stopped_at: Arc::new(Mutex::new(None)),
+            is_stopped: Arc::new(AtomicBool::new(true)),
         }
     }
 }
@@ -42,7 +50,68 @@ fn get_db_path(app: &AppHandle) -> Result<PathBuf, String> {
         })
         .map_err(|e| e.to_string())
 }
+/// Flush WAL content into the main DB file before it is copied for a sync.
+///
+/// The SQL plugin keeps the database in WAL journal mode; recent writes live in
+/// `mainframe.db-wal` until a checkpoint. Copying only `mainframe.db` would
+/// broadcast a stale snapshot (integrity_check still passes, so the receiver
+/// cannot tell). A TRUNCATE checkpoint folds the WAL back into the main file,
+/// so the file copy is complete.
+fn checkpoint_wal(db_path: &PathBuf) -> Result<(), String> {
+    let conn = rusqlite::Connection::open(db_path)
+        .map_err(|e| format!("Failed to open database for checkpoint: {}", e))?;
+    let busy: i64 = conn
+        .query_row("PRAGMA wal_checkpoint(TRUNCATE);", [], |row| row.get(0))
+        .map_err(|e| format!("WAL checkpoint failed: {}", e))?;
+    // Column 0 = busy flag (0 = fully checkpointed). Non-zero means some frames
+    // remain in the WAL because other connections hold read locks; serving a
+    // snapshot then risks the stale-data bug, so refuse loudly instead.
+    if busy != 0 {
+        return Err("Database is busy; close other views and try serving again.".to_string());
+    }
+    Ok(())
+}
 
+/// Choose the IP address to advertise in the QR code and UDP beacon.
+///
+/// `local_ip_address::local_ip()` can pick a non-Wi-Fi interface on Android
+/// (e.g. cellular) or a virtual adapter on desktop, which makes the advertised
+/// address unreachable for the peer. Instead, open a UDP socket toward a
+/// private-network target and read the local endpoint the OS actually routes
+/// through - no packets are sent. Enumerate all interfaces as a fallback and
+/// prefer private IPv4 addresses (sync is private-network only by design).
+fn pick_advertised_ip() -> Result<IpAddr, String> {
+    // 1) Routing probe: the OS picks the interface that would reach the
+    //    private target; this mirrors what the peer connection will use.
+    if let Ok(sock) = UdpSocket::bind("0.0.0.0:0") {
+        if sock.connect("192.168.255.255:9378").is_ok() {
+            if let Ok(addr) = sock.local_addr() {
+                if is_local_target(addr.ip()) && !addr.ip().is_loopback() {
+                    return Ok(addr.ip());
+                }
+            }
+        }
+    }
+
+    // 2) Fallback: first private IPv4 from the routing tables via std (no
+    //    extra crates); connect probes for a couple of common subnets.
+    for target in ["192.168.0.1:9378", "10.0.0.1:9378", "172.16.0.1:9378"] {
+        if let Ok(sock) = UdpSocket::bind("0.0.0.0:0") {
+            if sock.connect(target).is_ok() {
+                if let Ok(addr) = sock.local_addr() {
+                    let ip = addr.ip();
+                    if matches!(ip, IpAddr::V4(_)) && is_local_target(ip) && !ip.is_loopback() {
+                        return Ok(ip);
+                    }
+                }
+            }
+        }
+    }
+
+    // 3) Last resort: previous behavior.
+    local_ip_address::local_ip()
+        .map_err(|e| format!("Could not determine a local network address: {}", e))
+}
 fn generate_pin() -> String {
     let n: u32 = rand::thread_rng().gen_range(100_000..=999_999);
     format!("{}-{}", &n.to_string()[..3], &n.to_string()[3..])
@@ -100,7 +169,27 @@ pub fn start_sync_server(app: AppHandle, state: State<'_, SyncState>) -> Result<
         return Err("Server already running".to_string());
     }
 
-    let local_ip = local_ip_address::local_ip().map_err(|e| e.to_string())?;
+    // After a stop, tiny_http closes the listener asynchronously. Wait (max
+    // ~3s) for the port to be released so the rebind does not fail with
+    // WSAEADDRINUSE (10048) - the "port already in use" users saw after
+    // stopping a broadcast and trying to start it again.
+    let stopped = *state.stopped_at.lock().unwrap();
+    if let Some(t) = stopped {
+        while t.elapsed() < Duration::from_secs(5) {
+            let port_free = std::net::TcpListener::bind(("0.0.0.0", SYNC_PORT)).is_ok();
+            if port_free {
+                break;
+            }
+            // The old handler thread only re-checks the stop flag when a
+            // request wakes the accept loop. Nudge it with a throwaway
+            // loopback connection so it exits and releases the port.
+            let _ = std::net::TcpStream::connect(("127.0.0.1", SYNC_PORT));
+            thread::sleep(Duration::from_millis(250));
+        }
+        *state.stopped_at.lock().unwrap() = None;
+    }
+
+    let local_ip = pick_advertised_ip().map_err(|e| e.to_string())?;
     let advertised_addr = format!("{}:{}", local_ip, SYNC_PORT);
     // Bind all interfaces so Android can accept connections through the active
     // Wi-Fi or hotspot interface. The advertised address remains the selected
@@ -120,8 +209,16 @@ pub fn start_sync_server(app: AppHandle, state: State<'_, SyncState>) -> Result<
     let db_path = get_db_path(&app)?;
 
     let server_arc_clone = server_arc.clone();
+    let stop_flag = state.is_stopped.clone();
+    stop_flag.store(false, Ordering::SeqCst);
     thread::spawn(move || {
         for request in server_arc_clone.incoming_requests() {
+            if stop_flag.load(Ordering::SeqCst) {
+                // stop_sync_server was called: exit the loop so the thread
+                // drops its Server Arc and the listener socket closes,
+                // releasing port 9377 promptly.
+                break;
+            }
             let path = request.url().split('?').next().unwrap_or_default();
             let peer_ip = request.remote_addr().map(SocketAddr::ip);
 
@@ -135,8 +232,12 @@ pub fn start_sync_server(app: AppHandle, state: State<'_, SyncState>) -> Result<
                 .unwrap_or(false);
             let provided_pin = request_header(&request, "Authorization")
                 .and_then(|value| value.strip_prefix("Bearer "))
-                .map(str::trim);
-            let expected_pin = pin_state.lock().unwrap().clone();
+                .map(str::trim)
+                // Normalize: the display PIN is formatted ("482-391") but
+                // clients send the six raw digits. Compare digits only,
+                // otherwise every request fails with 401.
+                .map(|p| p.replace('-', ""));
+            let expected_pin = pin_state.lock().unwrap().clone().map(|p| p.replace('-', ""));
             let pin_valid = pin_expires_at
                 .lock()
                 .unwrap()
@@ -151,6 +252,16 @@ pub fn start_sync_server(app: AppHandle, state: State<'_, SyncState>) -> Result<
 
             if !authed {
                 let _ = request.respond(unauthorized());
+                continue;
+            }
+
+            // Flush WAL first: a file copy without checkpointing would ship a
+            // stale snapshot missing recent writes (see checkpoint_wal doc).
+            if let Err(err) = checkpoint_wal(&db_path) {
+                let _ = request.respond(
+                    Response::from_string(format!("Sync refused: {}", err))
+                        .with_status_code(503),
+                );
                 continue;
             }
 
@@ -225,12 +336,19 @@ pub fn start_sync_server(app: AppHandle, state: State<'_, SyncState>) -> Result<
 
 #[tauri::command]
 pub fn stop_sync_server(state: State<'_, SyncState>) -> Result<(), String> {
+    state.is_stopped.store(true, Ordering::SeqCst);
     state.is_broadcasting.store(false, Ordering::SeqCst);
     *state.pin.lock().unwrap() = None;
     *state.pin_expires_at.lock().unwrap() = None;
     let mut server_guard = state.server.lock().unwrap();
     if let Some(server) = server_guard.take() {
+        // unblock() wakes the accept loop; the listener socket only closes
+        // (releasing port 9377) once every Arc<Server> clone is dropped. The
+        // handler thread exits its loop shortly after unblock, but that exit
+        // is asynchronous - so we must NOT try to rebind immediately. Track
+        // stop-time so start_sync_server can wait for the port to be free.
         server.unblock();
+        *state.stopped_at.lock().unwrap() = Some(Instant::now());
     }
     Ok(())
 }

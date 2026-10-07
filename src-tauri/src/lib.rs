@@ -246,14 +246,23 @@ pub fn run() {
         },
     ];
 
-    tauri::Builder::default()
+    let mut builder = tauri::Builder::default();
+    builder = builder
         .manage(sync::SyncState::default())
         .plugin(tauri_plugin_opener::init())
         .plugin(
             tauri_plugin_sql::Builder::default()
                 .add_migrations("sqlite:mainframe.db", migrations)
                 .build(),
-        )
+        );
+
+    // barcode-scanner is mobile-only; the crate compiles empty on desktop.
+    #[cfg(any(target_os = "android", target_os = "ios"))]
+    {
+        builder = builder.plugin(tauri_plugin_barcode_scanner::init());
+    }
+
+    builder
         .invoke_handler(tauri::generate_handler![
             sync::start_sync_server,
             sync::stop_sync_server,

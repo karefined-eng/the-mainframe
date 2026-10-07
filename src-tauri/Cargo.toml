@@ -28,4 +28,5 @@ ureq = "2.9"
 local-ip-address = "0.6.3"
 rand = "0.8"
 rusqlite = { version = "0.32", features = ["bundled"] }
+tauri-plugin-barcode-scanner = "2.5.1"
 

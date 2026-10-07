@@ -4,6 +4,7 @@ import { listen } from "@tauri-apps/api/event";
 import { Server, Download, RefreshCw, CheckCircle2, AlertTriangle, Loader2, QrCode, Search, Laptop, KeyRound } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { useSyncContext } from "../context/SyncContext";
+import { scan, Format } from "@tauri-apps/plugin-barcode-scanner";
 
 export default function SyncPanel() {
   const { setSyncInProgress } = useSyncContext();
@@ -20,6 +21,9 @@ export default function SyncPanel() {
 
   const [discoveredDevices, setDiscoveredDevices] = useState<{ ip: string; name: string }[]>([]);
   const [isDiscovering, setIsDiscovering] = useState(false);
+
+  const [scanStatus, setScanStatus] = useState<"idle" | "scanning" | "error">("idle");
+  const [scanError, setScanError] = useState<string | null>(null);
 
   // Stop server and listen for db_swap_complete event on mount/unmount
   useEffect(() => {
@@ -95,6 +99,42 @@ export default function SyncPanel() {
           : "Failed to sync. Please check the connection and try again."
       );
       setPullStatus("error");
+    }
+  };
+
+  // Native camera scan (Android). The desktop QR encodes
+  // http://<ip>/?pin=<6digits>; parse and auto-fill both fields.
+  const handleScanQr = async () => {
+    try {
+      setScanStatus("scanning");
+      setScanError(null);
+      const result = await scan({ formats: [Format.QRCode], cameraDirection: "back" });
+      const value = result?.content;
+      if (!value) {
+        setScanStatus("error");
+        setScanError("No QR code detected. Try again.");
+        return;
+      }
+      const match = value.match(/^http:\/\/([\d.]+)(?::(\d+))?\/\?pin=(\d{6})$/);
+      if (!match) {
+        setScanStatus("error");
+        setScanError("That QR code is not a Mainframe connection code.");
+        return;
+      }
+      const [, ip, port, pin] = match;
+      setPullIp(port && port !== "9377" ? `${ip}:${port}` : ip);
+      setPullPin(`${pin.slice(0, 3)}-${pin.slice(3)}`);
+      setScanStatus("idle");
+      // Auto-start the pull with the scanned details.
+      await handlePull(`${ip}${port && port !== "9377" ? `:${port}` : ""}`, `${pin.slice(0, 3)}-${pin.slice(3)}`);
+    } catch (err: any) {
+      const msg = String(err?.message || err);
+      setScanStatus("error");
+      setScanError(
+        msg.includes("denied") || msg.toLowerCase().includes("permission")
+          ? "Camera permission denied. Enable it in system settings to scan."
+          : "Scan cancelled or failed. Please try again."
+      );
     }
   };
 
@@ -230,6 +270,22 @@ export default function SyncPanel() {
               </div>
             )}
           </div>
+
+          <button
+            onClick={handleScanQr}
+            disabled={scanStatus === "scanning" || pullStatus === "pulling"}
+            className="flex w-full items-center justify-center gap-2 rounded-xl border border-accent/40 bg-accent/5 px-6 py-3.5 text-sm font-medium text-accent transition-colors hover:bg-accent/10 disabled:opacity-50 cursor-pointer"
+          >
+            {scanStatus === "scanning" ? <Loader2 className="h-4 w-4 animate-spin" /> : <QrCode className="h-4 w-4" />}
+            {scanStatus === "scanning" ? "Opening camera..." : "Scan Connection QR"}
+          </button>
+
+          {scanStatus === "error" && scanError && (
+            <div className="flex items-start gap-3 rounded-xl border border-danger/20 bg-danger/5 p-4 text-sm text-danger">
+              <AlertTriangle className="h-5 w-5 shrink-0" />
+              <span className="leading-relaxed">{scanError}</span>
+            </div>
+          )}
 
           <div className="mt-auto flex flex-col gap-4">
             <div className="relative flex items-center gap-4">
