@@ -28,3 +28,10 @@ imports/
 
 dist-installers/
 .zcode/
+
+# Vercel CLI state and build output (parity with public-landing-page)
+.vercel
+.vercel/
+
+# Local env files
+.env*
