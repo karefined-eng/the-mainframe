@@ -1,0 +1,3348 @@
+<!doctype html>
+<html lang="en">
+<head>
+<style data-fullcalendar=""></style>
+<style type="text/css" data-vite-dev-id="C:/Users/asamoah/the-mainframe/src/landing/landing.css">/*
+ * Styles for the public landing page (/welcome).
+ *
+ * Uses the same locked design tokens as the application (src/index.css,
+ * 00_PROJECT_BRIEF.md): near-black background, off-white text, one electric-blue
+ * accent used sparingly.
+ *
+ * Structure: dividers carry hierarchy, so the page has one bordered surface (the
+ * hero panel) and no repeated card chrome. Monospace is reserved for code, data,
+ * and measurement. Browser surfaces (selection, caret, scrollbar, underline
+ * offset) are themed from the palette rather than left at vendor defaults.
+ *
+ * Documented intentional exceptions are listed at the end of this file.
+ */
+
+.lp {
+  --lp-max: 1140px;
+  --lp-gutter: clamp(20px, 5vw, 40px);
+  --lp-accent: var(--color-accent, #4a9eff);
+  --lp-surface: var(--color-surface, #1a1a1d);
+  --lp-surface-alt: var(--color-surface-alt, #141518);
+  --lp-border: var(--color-border, #1f2024);
+  --lp-text: var(--color-text, #f2f2f0);
+  --lp-muted: var(--color-text-muted, #b1b3b7);
+  --lp-bg: var(--color-bg, #0e0e10);
+  --lp-warning: var(--color-warning, #fbbf24);
+  --lp-rule: 1px solid var(--lp-border);
+
+  background: var(--lp-bg);
+  color: var(--lp-text);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+  min-height: 100dvh;
+  scrollbar-color: var(--lp-border) transparent;
+  scrollbar-width: thin;
+  caret-color: var(--lp-accent);
+}
+
+/* Monospace is reserved for code, data, and measurement. */
+.lp-mono {
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Browser surfaces ───────────────────────────────────── */
+
+.lp ::selection {
+  background: color-mix(in srgb, var(--lp-accent) 34%, transparent);
+  color: var(--lp-text);
+}
+
+.lp ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.lp ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.lp ::-webkit-scrollbar-thumb {
+  background: var(--lp-border);
+  border-radius: 999px;
+}
+
+.lp a {
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+/* Low-emphasis link for secondary actions, so the primary button is the only
+ * button-shaped control in view and reads as the single next step. */
+.lp-textlink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--lp-text);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--lp-text) 35%, transparent);
+  padding: 8px 0;
+}
+
+.lp-textlink:hover {
+  color: var(--lp-accent);
+  text-decoration-color: var(--lp-accent);
+}
+
+.lp a:focus-visible,
+.lp button:focus-visible {
+  outline: 2px solid var(--lp-accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.lp-skip {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 50;
+  padding: 10px 16px;
+  background: var(--lp-surface);
+  color: var(--lp-text);
+  border: 1px solid var(--lp-accent);
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.lp-skip:focus {
+  left: 12px;
+  top: 12px;
+}
+
+/* ── Layout primitives ──────────────────────────────────── */
+
+.lp-wrap {
+  width: 100%;
+  max-width: var(--lp-max);
+  margin: 0 auto;
+  padding: 0 var(--lp-gutter);
+}
+
+.lp-section {
+  padding: clamp(52px, 7vw, 88px) 0;
+  border-top: var(--lp-rule);
+}
+
+.lp-h2 {
+  font-size: clamp(24px, 3.2vw, 34px);
+  line-height: 1.16;
+  letter-spacing: -0.022em;
+  font-weight: 700;
+  margin: 0 0 16px;
+  max-width: 34ch;
+  text-wrap: balance;
+}
+
+.lp-lede {
+  font-size: clamp(15px, 1.5vw, 17px);
+  line-height: 1.68;
+  color: var(--lp-muted);
+  margin: 0;
+  max-width: 68ch;
+}
+
+/* A ruled block: dividers carry the structure, so no card chrome repeats.
+ * Rules are drawn as cell borders on transparent cells rather than as a 1px
+ * background gap. The gap technique painted a non-transparent layer behind the
+ * text, which meant edge-aligned copy sat flush against a visible background
+ * boundary. Borders give the same continuous rule with no painted surface. */
+.lp-ruled {
+  display: grid;
+  border-bottom: var(--lp-rule);
+}
+
+.lp-ruled > * {
+  border-top: var(--lp-rule);
+  background: transparent;
+}
+
+/* ── Header ─────────────────────────────────────────────── */
+
+.lp-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: color-mix(in srgb, var(--lp-bg) 90%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: var(--lp-rule);
+}
+
+.lp-header-inner {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-height: 62px;
+}
+
+.lp-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--lp-text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.lp-brand svg {
+  display: block;
+}
+
+.lp-nav {
+  display: none;
+  gap: 22px;
+  margin-left: auto;
+}
+
+.lp-nav a {
+  font-size: 13.5px;
+  color: var(--lp-muted);
+  text-decoration: none;
+  padding: 6px 0;
+  border-bottom: 1px solid transparent;
+}
+
+.lp-nav a:hover {
+  color: var(--lp-text);
+  border-bottom-color: var(--lp-accent);
+}
+
+.lp-header-cta {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--lp-text);
+  text-decoration: none;
+  padding: 8px 14px;
+  border: var(--lp-rule);
+  border-radius: 8px;
+}
+
+.lp-header-cta:hover {
+  border-color: var(--lp-accent);
+  color: var(--lp-accent);
+}
+
+/* Sticky nav is hidden on narrow viewports rather than compressed; the page is
+ * a linear read, so the sections stay reachable by scrolling. */
+@media (min-width: 900px) {
+  .lp-nav {
+    display: flex;
+  }
+
+  .lp-header-cta {
+    margin-left: 0;
+  }
+}
+
+/* ── Hero ───────────────────────────────────────────────── */
+
+.lp-hero {
+  padding: clamp(56px, 8vw, 108px) 0 clamp(48px, 6vw, 80px);
+}
+
+.lp-hero-grid {
+  display: grid;
+  gap: clamp(34px, 5vw, 60px);
+  align-items: start;
+}
+
+@media (min-width: 1024px) {
+  .lp-hero-grid {
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  }
+}
+
+.lp-h1 {
+  font-size: clamp(31px, 4.6vw, 55px);
+  line-height: 1.06;
+  letter-spacing: -0.026em;
+  font-weight: 700;
+  margin: 0 0 22px;
+  max-width: 24ch;
+  text-wrap: balance;
+}
+
+.lp-sub {
+  font-size: clamp(15.5px, 1.6vw, 17.5px);
+  line-height: 1.68;
+  color: var(--lp-muted);
+  margin: 0 0 24px;
+  max-width: 62ch;
+}
+
+.lp-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 13px 7px 11px;
+  border: var(--lp-rule);
+  border-radius: 999px;
+  font-size: 12.5px;
+  color: var(--lp-muted);
+  margin: 0 0 26px;
+}
+
+.lp-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--lp-accent);
+  flex: none;
+}
+
+.lp-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.lp-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 46px;
+  padding: 0 20px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+/* Accent use 1 of 3 */
+.lp-btn--primary {
+  background: var(--lp-accent);
+  color: #071018;
+  border-color: var(--lp-accent);
+}
+
+.lp-btn--primary:hover {
+  background: #6bb0ff;
+  border-color: #6bb0ff;
+}
+
+.lp-btn--ghost {
+  background: transparent;
+  color: var(--lp-text);
+  border-color: var(--lp-border);
+}
+
+.lp-btn--ghost:hover {
+  border-color: var(--lp-accent);
+  color: var(--lp-accent);
+}
+
+.lp-cta-note {
+  font-size: 13.5px;
+  line-height: 1.62;
+  color: var(--lp-muted);
+  margin: 20px 0 0;
+  max-width: 54ch;
+}
+
+.lp-cta-note strong {
+  color: var(--lp-text);
+  font-weight: 600;
+}
+
+.lp-cta-note a {
+  color: var(--lp-text);
+}
+
+/*
+ * Hero product panel — the page's single card, and the one authored motion
+ * moment. Real DOM built from the app's own vocabulary, not a screenshot.
+ */
+.lp-panel {
+  border: var(--lp-rule);
+  border-radius: 14px;
+  background: var(--lp-surface);
+  overflow: hidden;
+}
+
+.lp-panel-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px;
+  border-bottom: var(--lp-rule);
+  background: var(--lp-surface-alt);
+}
+
+.lp-panel-title {
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  color: var(--lp-muted);
+}
+
+.lp-panel-live {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--lp-muted);
+}
+
+.lp-panel-body {
+  padding: 4px 16px 0;
+}
+
+.lp-panel-disclosure {
+  margin: 0;
+  padding: 12px 16px 14px;
+  border-top: 1px solid var(--lp-border);
+  font-size: 12px;
+  color: var(--lp-muted);
+}
+
+/* Steps are separated by rules, not by nested card chrome. */
+.lp-step-block {
+  padding: 16px 0;
+  border-top: var(--lp-rule);
+}
+
+.lp-step-block:first-child {
+  border-top: 0;
+}
+
+.lp-step-block:first-child {
+  animation: lp-rise 620ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.lp-step-block:nth-child(2) {
+  animation: lp-rise 620ms cubic-bezier(0.16, 1, 0.3, 1) 90ms backwards;
+}
+
+.lp-step-block:nth-child(3) {
+  animation: lp-rise 620ms cubic-bezier(0.16, 1, 0.3, 1) 180ms backwards;
+}
+
+@keyframes lp-rise {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.lp-panel-label {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--lp-muted);
+  margin: 0 0 10px;
+}
+
+.lp-panel-num {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--lp-text);
+}
+
+.lp-raw {
+  margin: 0;
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 12px;
+  line-height: 1.8;
+  color: var(--lp-muted);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.lp-rows {
+  display: grid;
+}
+
+.lp-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-top: 1px solid var(--lp-border);
+}
+
+.lp-row:first-child {
+  border-top: 0;
+}
+
+.lp-row-title {
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lp-row-meta {
+  font-size: 12px;
+  color: var(--lp-muted);
+  white-space: nowrap;
+  text-align: right;
+}
+
+.lp-tick {
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+  background: var(--lp-muted);
+  flex: none;
+}
+
+.lp-tick--accent {
+  background: var(--lp-accent);
+}
+
+.lp-hot {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lp-hot li {
+  display: grid;
+  gap: 2px;
+  padding: 9px 0;
+  border-top: 1px solid var(--lp-border);
+}
+
+.lp-hot li:first-child {
+  border-top: 0;
+}
+
+.lp-hot strong {
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.lp-hot span {
+  font-size: 12px;
+  color: var(--lp-muted);
+}
+
+/* ── Audience ───────────────────────────────────────────── */
+
+.lp-aud-grid {
+  margin-top: 30px;
+}
+
+.lp-aud {
+  padding: 22px 0;
+}
+
+.lp-aud h3 {
+  font-size: 14.5px;
+  font-weight: 600;
+  margin: 0 0 7px;
+}
+
+.lp-aud p {
+  font-size: 13.5px;
+  line-height: 1.62;
+  color: var(--lp-muted);
+  margin: 0;
+  max-width: 44ch;
+}
+
+@media (min-width: 700px) {
+  .lp-aud-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lp-aud {
+    padding: 22px 26px;
+  }
+
+  .lp-aud:nth-child(odd) {
+    padding-left: 0;
+  }
+
+  .lp-aud:nth-child(even) {
+    padding-right: 0;
+  }
+}
+
+.lp-note {
+  margin: 26px 0 0;
+  padding: 16px 18px;
+  border: var(--lp-rule);
+  border-radius: 12px;
+  font-size: 13.5px;
+  line-height: 1.62;
+  color: var(--lp-muted);
+  max-width: 78ch;
+}
+
+.lp-note strong {
+  color: var(--lp-text);
+  font-weight: 600;
+}
+
+/* ── Walkthrough ────────────────────────────────────────── */
+
+.lp-steps {
+  margin-top: 30px;
+}
+
+.lp-step {
+  display: grid;
+  gap: 20px;
+  padding: 24px 0;
+}
+
+.lp-step-num {
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  /* Accent use 2 of 3 */
+  color: var(--lp-accent);
+}
+
+.lp-step-body h3 {
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0 0 9px;
+  letter-spacing: -0.008em;
+}
+
+.lp-step-body > p {
+  font-size: 14px;
+  line-height: 1.68;
+  color: var(--lp-muted);
+  margin: 0;
+  max-width: 70ch;
+}
+
+@media (min-width: 880px) {
+  .lp-step {
+    grid-template-columns: 56px minmax(0, 1fr);
+    align-items: start;
+    padding: 26px 0;
+  }
+}
+
+.lp-figure {
+  margin: 18px 0 0;
+  border-top: 1px dashed var(--lp-border);
+  padding-top: 14px;
+}
+
+.lp-figure-tag {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--lp-text);
+  margin: 0 0 6px;
+}
+
+.lp-figure p {
+  font-size: 13px;
+  line-height: 1.62;
+  color: var(--lp-muted);
+  margin: 0;
+  max-width: 74ch;
+}
+
+.lp-figure-note {
+  margin-top: 8px;
+}
+
+.lp-figure code {
+  font-family: "JetBrains Mono", ui-monospace, monospace;
+  font-size: 12px;
+  color: var(--lp-text);
+}
+
+/* ── Pillars ────────────────────────────────────────────── */
+
+.lp-pillar-grid {
+  margin-top: 30px;
+}
+
+.lp-pillar {
+  padding: 26px 0;
+  display: grid;
+  align-content: start;
+  gap: 10px;
+}
+
+.lp-pillar svg {
+  color: var(--lp-text);
+}
+
+.lp-pillar h3 {
+  font-size: 14.5px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.lp-pillar p {
+  font-size: 13.5px;
+  line-height: 1.62;
+  color: var(--lp-muted);
+  margin: 0;
+}
+
+@media (min-width: 640px) {
+  .lp-pillar-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lp-pillar {
+    padding: 26px 26px;
+  }
+
+  .lp-pillar:nth-child(odd) {
+    padding-left: 0;
+  }
+
+  .lp-pillar:nth-child(even) {
+    padding-right: 0;
+  }
+}
+
+@media (min-width: 1040px) {
+  .lp-pillar-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .lp-pillar {
+    padding: 26px 22px;
+  }
+
+  .lp-pillar:first-child {
+    padding-left: 0;
+  }
+
+  .lp-pillar:last-child {
+    padding-right: 0;
+  }
+
+  .lp-pillar:nth-child(even) {
+    padding-right: 22px;
+  }
+}
+
+/* ── Platform table ─────────────────────────────────────── */
+
+.lp-table-wrap {
+  margin-top: 30px;
+  border-top: var(--lp-rule);
+  border-bottom: var(--lp-rule);
+  overflow-x: auto;
+}
+
+.lp-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 640px;
+}
+
+.lp-table caption {
+  text-align: left;
+  font-size: 12.5px;
+  color: var(--lp-muted);
+  padding: 14px 0;
+  border-bottom: var(--lp-rule);
+}
+
+.lp-table th,
+.lp-table td {
+  text-align: left;
+  padding: 15px 20px;
+  border-bottom: 1px solid var(--lp-border);
+  vertical-align: top;
+  font-size: 13.5px;
+  line-height: 1.58;
+}
+
+.lp-table th:first-child,
+.lp-table td:first-child {
+  padding-left: 0;
+}
+
+.lp-table th:last-child,
+.lp-table td:last-child {
+  padding-right: 0;
+}
+
+.lp-table thead th {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--lp-muted);
+  font-weight: 500;
+}
+
+.lp-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.lp-table td:first-child {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.lp-table td:nth-child(2) {
+  color: var(--lp-muted);
+}
+
+.lp-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  border: var(--lp-rule);
+  color: var(--lp-muted);
+  white-space: nowrap;
+}
+
+.lp-tag--accent {
+  color: var(--lp-accent);
+  border-color: color-mix(in srgb, var(--lp-accent) 45%, var(--lp-border));
+}
+
+.lp-table-status {
+  display: block;
+  margin-top: 7px;
+  color: var(--lp-muted);
+}
+
+.lp-download {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.lp-download-note {
+  font-size: 13.5px;
+  line-height: 1.62;
+  color: var(--lp-muted);
+  margin: 18px 0 0;
+  max-width: 78ch;
+}
+
+.lp-download-note strong {
+  color: var(--lp-text);
+  font-weight: 600;
+}
+
+/* ── Trust ──────────────────────────────────────────────── */
+
+.lp-trust-grid {
+  margin-top: 30px;
+}
+
+.lp-trust {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 12px;
+  padding: 20px 0;
+}
+
+/* Sub-headings inside a section. Unlike an eyebrow, these sit below a section
+ * heading and label two genuinely different lists of claims. */
+.lp-subhead {
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -0.006em;
+  margin: 34px 0 0;
+  color: var(--lp-text);
+}
+
+.lp-subhead--spaced {
+  margin-top: 46px;
+}
+
+.lp-trust svg {
+  color: var(--lp-warning);
+  margin-top: 2px;
+}
+
+/* Guarantees are not hazards: accent treatment so the product's strongest
+ * promises do not render in the same alarm register as its real limitations. */
+.lp-trust--good svg {
+  color: var(--lp-accent);
+}
+
+.lp-trust h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 6px;
+}
+
+.lp-trust p {
+  font-size: 13.5px;
+  line-height: 1.62;
+  color: var(--lp-muted);
+  margin: 0;
+  max-width: 46ch;
+}
+
+@media (min-width: 760px) {
+  .lp-trust-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .lp-trust {
+    padding: 20px 26px;
+  }
+
+  .lp-trust:nth-child(odd) {
+    padding-left: 0;
+  }
+
+  .lp-trust:nth-child(even) {
+    padding-right: 0;
+  }
+}
+
+/* ── Contribute ─────────────────────────────────────────── */
+
+.lp-contrib {
+  display: grid;
+  gap: 34px;
+  margin-top: 30px;
+}
+
+@media (min-width: 940px) {
+  .lp-contrib {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    align-items: start;
+    gap: 44px;
+  }
+}
+
+.lp-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 13px;
+}
+
+.lp-list li {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: 11px;
+  font-size: 13.5px;
+  line-height: 1.62;
+  color: var(--lp-muted);
+}
+
+.lp-list svg {
+  color: var(--lp-muted);
+  margin-top: 2px;
+}
+
+.lp-list a {
+  color: var(--lp-text);
+}
+
+.lp-stack {
+  border-top: var(--lp-rule);
+  border-bottom: var(--lp-rule);
+  padding: 18px 0;
+}
+
+.lp-stack-label {
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--lp-muted);
+  margin: 0 0 16px;
+}
+
+.lp-stack dl {
+  margin: 0;
+  display: grid;
+  gap: 14px;
+}
+
+.lp-stack dt {
+  font-size: 12.5px;
+  color: var(--lp-muted);
+}
+
+.lp-stack dd {
+  margin: 3px 0 0;
+  font-size: 13.5px;
+  color: var(--lp-text);
+}
+
+/* ── Closing CTA ────────────────────────────────────────── */
+
+/*
+ * The closing band is full-bleed and coloured. Its content sits in the page's
+ * shared .lp-wrap, so text is inset from the band edge by the page gutter and by
+ * this section's own vertical padding; the detector cannot see through the
+ * nested wrap and reports the direct child as flush. Kept deliberately: a
+ * full-bleed band aligned to the page grid is the intended composition.
+ */
+.lp-final {
+  padding: clamp(48px, 6vw, 76px) 0;
+  background: var(--lp-surface-alt);
+  border-top: var(--lp-rule);
+}
+
+.lp-final h2 {
+  font-size: clamp(23px, 3vw, 32px);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-weight: 700;
+  margin: 0 0 14px;
+  max-width: 38ch;
+  text-wrap: balance;
+}
+
+.lp-final p {
+  font-size: 14.5px;
+  line-height: 1.68;
+  color: var(--lp-muted);
+  margin: 0 0 26px;
+  max-width: 64ch;
+}
+
+/* ── Footer ─────────────────────────────────────────────── */
+
+.lp-footer {
+  border-top: var(--lp-rule);
+  padding: 28px 0 44px;
+}
+
+.lp-footer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px 24px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lp-footer p {
+  font-size: 12.5px;
+  color: var(--lp-muted);
+  margin: 0;
+}
+
+.lp-footer nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.lp-footer a {
+  font-size: 12.5px;
+  color: var(--lp-muted);
+  text-decoration: none;
+}
+
+.lp-footer a:hover {
+  color: var(--lp-accent);
+  text-decoration: underline;
+}
+
+/* ── Motion preference ──────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .lp *,
+  .lp-step-block:first-child,
+  .lp-step-block:nth-child(2),
+  .lp-step-block:nth-child(3) {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/*
+ * Intentional exceptions, documented per polish.md step 5:
+ *
+ * 1. Inter is the project's brand face, pinned by 00_PROJECT_BRIEF.md for the
+ *    application. The craft floor's overused-font rule is overridden here by its
+ *    own "the brief wins" clause: a landing page that does not match the product's
+ *    typography would break brand continuity. Changing it is a brand decision for
+ *    the owner, not a polish fix.
+ * 2. The closing band is full-bleed and coloured, with content aligned to the
+ *    page grid inside .lp-wrap. The detector reports the direct child as flush
+ *    against the band; the intended composition is kept.
+ * 3. The walkthrough keeps 01-04 step numerals because the sequence itself
+ *    carries information the reader needs (an ordered loop).
+ * 4. Two hardcoded values remain, both on the primary button (#071018 text on the
+ *    accent fill, #6bb0ff hover). The token set has no on-accent or accent-hover
+ *    value, and inventing tokens for one local exception would be worse than the
+ *    two literals.
+ */
+</style>
+<style type="text/css" data-vite-dev-id="C:/Users/asamoah/the-mainframe/src/index.css">/*! tailwindcss v4.3.3 | MIT License | https://tailwindcss.com */
+@layer properties;
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300;
+  src: url(/node_modules/@fontsource/inter/files/inter-cyrillic-ext-300-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-cyrillic-ext-300-normal.woff) format('woff');
+  unicode-range: U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300;
+  src: url(/node_modules/@fontsource/inter/files/inter-cyrillic-300-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-cyrillic-300-normal.woff) format('woff');
+  unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300;
+  src: url(/node_modules/@fontsource/inter/files/inter-greek-ext-300-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-greek-ext-300-normal.woff) format('woff');
+  unicode-range: U+1F00-1FFF;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300;
+  src: url(/node_modules/@fontsource/inter/files/inter-greek-300-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-greek-300-normal.woff) format('woff');
+  unicode-range: U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300;
+  src: url(/node_modules/@fontsource/inter/files/inter-vietnamese-300-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-vietnamese-300-normal.woff) format('woff');
+  unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300;
+  src: url(/node_modules/@fontsource/inter/files/inter-latin-ext-300-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-latin-ext-300-normal.woff) format('woff');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300;
+  src: url(/node_modules/@fontsource/inter/files/inter-latin-300-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-latin-300-normal.woff) format('woff');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/node_modules/@fontsource/inter/files/inter-cyrillic-ext-400-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-cyrillic-ext-400-normal.woff) format('woff');
+  unicode-range: U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/node_modules/@fontsource/inter/files/inter-cyrillic-400-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-cyrillic-400-normal.woff) format('woff');
+  unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/node_modules/@fontsource/inter/files/inter-greek-ext-400-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-greek-ext-400-normal.woff) format('woff');
+  unicode-range: U+1F00-1FFF;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/node_modules/@fontsource/inter/files/inter-greek-400-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-greek-400-normal.woff) format('woff');
+  unicode-range: U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/node_modules/@fontsource/inter/files/inter-vietnamese-400-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-vietnamese-400-normal.woff) format('woff');
+  unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/node_modules/@fontsource/inter/files/inter-latin-ext-400-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-latin-ext-400-normal.woff) format('woff');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/node_modules/@fontsource/inter/files/inter-latin-400-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-latin-400-normal.woff) format('woff');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(/node_modules/@fontsource/inter/files/inter-cyrillic-ext-500-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-cyrillic-ext-500-normal.woff) format('woff');
+  unicode-range: U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(/node_modules/@fontsource/inter/files/inter-cyrillic-500-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-cyrillic-500-normal.woff) format('woff');
+  unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(/node_modules/@fontsource/inter/files/inter-greek-ext-500-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-greek-ext-500-normal.woff) format('woff');
+  unicode-range: U+1F00-1FFF;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(/node_modules/@fontsource/inter/files/inter-greek-500-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-greek-500-normal.woff) format('woff');
+  unicode-range: U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(/node_modules/@fontsource/inter/files/inter-vietnamese-500-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-vietnamese-500-normal.woff) format('woff');
+  unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(/node_modules/@fontsource/inter/files/inter-latin-ext-500-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-latin-ext-500-normal.woff) format('woff');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(/node_modules/@fontsource/inter/files/inter-latin-500-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-latin-500-normal.woff) format('woff');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url(/node_modules/@fontsource/inter/files/inter-cyrillic-ext-600-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-cyrillic-ext-600-normal.woff) format('woff');
+  unicode-range: U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url(/node_modules/@fontsource/inter/files/inter-cyrillic-600-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-cyrillic-600-normal.woff) format('woff');
+  unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url(/node_modules/@fontsource/inter/files/inter-greek-ext-600-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-greek-ext-600-normal.woff) format('woff');
+  unicode-range: U+1F00-1FFF;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url(/node_modules/@fontsource/inter/files/inter-greek-600-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-greek-600-normal.woff) format('woff');
+  unicode-range: U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url(/node_modules/@fontsource/inter/files/inter-vietnamese-600-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-vietnamese-600-normal.woff) format('woff');
+  unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url(/node_modules/@fontsource/inter/files/inter-latin-ext-600-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-latin-ext-600-normal.woff) format('woff');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 600;
+  src: url(/node_modules/@fontsource/inter/files/inter-latin-600-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-latin-600-normal.woff) format('woff');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(/node_modules/@fontsource/inter/files/inter-cyrillic-ext-700-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-cyrillic-ext-700-normal.woff) format('woff');
+  unicode-range: U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(/node_modules/@fontsource/inter/files/inter-cyrillic-700-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-cyrillic-700-normal.woff) format('woff');
+  unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(/node_modules/@fontsource/inter/files/inter-greek-ext-700-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-greek-ext-700-normal.woff) format('woff');
+  unicode-range: U+1F00-1FFF;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(/node_modules/@fontsource/inter/files/inter-greek-700-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-greek-700-normal.woff) format('woff');
+  unicode-range: U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(/node_modules/@fontsource/inter/files/inter-vietnamese-700-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-vietnamese-700-normal.woff) format('woff');
+  unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(/node_modules/@fontsource/inter/files/inter-latin-ext-700-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-latin-ext-700-normal.woff) format('woff');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(/node_modules/@fontsource/inter/files/inter-latin-700-normal.woff2) format('woff2'), url(/node_modules/@fontsource/inter/files/inter-latin-700-normal.woff) format('woff');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-cyrillic-ext-400-normal.woff2) format('woff2'), url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-cyrillic-ext-400-normal.woff) format('woff');
+  unicode-range: U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-cyrillic-400-normal.woff2) format('woff2'), url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-cyrillic-400-normal.woff) format('woff');
+  unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-greek-400-normal.woff2) format('woff2'), url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-greek-400-normal.woff) format('woff');
+  unicode-range: U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-vietnamese-400-normal.woff2) format('woff2'), url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-vietnamese-400-normal.woff) format('woff');
+  unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-ext-400-normal.woff2) format('woff2'), url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-ext-400-normal.woff) format('woff');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff2) format('woff2'), url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-400-normal.woff) format('woff');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-cyrillic-ext-500-normal.woff2) format('woff2'), url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-cyrillic-ext-500-normal.woff) format('woff');
+  unicode-range: U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-cyrillic-500-normal.woff2) format('woff2'), url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-cyrillic-500-normal.woff) format('woff');
+  unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-greek-500-normal.woff2) format('woff2'), url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-greek-500-normal.woff) format('woff');
+  unicode-range: U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-vietnamese-500-normal.woff2) format('woff2'), url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-vietnamese-500-normal.woff) format('woff');
+  unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-ext-500-normal.woff2) format('woff2'), url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-ext-500-normal.woff) format('woff');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 500;
+  src: url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-500-normal.woff2) format('woff2'), url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-500-normal.woff) format('woff');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-cyrillic-ext-700-normal.woff2) format('woff2'), url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-cyrillic-ext-700-normal.woff) format('woff');
+  unicode-range: U+0460-052F,U+1C80-1C8A,U+20B4,U+2DE0-2DFF,U+A640-A69F,U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-cyrillic-700-normal.woff2) format('woff2'), url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-cyrillic-700-normal.woff) format('woff');
+  unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-greek-700-normal.woff2) format('woff2'), url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-greek-700-normal.woff) format('woff');
+  unicode-range: U+0370-0377,U+037A-037F,U+0384-038A,U+038C,U+038E-03A1,U+03A3-03FF;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-vietnamese-700-normal.woff2) format('woff2'), url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-vietnamese-700-normal.woff) format('woff');
+  unicode-range: U+0102-0103,U+0110-0111,U+0128-0129,U+0168-0169,U+01A0-01A1,U+01AF-01B0,U+0300-0301,U+0303-0304,U+0308-0309,U+0323,U+0329,U+1EA0-1EF9,U+20AB;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-ext-700-normal.woff2) format('woff2'), url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-ext-700-normal.woff) format('woff');
+  unicode-range: U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF;
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 700;
+  src: url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-700-normal.woff2) format('woff2'), url(/node_modules/@fontsource/jetbrains-mono/files/jetbrains-mono-latin-700-normal.woff) format('woff');
+  unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+}
+@layer theme, base, components, utilities;
+@layer theme {
+  :root, :host {
+    --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue",
+      "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji",
+      "Segoe UI Symbol", "Noto Color Emoji";
+    --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+      "Courier New", monospace;
+    --color-red-200: oklch(88.5% 0.062 18.334);
+    --color-red-300: oklch(80.8% 0.114 19.571);
+    --color-red-500: oklch(63.7% 0.237 25.331);
+    --color-black: #000;
+    --color-white: #fff;
+    --spacing: 0.25rem;
+    --container-sm: 24rem;
+    --container-md: 28rem;
+    --container-4xl: 56rem;
+    --text-xs: 0.75rem;
+    --text-xs--line-height: calc(1 / 0.75);
+    --text-sm: 0.875rem;
+    --text-sm--line-height: calc(1.25 / 0.875);
+    --text-base: 1rem;
+    --text-base--line-height: calc(1.5 / 1);
+    --text-lg: 1.125rem;
+    --text-lg--line-height: calc(1.75 / 1.125);
+    --text-xl: 1.25rem;
+    --text-xl--line-height: calc(1.75 / 1.25);
+    --text-2xl: 1.5rem;
+    --text-2xl--line-height: calc(2 / 1.5);
+    --text-3xl: 1.875rem;
+    --text-3xl--line-height: calc(2.25 / 1.875);
+    --font-weight-normal: 400;
+    --font-weight-medium: 500;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --tracking-tight: -0.025em;
+    --tracking-wide: 0.025em;
+    --tracking-wider: 0.05em;
+    --tracking-widest: 0.1em;
+    --leading-tight: 1.25;
+    --leading-relaxed: 1.625;
+    --radius-md: 0.375rem;
+    --radius-lg: 0.5rem;
+    --radius-xl: 0.75rem;
+    --radius-2xl: 1rem;
+    --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+    --animate-spin: spin 1s linear infinite;
+    --default-transition-duration: 150ms;
+    --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    --default-font-family: var(--font-sans);
+    --default-mono-font-family: var(--font-mono);
+    --color-bg: #0E0E10;
+    --color-surface: #1A1A1D;
+    --color-surface-alt: #141518;
+    --color-text: #F2F2F0;
+    --color-text-muted: #B1B3B7;
+    --color-accent: #4A9EFF;
+    --color-border: #1F2024;
+    --color-sidebar: #111214;
+    --color-danger: #FF5E5E;
+    --color-success: #34D399;
+    --color-warning: #FBBF24;
+  }
+}
+@layer base {
+  *, ::after, ::before, ::backdrop, ::file-selector-button {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    border: 0 solid;
+  }
+  html, :host {
+    line-height: 1.5;
+    -webkit-text-size-adjust: 100%;
+    tab-size: 4;
+    font-family: var(--default-font-family, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji");
+    font-feature-settings: var(--default-font-feature-settings, normal);
+    font-variation-settings: var(--default-font-variation-settings, normal);
+    -webkit-tap-highlight-color: transparent;
+  }
+  hr {
+    height: 0;
+    color: inherit;
+    border-top-width: 1px;
+  }
+  abbr:where([title]) {
+    -webkit-text-decoration: underline dotted;
+    text-decoration: underline dotted;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    font-size: inherit;
+    font-weight: inherit;
+  }
+  a {
+    color: inherit;
+    -webkit-text-decoration: inherit;
+    text-decoration: inherit;
+  }
+  b, strong {
+    font-weight: bolder;
+  }
+  code, kbd, samp, pre {
+    font-family: var(--default-mono-font-family, ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace);
+    font-feature-settings: var(--default-mono-font-feature-settings, normal);
+    font-variation-settings: var(--default-mono-font-variation-settings, normal);
+    font-size: 1em;
+  }
+  small {
+    font-size: 80%;
+  }
+  sub, sup {
+    font-size: 75%;
+    line-height: 0;
+    position: relative;
+    vertical-align: baseline;
+  }
+  sub {
+    bottom: -0.25em;
+  }
+  sup {
+    top: -0.5em;
+  }
+  table {
+    text-indent: 0;
+    border-color: inherit;
+    border-collapse: collapse;
+  }
+  :-moz-focusring:where(:not(iframe)) {
+    outline: auto;
+  }
+  progress {
+    vertical-align: baseline;
+  }
+  summary {
+    display: list-item;
+  }
+  ol, ul, menu {
+    list-style: none;
+  }
+  img, svg, video, canvas, audio, iframe, embed, object {
+    display: block;
+    vertical-align: middle;
+  }
+  img, video {
+    max-width: 100%;
+    height: auto;
+  }
+  button, input, select, optgroup, textarea, ::file-selector-button {
+    font: inherit;
+    font-feature-settings: inherit;
+    font-variation-settings: inherit;
+    letter-spacing: inherit;
+    color: inherit;
+    border-radius: 0;
+    background-color: transparent;
+    opacity: 1;
+  }
+  :where(select:is([multiple], [size])) optgroup {
+    font-weight: bolder;
+  }
+  :where(select:is([multiple], [size])) optgroup option {
+    padding-inline-start: 20px;
+  }
+  ::file-selector-button {
+    margin-inline-end: 4px;
+  }
+  ::placeholder {
+    opacity: 1;
+  }
+  @supports (not (-webkit-appearance: -apple-pay-button))  or (contain-intrinsic-size: 1px) {
+    ::placeholder {
+      color: currentcolor;
+      @supports (color: color-mix(in lab, red, red)) {
+        color: color-mix(in oklab, currentcolor 50%, transparent);
+      }
+    }
+  }
+  textarea {
+    resize: vertical;
+  }
+  ::-webkit-search-decoration {
+    -webkit-appearance: none;
+  }
+  ::-webkit-date-and-time-value {
+    min-height: 1lh;
+    text-align: inherit;
+  }
+  ::-webkit-datetime-edit {
+    display: inline-flex;
+  }
+  ::-webkit-datetime-edit-fields-wrapper {
+    padding: 0;
+  }
+  ::-webkit-datetime-edit, ::-webkit-datetime-edit-year-field, ::-webkit-datetime-edit-month-field, ::-webkit-datetime-edit-day-field, ::-webkit-datetime-edit-hour-field, ::-webkit-datetime-edit-minute-field, ::-webkit-datetime-edit-second-field, ::-webkit-datetime-edit-millisecond-field, ::-webkit-datetime-edit-meridiem-field {
+    padding-block: 0;
+  }
+  ::-webkit-calendar-picker-indicator {
+    line-height: 1;
+  }
+  :-moz-ui-invalid {
+    box-shadow: none;
+  }
+  button, input:where([type="button"], [type="reset"], [type="submit"]), ::file-selector-button {
+    appearance: button;
+  }
+  ::-webkit-inner-spin-button, ::-webkit-outer-spin-button {
+    height: auto;
+  }
+  [hidden]:where(:not([hidden="until-found"])) {
+    display: none !important;
+  }
+}
+@layer utilities {
+  .collapse {
+    visibility: collapse;
+  }
+  .invisible {
+    visibility: hidden;
+  }
+  .visible {
+    visibility: visible;
+  }
+  .absolute {
+    position: absolute;
+  }
+  .fixed {
+    position: fixed;
+  }
+  .relative {
+    position: relative;
+  }
+  .static {
+    position: static;
+  }
+  .sticky {
+    position: sticky;
+  }
+  .inset-0 {
+    inset: 0px;
+  }
+  .inset-y-0 {
+    inset-block: 0px;
+  }
+  .top-1 {
+    top: var(--spacing);
+  }
+  .right-6 {
+    right: calc(var(--spacing) * 6);
+  }
+  .bottom-6 {
+    bottom: calc(var(--spacing) * 6);
+  }
+  .left-0 {
+    left: 0px;
+  }
+  .left-1 {
+    left: var(--spacing);
+  }
+  .left-7 {
+    left: calc(var(--spacing) * 7);
+  }
+  .z-40 {
+    z-index: 40;
+  }
+  .z-50 {
+    z-index: 50;
+  }
+  .m-0 {
+    margin: 0px;
+  }
+  .-mx-1 {
+    margin-inline: calc(var(--spacing) * -1);
+  }
+  .mx-auto {
+    margin-inline: auto;
+  }
+  .-mt-2 {
+    margin-top: calc(var(--spacing) * -2);
+  }
+  .mt-0 {
+    margin-top: 0px;
+  }
+  .mt-0\.5 {
+    margin-top: calc(var(--spacing) * 0.5);
+  }
+  .mt-1 {
+    margin-top: var(--spacing);
+  }
+  .mt-1\.5 {
+    margin-top: calc(var(--spacing) * 1.5);
+  }
+  .mt-2 {
+    margin-top: calc(var(--spacing) * 2);
+  }
+  .mt-3 {
+    margin-top: calc(var(--spacing) * 3);
+  }
+  .mt-4 {
+    margin-top: calc(var(--spacing) * 4);
+  }
+  .mt-6 {
+    margin-top: calc(var(--spacing) * 6);
+  }
+  .mt-10 {
+    margin-top: calc(var(--spacing) * 10);
+  }
+  .mt-auto {
+    margin-top: auto;
+  }
+  .mr-1 {
+    margin-right: var(--spacing);
+  }
+  .mr-2 {
+    margin-right: calc(var(--spacing) * 2);
+  }
+  .mr-auto {
+    margin-right: auto;
+  }
+  .mb-0 {
+    margin-bottom: 0px;
+  }
+  .mb-1 {
+    margin-bottom: var(--spacing);
+  }
+  .mb-2 {
+    margin-bottom: calc(var(--spacing) * 2);
+  }
+  .mb-3 {
+    margin-bottom: calc(var(--spacing) * 3);
+  }
+  .mb-4 {
+    margin-bottom: calc(var(--spacing) * 4);
+  }
+  .mb-6 {
+    margin-bottom: calc(var(--spacing) * 6);
+  }
+  .mb-8 {
+    margin-bottom: calc(var(--spacing) * 8);
+  }
+  .-ml-2 {
+    margin-left: calc(var(--spacing) * -2);
+  }
+  .ml-0\.5 {
+    margin-left: calc(var(--spacing) * 0.5);
+  }
+  .ml-3 {
+    margin-left: calc(var(--spacing) * 3);
+  }
+  .block {
+    display: block;
+  }
+  .contents {
+    display: contents;
+  }
+  .flex {
+    display: flex;
+  }
+  .grid {
+    display: grid;
+  }
+  .hidden {
+    display: none;
+  }
+  .inline {
+    display: inline;
+  }
+  .inline-block {
+    display: inline-block;
+  }
+  .list-item {
+    display: list-item;
+  }
+  .table {
+    display: table;
+  }
+  .h-3 {
+    height: calc(var(--spacing) * 3);
+  }
+  .h-4 {
+    height: calc(var(--spacing) * 4);
+  }
+  .h-5 {
+    height: calc(var(--spacing) * 5);
+  }
+  .h-6 {
+    height: calc(var(--spacing) * 6);
+  }
+  .h-dvh {
+    height: 100dvh;
+  }
+  .h-full {
+    height: 100%;
+  }
+  .h-px {
+    height: 1px;
+  }
+  .min-h-0 {
+    min-height: 0px;
+  }
+  .min-h-16 {
+    min-height: calc(var(--spacing) * 16);
+  }
+  .min-h-\[56px\] {
+    min-height: 56px;
+  }
+  .min-h-\[60px\] {
+    min-height: 60px;
+  }
+  .min-h-screen {
+    min-height: 100vh;
+  }
+  .w-3 {
+    width: calc(var(--spacing) * 3);
+  }
+  .w-4 {
+    width: calc(var(--spacing) * 4);
+  }
+  .w-5 {
+    width: calc(var(--spacing) * 5);
+  }
+  .w-6 {
+    width: calc(var(--spacing) * 6);
+  }
+  .w-12 {
+    width: calc(var(--spacing) * 12);
+  }
+  .w-\[260px\] {
+    width: 260px;
+  }
+  .w-full {
+    width: 100%;
+  }
+  .max-w-4xl {
+    max-width: var(--container-4xl);
+  }
+  .max-w-48 {
+    max-width: calc(var(--spacing) * 48);
+  }
+  .max-w-\[1400px\] {
+    max-width: 1400px;
+  }
+  .max-w-sm {
+    max-width: var(--container-sm);
+  }
+  .min-w-0 {
+    min-width: 0px;
+  }
+  .flex-1 {
+    flex: 1;
+  }
+  .flex-none {
+    flex: none;
+  }
+  .shrink {
+    flex-shrink: 1;
+  }
+  .shrink-0 {
+    flex-shrink: 0;
+  }
+  .border-collapse {
+    border-collapse: collapse;
+  }
+  .-translate-x-full {
+    --tw-translate-x: -100%;
+    translate: var(--tw-translate-x) var(--tw-translate-y);
+  }
+  .translate-x-0 {
+    --tw-translate-x: 0px;
+    translate: var(--tw-translate-x) var(--tw-translate-y);
+  }
+  .transform {
+    transform: var(--tw-rotate-x,) var(--tw-rotate-y,) var(--tw-rotate-z,) var(--tw-skew-x,) var(--tw-skew-y,);
+  }
+  .animate-\[slideUp_0\.2s_ease-out\] {
+    animation: slideUp 0.2s ease-out;
+  }
+  .animate-spin {
+    animation: var(--animate-spin);
+  }
+  .cursor-grab {
+    cursor: grab;
+  }
+  .cursor-pointer {
+    cursor: pointer;
+  }
+  .resize-none {
+    resize: none;
+  }
+  .resize-y {
+    resize: vertical;
+  }
+  .list-none {
+    list-style-type: none;
+  }
+  .grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  .grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .flex-col {
+    flex-direction: column;
+  }
+  .flex-wrap {
+    flex-wrap: wrap;
+  }
+  .items-center {
+    align-items: center;
+  }
+  .items-start {
+    align-items: flex-start;
+  }
+  .justify-between {
+    justify-content: space-between;
+  }
+  .justify-center {
+    justify-content: center;
+  }
+  .justify-end {
+    justify-content: flex-end;
+  }
+  .gap-0\.5 {
+    gap: calc(var(--spacing) * 0.5);
+  }
+  .gap-1 {
+    gap: var(--spacing);
+  }
+  .gap-1\.5 {
+    gap: calc(var(--spacing) * 1.5);
+  }
+  .gap-2 {
+    gap: calc(var(--spacing) * 2);
+  }
+  .gap-2\.5 {
+    gap: calc(var(--spacing) * 2.5);
+  }
+  .gap-3 {
+    gap: calc(var(--spacing) * 3);
+  }
+  .gap-4 {
+    gap: calc(var(--spacing) * 4);
+  }
+  .gap-5 {
+    gap: calc(var(--spacing) * 5);
+  }
+  .gap-6 {
+    gap: calc(var(--spacing) * 6);
+  }
+  .gap-8 {
+    gap: calc(var(--spacing) * 8);
+  }
+  .gap-x-2 {
+    column-gap: calc(var(--spacing) * 2);
+  }
+  .gap-x-3 {
+    column-gap: calc(var(--spacing) * 3);
+  }
+  .gap-y-0\.5 {
+    row-gap: calc(var(--spacing) * 0.5);
+  }
+  .gap-y-1 {
+    row-gap: var(--spacing);
+  }
+  :where(.divide-y > :not(:last-child)) {
+    --tw-divide-y-reverse: 0;
+    border-bottom-style: var(--tw-border-style);
+    border-top-style: var(--tw-border-style);
+    border-top-width: calc(1px * var(--tw-divide-y-reverse));
+    border-bottom-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
+  }
+  :where(.divide-border > :not(:last-child)) {
+    border-color: var(--color-border);
+  }
+  .self-start {
+    align-self: flex-start;
+  }
+  .truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .overflow-hidden {
+    overflow: hidden;
+  }
+  .overflow-x-auto {
+    overflow-x: auto;
+  }
+  .overflow-y-auto {
+    overflow-y: auto;
+  }
+  .overscroll-contain {
+    overscroll-behavior: contain;
+  }
+  .rounded {
+    border-radius: 0.25rem;
+  }
+  .rounded-2xl {
+    border-radius: var(--radius-2xl);
+  }
+  .rounded-full {
+    border-radius: calc(infinity * 1px);
+  }
+  .rounded-lg {
+    border-radius: var(--radius-lg);
+  }
+  .rounded-md {
+    border-radius: var(--radius-md);
+  }
+  .rounded-xl {
+    border-radius: var(--radius-xl);
+  }
+  .border {
+    border-style: var(--tw-border-style);
+    border-width: 1px;
+  }
+  .border-t {
+    border-top-style: var(--tw-border-style);
+    border-top-width: 1px;
+  }
+  .border-r {
+    border-right-style: var(--tw-border-style);
+    border-right-width: 1px;
+  }
+  .border-b {
+    border-bottom-style: var(--tw-border-style);
+    border-bottom-width: 1px;
+  }
+  .border-l-2 {
+    border-left-style: var(--tw-border-style);
+    border-left-width: 2px;
+  }
+  .border-none {
+    --tw-border-style: none;
+    border-style: none;
+  }
+  .border-accent {
+    border-color: var(--color-accent);
+  }
+  .border-accent\/20 {
+    border-color: color-mix(in srgb, #4A9EFF 20%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-accent) 20%, transparent);
+    }
+  }
+  .border-accent\/30 {
+    border-color: color-mix(in srgb, #4A9EFF 30%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-accent) 30%, transparent);
+    }
+  }
+  .border-accent\/40 {
+    border-color: color-mix(in srgb, #4A9EFF 40%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-accent) 40%, transparent);
+    }
+  }
+  .border-accent\/50 {
+    border-color: color-mix(in srgb, #4A9EFF 50%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-accent) 50%, transparent);
+    }
+  }
+  .border-accent\/60 {
+    border-color: color-mix(in srgb, #4A9EFF 60%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-accent) 60%, transparent);
+    }
+  }
+  .border-border {
+    border-color: var(--color-border);
+  }
+  .border-border\/50 {
+    border-color: color-mix(in srgb, #1F2024 50%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-border) 50%, transparent);
+    }
+  }
+  .border-danger\/20 {
+    border-color: color-mix(in srgb, #FF5E5E 20%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-danger) 20%, transparent);
+    }
+  }
+  .border-red-500\/40 {
+    border-color: color-mix(in srgb, oklch(63.7% 0.237 25.331) 40%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-red-500) 40%, transparent);
+    }
+  }
+  .border-transparent {
+    border-color: transparent;
+  }
+  .bg-accent {
+    background-color: var(--color-accent);
+  }
+  .bg-accent\/5 {
+    background-color: color-mix(in srgb, #4A9EFF 5%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-accent) 5%, transparent);
+    }
+  }
+  .bg-accent\/10 {
+    background-color: color-mix(in srgb, #4A9EFF 10%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-accent) 10%, transparent);
+    }
+  }
+  .bg-bg {
+    background-color: var(--color-bg);
+  }
+  .bg-bg\/40 {
+    background-color: color-mix(in srgb, #0E0E10 40%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-bg) 40%, transparent);
+    }
+  }
+  .bg-black\/50 {
+    background-color: color-mix(in srgb, #000 50%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-black) 50%, transparent);
+    }
+  }
+  .bg-border {
+    background-color: var(--color-border);
+  }
+  .bg-danger\/5 {
+    background-color: color-mix(in srgb, #FF5E5E 5%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-danger) 5%, transparent);
+    }
+  }
+  .bg-danger\/90 {
+    background-color: color-mix(in srgb, #FF5E5E 90%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-danger) 90%, transparent);
+    }
+  }
+  .bg-red-500\/10 {
+    background-color: color-mix(in srgb, oklch(63.7% 0.237 25.331) 10%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-red-500) 10%, transparent);
+    }
+  }
+  .bg-sidebar {
+    background-color: var(--color-sidebar);
+  }
+  .bg-success\/10 {
+    background-color: color-mix(in srgb, #34D399 10%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-success) 10%, transparent);
+    }
+  }
+  .bg-success\/90 {
+    background-color: color-mix(in srgb, #34D399 90%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-success) 90%, transparent);
+    }
+  }
+  .bg-surface {
+    background-color: var(--color-surface);
+  }
+  .bg-surface-alt {
+    background-color: var(--color-surface-alt);
+  }
+  .bg-surface-alt\/50 {
+    background-color: color-mix(in srgb, #141518 50%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-surface-alt) 50%, transparent);
+    }
+  }
+  .bg-surface-alt\/70 {
+    background-color: color-mix(in srgb, #141518 70%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      background-color: color-mix(in oklab, var(--color-surface-alt) 70%, transparent);
+    }
+  }
+  .bg-text-muted {
+    background-color: var(--color-text-muted);
+  }
+  .bg-transparent {
+    background-color: transparent;
+  }
+  .bg-white {
+    background-color: var(--color-white);
+  }
+  .p-0 {
+    padding: 0px;
+  }
+  .p-1 {
+    padding: var(--spacing);
+  }
+  .p-1\.5 {
+    padding: calc(var(--spacing) * 1.5);
+  }
+  .p-2 {
+    padding: calc(var(--spacing) * 2);
+  }
+  .p-3 {
+    padding: calc(var(--spacing) * 3);
+  }
+  .p-4 {
+    padding: calc(var(--spacing) * 4);
+  }
+  .p-5 {
+    padding: calc(var(--spacing) * 5);
+  }
+  .p-6 {
+    padding: calc(var(--spacing) * 6);
+  }
+  .p-8 {
+    padding: calc(var(--spacing) * 8);
+  }
+  .px-1 {
+    padding-inline: var(--spacing);
+  }
+  .px-2 {
+    padding-inline: calc(var(--spacing) * 2);
+  }
+  .px-2\.5 {
+    padding-inline: calc(var(--spacing) * 2.5);
+  }
+  .px-3 {
+    padding-inline: calc(var(--spacing) * 3);
+  }
+  .px-4 {
+    padding-inline: calc(var(--spacing) * 4);
+  }
+  .px-5 {
+    padding-inline: calc(var(--spacing) * 5);
+  }
+  .px-6 {
+    padding-inline: calc(var(--spacing) * 6);
+  }
+  .py-0\.5 {
+    padding-block: calc(var(--spacing) * 0.5);
+  }
+  .py-1 {
+    padding-block: var(--spacing);
+  }
+  .py-1\.5 {
+    padding-block: calc(var(--spacing) * 1.5);
+  }
+  .py-2 {
+    padding-block: calc(var(--spacing) * 2);
+  }
+  .py-2\.5 {
+    padding-block: calc(var(--spacing) * 2.5);
+  }
+  .py-3 {
+    padding-block: calc(var(--spacing) * 3);
+  }
+  .py-3\.5 {
+    padding-block: calc(var(--spacing) * 3.5);
+  }
+  .py-4 {
+    padding-block: calc(var(--spacing) * 4);
+  }
+  .py-5 {
+    padding-block: calc(var(--spacing) * 5);
+  }
+  .pt-0\.5 {
+    padding-top: calc(var(--spacing) * 0.5);
+  }
+  .pt-2 {
+    padding-top: calc(var(--spacing) * 2);
+  }
+  .pt-4 {
+    padding-top: calc(var(--spacing) * 4);
+  }
+  .pt-6 {
+    padding-top: calc(var(--spacing) * 6);
+  }
+  .pt-12 {
+    padding-top: calc(var(--spacing) * 12);
+  }
+  .pr-1 {
+    padding-right: var(--spacing);
+  }
+  .pb-1 {
+    padding-bottom: var(--spacing);
+  }
+  .pb-4 {
+    padding-bottom: calc(var(--spacing) * 4);
+  }
+  .pb-\[env\(safe-area-inset-bottom\,16px\)\] {
+    padding-bottom: env(safe-area-inset-bottom,16px);
+  }
+  .pl-2 {
+    padding-left: calc(var(--spacing) * 2);
+  }
+  .text-center {
+    text-align: center;
+  }
+  .text-left {
+    text-align: left;
+  }
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+  .text-2xl {
+    font-size: var(--text-2xl);
+    line-height: var(--tw-leading, var(--text-2xl--line-height));
+  }
+  .text-3xl {
+    font-size: var(--text-3xl);
+    line-height: var(--tw-leading, var(--text-3xl--line-height));
+  }
+  .text-base {
+    font-size: var(--text-base);
+    line-height: var(--tw-leading, var(--text-base--line-height));
+  }
+  .text-lg {
+    font-size: var(--text-lg);
+    line-height: var(--tw-leading, var(--text-lg--line-height));
+  }
+  .text-sm {
+    font-size: var(--text-sm);
+    line-height: var(--tw-leading, var(--text-sm--line-height));
+  }
+  .text-xl {
+    font-size: var(--text-xl);
+    line-height: var(--tw-leading, var(--text-xl--line-height));
+  }
+  .text-xs {
+    font-size: var(--text-xs);
+    line-height: var(--tw-leading, var(--text-xs--line-height));
+  }
+  .text-\[10px\] {
+    font-size: 10px;
+  }
+  .text-\[11px\] {
+    font-size: 11px;
+  }
+  .leading-relaxed {
+    --tw-leading: var(--leading-relaxed);
+    line-height: var(--leading-relaxed);
+  }
+  .leading-tight {
+    --tw-leading: var(--leading-tight);
+    line-height: var(--leading-tight);
+  }
+  .font-bold {
+    --tw-font-weight: var(--font-weight-bold);
+    font-weight: var(--font-weight-bold);
+  }
+  .font-medium {
+    --tw-font-weight: var(--font-weight-medium);
+    font-weight: var(--font-weight-medium);
+  }
+  .font-normal {
+    --tw-font-weight: var(--font-weight-normal);
+    font-weight: var(--font-weight-normal);
+  }
+  .font-semibold {
+    --tw-font-weight: var(--font-weight-semibold);
+    font-weight: var(--font-weight-semibold);
+  }
+  .tracking-tight {
+    --tw-tracking: var(--tracking-tight);
+    letter-spacing: var(--tracking-tight);
+  }
+  .tracking-wide {
+    --tw-tracking: var(--tracking-wide);
+    letter-spacing: var(--tracking-wide);
+  }
+  .tracking-wider {
+    --tw-tracking: var(--tracking-wider);
+    letter-spacing: var(--tracking-wider);
+  }
+  .tracking-widest {
+    --tw-tracking: var(--tracking-widest);
+    letter-spacing: var(--tracking-widest);
+  }
+  .text-wrap {
+    text-wrap: wrap;
+  }
+  .whitespace-nowrap {
+    white-space: nowrap;
+  }
+  .whitespace-pre-wrap {
+    white-space: pre-wrap;
+  }
+  .text-accent {
+    color: var(--color-accent);
+  }
+  .text-accent\/50 {
+    color: color-mix(in srgb, #4A9EFF 50%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--color-accent) 50%, transparent);
+    }
+  }
+  .text-accent\/70 {
+    color: color-mix(in srgb, #4A9EFF 70%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--color-accent) 70%, transparent);
+    }
+  }
+  .text-accent\/80 {
+    color: color-mix(in srgb, #4A9EFF 80%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--color-accent) 80%, transparent);
+    }
+  }
+  .text-bg {
+    color: var(--color-bg);
+  }
+  .text-danger {
+    color: var(--color-danger);
+  }
+  .text-red-200 {
+    color: var(--color-red-200);
+  }
+  .text-red-300 {
+    color: var(--color-red-300);
+  }
+  .text-success {
+    color: var(--color-success);
+  }
+  .text-text {
+    color: var(--color-text);
+  }
+  .text-text-muted {
+    color: var(--color-text-muted);
+  }
+  .text-text-muted\/30 {
+    color: color-mix(in srgb, #B1B3B7 30%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--color-text-muted) 30%, transparent);
+    }
+  }
+  .text-text-muted\/40 {
+    color: color-mix(in srgb, #B1B3B7 40%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--color-text-muted) 40%, transparent);
+    }
+  }
+  .text-text-muted\/50 {
+    color: color-mix(in srgb, #B1B3B7 50%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--color-text-muted) 50%, transparent);
+    }
+  }
+  .text-text-muted\/60 {
+    color: color-mix(in srgb, #B1B3B7 60%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--color-text-muted) 60%, transparent);
+    }
+  }
+  .text-text-muted\/70 {
+    color: color-mix(in srgb, #B1B3B7 70%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--color-text-muted) 70%, transparent);
+    }
+  }
+  .text-warning {
+    color: var(--color-warning);
+  }
+  .text-white {
+    color: var(--color-white);
+  }
+  .capitalize {
+    text-transform: capitalize;
+  }
+  .uppercase {
+    text-transform: uppercase;
+  }
+  .italic {
+    font-style: italic;
+  }
+  .line-through {
+    text-decoration-line: line-through;
+  }
+  .underline {
+    text-decoration-line: underline;
+  }
+  .opacity-100 {
+    opacity: 100%;
+  }
+  .shadow-lg {
+    --tw-shadow: 0 10px 15px -3px var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 4px 6px -4px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+  .shadow-sm {
+    --tw-shadow: 0 1px 3px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.1)), 0 1px 2px -1px var(--tw-shadow-color, rgb(0 0 0 / 0.1));
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+  .ring-1 {
+    --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+  .ring-accent\/20 {
+    --tw-ring-color: color-mix(in srgb, #4A9EFF 20%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      --tw-ring-color: color-mix(in oklab, var(--color-accent) 20%, transparent);
+    }
+  }
+  .outline {
+    outline-style: var(--tw-outline-style);
+    outline-width: 1px;
+  }
+  .filter {
+    filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
+  }
+  .backdrop-filter {
+    -webkit-backdrop-filter: var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);
+    backdrop-filter: var(--tw-backdrop-blur,) var(--tw-backdrop-brightness,) var(--tw-backdrop-contrast,) var(--tw-backdrop-grayscale,) var(--tw-backdrop-hue-rotate,) var(--tw-backdrop-invert,) var(--tw-backdrop-opacity,) var(--tw-backdrop-saturate,) var(--tw-backdrop-sepia,);
+  }
+  .transition {
+    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to, opacity, box-shadow, transform, translate, scale, rotate, filter, -webkit-backdrop-filter, backdrop-filter, display, content-visibility, overlay, pointer-events;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+  .transition-\[grid-template-columns\] {
+    transition-property: grid-template-columns;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+  .transition-all {
+    transition-property: all;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+  .transition-colors {
+    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, --tw-gradient-from, --tw-gradient-via, --tw-gradient-to;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+  .transition-transform {
+    transition-property: transform, translate, scale, rotate;
+    transition-timing-function: var(--tw-ease, var(--default-transition-timing-function));
+    transition-duration: var(--tw-duration, var(--default-transition-duration));
+  }
+  .duration-200 {
+    --tw-duration: 200ms;
+    transition-duration: 200ms;
+  }
+  .duration-300 {
+    --tw-duration: 300ms;
+    transition-duration: 300ms;
+  }
+  .ease-in-out {
+    --tw-ease: var(--ease-in-out);
+    transition-timing-function: var(--ease-in-out);
+  }
+  .outline-none {
+    --tw-outline-style: none;
+    outline-style: none;
+  }
+  .\[domain\:op\] {
+    domain: op;
+  }
+  .\[domain\:operation\] {
+    domain: operation;
+  }
+  .\[io\:backup\] {
+    io: backup;
+  }
+  .\[sync\:pull\] {
+    sync: pull;
+  }
+  @media (hover: hover) {
+    .group-hover\:text-text-muted:is(:where(.group):hover *) {
+      color: var(--color-text-muted);
+    }
+  }
+  .placeholder\:text-text-muted\/40::placeholder {
+    color: color-mix(in srgb, #B1B3B7 40%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--color-text-muted) 40%, transparent);
+    }
+  }
+  .placeholder\:text-text-muted\/50::placeholder {
+    color: color-mix(in srgb, #B1B3B7 50%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      color: color-mix(in oklab, var(--color-text-muted) 50%, transparent);
+    }
+  }
+  .focus-within\:border-accent:focus-within {
+    border-color: var(--color-accent);
+  }
+  .focus-within\:ring-1:focus-within {
+    --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+  .focus-within\:ring-accent:focus-within {
+    --tw-ring-color: var(--color-accent);
+  }
+  @media (hover: hover) {
+    .hover\:-translate-y-\[1px\]:hover {
+      --tw-translate-y: calc(1px * -1);
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
+    .hover\:border-accent\/30:hover {
+      border-color: color-mix(in srgb, #4A9EFF 30%, transparent);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:border-accent\/30:hover {
+        border-color: color-mix(in oklab, var(--color-accent) 30%, transparent);
+      }
+    }
+    .hover\:border-accent\/40:hover {
+      border-color: color-mix(in srgb, #4A9EFF 40%, transparent);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:border-accent\/40:hover {
+        border-color: color-mix(in oklab, var(--color-accent) 40%, transparent);
+      }
+    }
+    .hover\:border-accent\/50:hover {
+      border-color: color-mix(in srgb, #4A9EFF 50%, transparent);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:border-accent\/50:hover {
+        border-color: color-mix(in oklab, var(--color-accent) 50%, transparent);
+      }
+    }
+    .hover\:border-accent\/60:hover {
+      border-color: color-mix(in srgb, #4A9EFF 60%, transparent);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:border-accent\/60:hover {
+        border-color: color-mix(in oklab, var(--color-accent) 60%, transparent);
+      }
+    }
+    .hover\:border-border:hover {
+      border-color: var(--color-border);
+    }
+    .hover\:bg-accent\/10:hover {
+      background-color: color-mix(in srgb, #4A9EFF 10%, transparent);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:bg-accent\/10:hover {
+        background-color: color-mix(in oklab, var(--color-accent) 10%, transparent);
+      }
+    }
+    .hover\:bg-accent\/20:hover {
+      background-color: color-mix(in srgb, #4A9EFF 20%, transparent);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:bg-accent\/20:hover {
+        background-color: color-mix(in oklab, var(--color-accent) 20%, transparent);
+      }
+    }
+    .hover\:bg-accent\/90:hover {
+      background-color: color-mix(in srgb, #4A9EFF 90%, transparent);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:bg-accent\/90:hover {
+        background-color: color-mix(in oklab, var(--color-accent) 90%, transparent);
+      }
+    }
+    .hover\:bg-border\/50:hover {
+      background-color: color-mix(in srgb, #1F2024 50%, transparent);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:bg-border\/50:hover {
+        background-color: color-mix(in oklab, var(--color-border) 50%, transparent);
+      }
+    }
+    .hover\:bg-surface:hover {
+      background-color: var(--color-surface);
+    }
+    .hover\:bg-surface-alt:hover {
+      background-color: var(--color-surface-alt);
+    }
+    .hover\:text-accent:hover {
+      color: var(--color-accent);
+    }
+    .hover\:text-accent\/80:hover {
+      color: color-mix(in srgb, #4A9EFF 80%, transparent);
+    }
+    @supports (color: color-mix(in lab, red, red)) {
+      .hover\:text-accent\/80:hover {
+        color: color-mix(in oklab, var(--color-accent) 80%, transparent);
+      }
+    }
+    .hover\:text-danger:hover {
+      color: var(--color-danger);
+    }
+    .hover\:text-text:hover {
+      color: var(--color-text);
+    }
+  }
+  .focus\:border-accent:focus {
+    border-color: var(--color-accent);
+  }
+  .focus\:border-accent\/50:focus {
+    border-color: color-mix(in srgb, #4A9EFF 50%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-accent) 50%, transparent);
+    }
+  }
+  .focus\:ring-1:focus {
+    --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+  .focus\:ring-accent:focus {
+    --tw-ring-color: var(--color-accent);
+  }
+  .focus\:outline-none:focus {
+    --tw-outline-style: none;
+    outline-style: none;
+  }
+  .focus-visible\:ring-2:focus-visible {
+    --tw-ring-shadow: var(--tw-ring-inset,) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color, currentcolor);
+    box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow);
+  }
+  .focus-visible\:ring-accent:focus-visible {
+    --tw-ring-color: var(--color-accent);
+  }
+  .focus-visible\:outline-none:focus-visible {
+    --tw-outline-style: none;
+    outline-style: none;
+  }
+  .active\:translate-y-0:active {
+    --tw-translate-y: 0px;
+    translate: var(--tw-translate-x) var(--tw-translate-y);
+  }
+  .active\:cursor-grabbing:active {
+    cursor: grabbing;
+  }
+  .disabled\:translate-y-0:disabled {
+    --tw-translate-y: 0px;
+    translate: var(--tw-translate-x) var(--tw-translate-y);
+  }
+  .disabled\:opacity-40:disabled {
+    opacity: 40%;
+  }
+  .disabled\:opacity-50:disabled {
+    opacity: 50%;
+  }
+  @media (width >= 40rem) {
+    .sm\:col-span-2 {
+      grid-column: span 2 / span 2;
+    }
+    .sm\:w-auto {
+      width: auto;
+    }
+    .sm\:max-w-md {
+      max-width: var(--container-md);
+    }
+    .sm\:grid-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .sm\:grid-cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .sm\:flex-row {
+      flex-direction: row;
+    }
+    .sm\:items-center {
+      align-items: center;
+    }
+    .sm\:gap-0 {
+      gap: 0px;
+    }
+    .sm\:gap-3 {
+      gap: calc(var(--spacing) * 3);
+    }
+    .sm\:gap-4 {
+      gap: calc(var(--spacing) * 4);
+    }
+    .sm\:gap-5 {
+      gap: calc(var(--spacing) * 5);
+    }
+    .sm\:p-5 {
+      padding: calc(var(--spacing) * 5);
+    }
+    .sm\:p-8 {
+      padding: calc(var(--spacing) * 8);
+    }
+    .sm\:px-6 {
+      padding-inline: calc(var(--spacing) * 6);
+    }
+    .sm\:py-8 {
+      padding-block: calc(var(--spacing) * 8);
+    }
+    .sm\:pt-0 {
+      padding-top: 0px;
+    }
+    .sm\:pt-8 {
+      padding-top: calc(var(--spacing) * 8);
+    }
+    .sm\:pb-0 {
+      padding-bottom: 0px;
+    }
+    .sm\:text-3xl {
+      font-size: var(--text-3xl);
+      line-height: var(--tw-leading, var(--text-3xl--line-height));
+    }
+    .sm\:text-lg {
+      font-size: var(--text-lg);
+      line-height: var(--tw-leading, var(--text-lg--line-height));
+    }
+    .sm\:text-xs {
+      font-size: var(--text-xs);
+      line-height: var(--tw-leading, var(--text-xs--line-height));
+    }
+    .sm\:opacity-0 {
+      opacity: 0%;
+    }
+    @media (hover: hover) {
+      .sm\:group-hover\:opacity-100:is(:where(.group):hover *) {
+        opacity: 100%;
+      }
+    }
+  }
+  @media (width >= 48rem) {
+    .md\:relative {
+      position: relative;
+    }
+    .md\:block {
+      display: block;
+    }
+    .md\:flex {
+      display: flex;
+    }
+    .md\:grid {
+      display: grid;
+    }
+    .md\:hidden {
+      display: none;
+    }
+    .md\:w-1\/3 {
+      width: calc(1 / 3 * 100%);
+    }
+    .md\:w-auto {
+      width: auto;
+    }
+    .md\:max-w-\[400px\] {
+      max-width: 400px;
+    }
+    .md\:min-w-\[320px\] {
+      min-width: 320px;
+    }
+    .md\:translate-x-0 {
+      --tw-translate-x: 0px;
+      translate: var(--tw-translate-x) var(--tw-translate-y);
+    }
+    .md\:grid-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .md\:grid-cols-\[64px_1fr\] {
+      grid-template-columns: 64px 1fr;
+    }
+    .md\:grid-cols-\[260px_1fr\] {
+      grid-template-columns: 260px 1fr;
+    }
+  }
+  @media (width >= 64rem) {
+    .lg\:grid-cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    .lg\:p-12 {
+      padding: calc(var(--spacing) * 12);
+    }
+  }
+  @media (width >= 80rem) {
+    .xl\:grid-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+:root {
+  color-scheme: dark;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: var(--color-bg);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--color-bg);
+}
+* {
+  box-sizing: border-box;
+}
+button, input, textarea, select {
+  font: inherit;
+}
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 3px;
+}
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+body {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@property --tw-translate-x {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-translate-y {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-translate-z {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-rotate-x {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-rotate-y {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-rotate-z {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-skew-x {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-skew-y {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-divide-y-reverse {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
+@property --tw-border-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
+@property --tw-leading {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-font-weight {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-tracking {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-inset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-inset-ring-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-inset-ring-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-ring-inset {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ring-offset-width {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --tw-ring-offset-color {
+  syntax: "*";
+  inherits: false;
+  initial-value: #fff;
+}
+@property --tw-ring-offset-shadow {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0 0 #0000;
+}
+@property --tw-outline-style {
+  syntax: "*";
+  inherits: false;
+  initial-value: solid;
+}
+@property --tw-blur {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-brightness {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-contrast {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-grayscale {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-hue-rotate {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-invert {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-opacity {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-saturate {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-sepia {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-drop-shadow {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-drop-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-drop-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-drop-shadow-size {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-blur {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-brightness {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-contrast {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-grayscale {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-hue-rotate {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-invert {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-opacity {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-saturate {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-backdrop-sepia {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-duration {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-ease {
+  syntax: "*";
+  inherits: false;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@layer properties {
+  @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
+    *, ::before, ::after, ::backdrop {
+      --tw-translate-x: 0;
+      --tw-translate-y: 0;
+      --tw-translate-z: 0;
+      --tw-rotate-x: initial;
+      --tw-rotate-y: initial;
+      --tw-rotate-z: initial;
+      --tw-skew-x: initial;
+      --tw-skew-y: initial;
+      --tw-divide-y-reverse: 0;
+      --tw-border-style: solid;
+      --tw-leading: initial;
+      --tw-font-weight: initial;
+      --tw-tracking: initial;
+      --tw-shadow: 0 0 #0000;
+      --tw-shadow-color: initial;
+      --tw-shadow-alpha: 100%;
+      --tw-inset-shadow: 0 0 #0000;
+      --tw-inset-shadow-color: initial;
+      --tw-inset-shadow-alpha: 100%;
+      --tw-ring-color: initial;
+      --tw-ring-shadow: 0 0 #0000;
+      --tw-inset-ring-color: initial;
+      --tw-inset-ring-shadow: 0 0 #0000;
+      --tw-ring-inset: initial;
+      --tw-ring-offset-width: 0px;
+      --tw-ring-offset-color: #fff;
+      --tw-ring-offset-shadow: 0 0 #0000;
+      --tw-outline-style: solid;
+      --tw-blur: initial;
+      --tw-brightness: initial;
+      --tw-contrast: initial;
+      --tw-grayscale: initial;
+      --tw-hue-rotate: initial;
+      --tw-invert: initial;
+      --tw-opacity: initial;
+      --tw-saturate: initial;
+      --tw-sepia: initial;
+      --tw-drop-shadow: initial;
+      --tw-drop-shadow-color: initial;
+      --tw-drop-shadow-alpha: 100%;
+      --tw-drop-shadow-size: initial;
+      --tw-backdrop-blur: initial;
+      --tw-backdrop-brightness: initial;
+      --tw-backdrop-contrast: initial;
+      --tw-backdrop-grayscale: initial;
+      --tw-backdrop-hue-rotate: initial;
+      --tw-backdrop-invert: initial;
+      --tw-backdrop-opacity: initial;
+      --tw-backdrop-saturate: initial;
+      --tw-backdrop-sepia: initial;
+      --tw-duration: initial;
+      --tw-ease: initial;
+    }
+  }
+}
+</style>
+<script type="module">import { injectIntoGlobalHook } from "/@react-refresh";
+injectIntoGlobalHook(window);
+window.$RefreshReg$ = () => {};
+window.$RefreshSig$ = () => (type) => type;</script>
+<script type="module" src="/@vite/client"></script>
+<script src="https://va.vercel-scripts.com/v1/script.debug.js" data-sdkn="@vercel/analytics/react" data-sdkv="2.0.1" defer></script>
+</head>
+<body>
+
+    <div id="root"><div class="lp"><a class="lp-skip" href="#hero">Skip to main content</a><header class="lp-header"><div class="lp-wrap lp-header-inner"><a class="lp-brand" href="#hero"><svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false"><rect x="2.5" y="4" width="15" height="2.6" rx="1.3" fill="currentColor" /><rect x="2.5" y="8.7" width="15" height="2.6" rx="1.3" fill="var(--color-accent, #4A9EFF)" /><rect x="2.5" y="13.4" width="15" height="2.6" rx="1.3" fill="currentColor" /></svg>The Mainframe</a><nav class="lp-nav" aria-label="Page sections"><a href="#why">Why</a><a href="#walkthrough">How it works</a><a href="#features">Features</a><a href="#platforms">Platforms</a><a href="#trust">Limitations</a></nav><a class="lp-textlink lp-header-cta" href="https://github.com/karefined-eng/the-mainframe" target="_blank" rel="noreferrer noopener">GitHub<svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link" aria-hidden="true"><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></svg></a></div></header><main id="main"><section class="lp-hero" id="hero" aria-labelledby="hero-heading" data-od-id="hero"><div class="lp-wrap lp-hero-grid"><div><h1 class="lp-h1" id="hero-heading">A local-first home for every list you are already keeping.</h1><p class="lp-sub">The Mainframe is a private, offline life-management app for scattered projects, goals, courses, ideas, and purchases. Paste the lists you already have, keep the database on your own devices, and bring some order to what is currently spread across notes, messages, and memory.</p><p class="lp-status"><span class="lp-dot" aria-hidden="true"></span>Early public release · no versioned releases yet</p><div class="lp-cta-row"><a class="lp-btn lp-btn--primary" href="https://github.com/karefined-eng/the-mainframe/actions" target="_blank" rel="noreferrer noopener" data-od-id="cta-download">Get a build from CI<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link" aria-hidden="true"><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></svg></a><a class="lp-textlink" href="https://github.com/karefined-eng/the-mainframe" target="_blank" rel="noreferrer noopener" data-od-id="cta-source">Read the source first</a></div><p class="lp-cta-note">Builds are unsigned CI artifacts, not releases — no accounts, no downloads page. <a href="#platforms">See platform status</a>.</p></div><div class="lp-panel" data-od-id="hero-panel"><div class="lp-panel-bar"><span class="lp-tick"></span><span class="lp-tick"></span><span class="lp-tick lp-tick--accent"></span><span class="lp-panel-title">mainframe · local</span><span class="lp-panel-live"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-lock" aria-hidden="true"><rect width="18" height="11" x="3" y="11" rx="2" ry="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg>offline</span></div><div class="lp-panel-body"><div class="lp-step-block"><p class="lp-panel-label"><span class="lp-panel-num lp-mono">01</span>You paste 4 lines</p><pre class="lp-raw">AWS SAA - book exam slot
+LAN snapshot diff viewer
+27" 4K monitor
+Run 10k under 50 min</pre></div><div class="lp-step-block"><p class="lp-panel-label"><span class="lp-panel-num lp-mono">02</span>You get 4 rows</p><div class="lp-rows"><div class="lp-row"><span class="lp-tick"></span><span class="lp-row-title">AWS SAA - book exam slot</span><span class="lp-row-meta">Not started · no date</span></div><div class="lp-row"><span class="lp-tick"></span><span class="lp-row-title">LAN snapshot diff viewer</span><span class="lp-row-meta">Not started · no date</span></div><div class="lp-row"><span class="lp-tick"></span><span class="lp-row-title">27" 4K monitor</span><span class="lp-row-meta">Not started · no date</span></div><div class="lp-row"><span class="lp-tick"></span><span class="lp-row-title">Run 10k under 50 min</span><span class="lp-row-meta">Not started · no date</span></div></div></div><div class="lp-step-block"><p class="lp-panel-label"><span class="lp-panel-num lp-mono">03</span>Which need attention</p><ul class="lp-hot"><li><strong>AWS SAA - book exam slot</strong><span>Due this week</span></li><li><strong>LAN snapshot diff viewer</strong><span>No update in 21 days</span></li></ul></div></div><p class="lp-panel-disclosure">This is the whole transform. The app splits on newlines and files each line in the list you had open — it does not guess a domain or invent a due date.</p></div></div></section><section class="lp-section" id="why" aria-labelledby="why-heading" data-od-id="why"><div class="lp-wrap"><h2 class="lp-h2" id="why-heading">Built for people whose work does not fit in one list</h2><p class="lp-lede">Most life tools are either a generic task list you have to reshape around your life, or a workspace so broad that maintaining it becomes the work. The Mainframe starts from the lists a person actually keeps: studies, builds, acquisitions, long-term goals, and ventures.</p><div class="lp-ruled lp-aud-grid"><div class="lp-aud"><h3>Developers and solo builders</h3><p>Several builds, courses, and side projects running in parallel with no single place that shows all of them.</p></div><div class="lp-aud"><h3>Students and career switchers</h3><p>Certification tracks, study material, and application deadlines spread across notes, browsers, and messages.</p></div><div class="lp-aud"><h3>Freelancers and creators</h3><p>Client deliverables that recur, personal work that keeps getting postponed, and ideas that need somewhere to land.</p></div><div class="lp-aud"><h3>Anyone whose lists are everywhere</h3><p>Task content split across note apps, chat threads, spreadsheets, and memory. The Mainframe is built to be the one place those lists come to rest.</p></div></div></div></section><section class="lp-section" id="walkthrough" aria-labelledby="walkthrough-heading" data-od-id="walkthrough"><div class="lp-wrap"><h2 class="lp-h2" id="walkthrough-heading">Paste, structure, decide, continue</h2><p class="lp-lede">Four steps, no setup ritual. The loop works the same offline as it does on a local network.</p><div class="lp-ruled lp-steps"><article class="lp-step"><p class="lp-step-num lp-mono">01</p><div class="lp-step-body"><h3>Paste the list you already have</h3><p>Copy a wall of unstructured text from wherever it currently lives and paste it in. Plain text is the only input path — there is no file-upload workflow and no format-specific parser to satisfy.</p><figure class="lp-figure"><figcaption class="lp-figure-tag">Paste panel with a real list</figcaption><p class="lp-figure-note">Screenshot coming with the first release.</p></figure></div></article><article class="lp-step"><p class="lp-step-num lp-mono">02</p><div class="lp-step-body"><h3>Watch it become rows</h3><p>Each non-empty line becomes one item, with the original line kept alongside it as raw import text. That is the whole transform: the app does not guess which domain a line belongs to, and it does not invent a due date for you.</p><figure class="lp-figure"><figcaption class="lp-figure-tag">Rows in a domain list</figcaption><p class="lp-figure-note">Screenshot coming with the first release.</p></figure></div></article><article class="lp-step"><p class="lp-step-num lp-mono">03</p><div class="lp-step-body"><h3>See what needs attention</h3><p>The dashboard pulls a short cross-domain shortlist and says why each entry surfaced, using plain reasons such as being overdue, being due this week, or not having been touched in a while.</p><figure class="lp-figure"><figcaption class="lp-figure-tag">Cross-domain attention view</figcaption><p class="lp-figure-note">Screenshot coming with the first release.</p></figure></div></article><article class="lp-step"><p class="lp-step-num lp-mono">04</p><div class="lp-step-body"><h3>Stay offline, sync only when you choose</h3><p>The app reads and writes a local SQLite database on each device. When you want the same snapshot on a second device, pair once on a trusted local network and transfer a validated snapshot.</p><figure class="lp-figure"><figcaption class="lp-figure-tag">LAN sync pairing</figcaption><p class="lp-figure-note">Screenshot coming with the first release.</p></figure></div></article></div></div></section><section class="lp-section" id="features" aria-labelledby="features-heading" data-od-id="features"><div class="lp-wrap"><h2 class="lp-h2" id="features-heading">Four things it does, and nothing else</h2><p class="lp-lede">Each pillar is a commitment about behavior, not a feature count. Technical detail belongs further down the page.</p><div class="lp-ruled lp-pillar-grid"><article class="lp-pillar"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-clipboard-paste" aria-hidden="true"><path d="M15 2H9a1 1 0 0 0-1 1v2c0 .6.4 1 1 1h6c.6 0 1-.4 1-1V3c0-.6-.4-1-1-1Z" /><path d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2M16 4h2a2 2 0 0 1 2 2v2M11 14h10" /><path d="m17 10 4 4-4 4" /></svg><h3>Bring in a list</h3><p>Paste messy plain text and start with structure. No template to fill in, no import wizard, and the source line stays attached to the row it produced.</p></article><article class="lp-pillar"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flame" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" /></svg><h3>See what matters now</h3><p>One combined view across every domain so parallel tracks stop competing for attention in your head. Each suggestion explains why it appeared.</p></article><article class="lp-pillar"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-hard-drive" aria-hidden="true"><line x1="22" x2="2" y1="12" y2="12" /><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z" /><line x1="6" x2="6.01" y1="16" y2="16" /><line x1="10" x2="10.01" y1="16" y2="16" /></svg><h3>Keep it local</h3><p>Offline-first SQLite storage with no required account. Your database is a file on your own device, not a row in someone else's service.</p></article><article class="lp-pillar"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-arrow-left-right" aria-hidden="true"><path d="M8 3 4 7l4 4" /><path d="M4 7h16" /><path d="m16 21 4-4-4-4" /><path d="M20 17H4" /></svg><h3>Move a snapshot when you choose</h3><p>Opt-in transfer between your own trusted devices with one-time pairing, bounded to a validated snapshot rather than continuous background sync.</p></article></div></div></section><section class="lp-section" id="platforms" aria-labelledby="platforms-heading" data-od-id="platforms"><div class="lp-wrap"><h2 class="lp-h2" id="platforms-heading">What you can actually run today</h2><p class="lp-lede">One Tauri v2 codebase, built by GitHub Actions for four platforms. Everything below is a build target, not a tested release.</p><div class="lp-table-wrap"><table class="lp-table"><caption>Platform status as documented in the repository README. No platform is marked as tested or released.</caption><thead><tr><th scope="col">Platform</th><th scope="col">Current deliverable</th><th scope="col">Status</th></tr></thead><tbody><tr><td>Windows 10/11</td><td>Desktop installer artifacts from GitHub Actions</td><td><span class="lp-tag lp-tag--accent">Build target</span><span class="lp-table-status">Build target</span></td></tr><tr><td>macOS</td><td>.app / .dmg artifacts from GitHub Actions</td><td><span class="lp-tag lp-tag--accent">Build target</span><span class="lp-table-status">Build target; signing and notarization still required for distribution</span></td></tr><tr><td>Linux</td><td>AppImage / deb artifacts from GitHub Actions</td><td><span class="lp-tag lp-tag--accent">Build target</span><span class="lp-table-status">Build target; test on target distributions before release</span></td></tr><tr><td>Android</td><td>Signed release APK or unsigned debug APK artifact</td><td><span class="lp-tag lp-tag--accent">Build target</span><span class="lp-table-status">Build target; Play Store bundle and device testing remain</span></td></tr><tr><td>iOS</td><td>Not currently configured</td><td><span class="lp-tag">Not configured</span><span class="lp-table-status">Planned evaluation</span></td></tr></tbody></table></div><div class="lp-download"><a class="lp-btn lp-btn--primary" href="https://github.com/karefined-eng/the-mainframe/actions" target="_blank" rel="noreferrer noopener" data-od-id="cta-actions">Open the Actions tab<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link" aria-hidden="true"><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></svg></a><a class="lp-btn lp-btn--ghost" href="https://github.com/karefined-eng/the-mainframe#quick-start-for-contributors" target="_blank" rel="noreferrer noopener">Build it locally instead</a></div><p class="lp-download-note"><strong>How to get a build:</strong> open the Actions tab, pick a <em>successful</em> run of the desktop or Android workflow, and download the artifact for your platform. Links to runs are not published here on purpose — an artifact only exists after a successful build, and this page will not point you at a build that failed. When versioning, signing, and device testing are done, these become versioned GitHub Releases.</p></div></section><section class="lp-section" id="trust" aria-labelledby="trust-heading" data-od-id="trust"><div class="lp-wrap"><h2 class="lp-h2" id="trust-heading">What it will not do, and what you should know</h2><p class="lp-lede">Two different lists. The first is what the app will never do to you. The second is what is genuinely limited today — stated plainly, because you should know it before you put real work in.</p><h3 class="lp-subhead" id="guarantees-heading">What it will not do</h3><div class="lp-ruled lp-trust-grid" aria-labelledby="guarantees-heading"><article class="lp-trust lp-trust--good"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" /></svg><div><h3>No required account or cloud service</h3><p>The core workflow never calls a hosted backend. There is no sign-up, no subscription, and no telemetry service in the loop.</p></div></article><article class="lp-trust lp-trust--good"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" /></svg><div><h3>Data stays on the device by default</h3><p>Every device holds its own SQLite database and works with no network connection.</p></div></article><article class="lp-trust lp-trust--good"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" /></svg><div><h3>No background sync</h3><p>Nothing moves between your devices unless you start a transfer yourself and pair once to authorise it.</p></div></article><article class="lp-trust lp-trust--good"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-shield-check" aria-hidden="true"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="m9 12 2 2 4-4" /></svg><div><h3>Nothing is uploaded to build this page</h3><p>This is a static page with no third-party scripts and no external fonts. The only measurement is the host's own cookie-free page-view counter — no accounts, no cross-site tracking, no personal data.</p></div></article></div><h3 class="lp-subhead lp-subhead--spaced" id="cautions-heading">What you should know before trusting it</h3><div class="lp-ruled lp-trust-grid" aria-labelledby="cautions-heading"><article class="lp-trust"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg><div><h3>Devices do not merge automatically</h3><p>Installing the app on a second machine does not combine the two databases. A snapshot transfer copies one device's database over the other's — it is not a merge.</p></div></article><article class="lp-trust"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg><div><h3>The current LAN transport is cleartext</h3><p>Sync is HTTP on the local network, restricted to private addresses on port 9377 (discovery on 9378). Do not expose it to the public internet, use it on an untrusted network, or treat it as a backup.</p></div></article><article class="lp-trust"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg><div><h3>Pairing is short-lived by design</h3><p>Pairing uses a one-time six-digit token that expires after 10 minutes. If pairing fails, start over rather than reusing a token.</p></div></article><article class="lp-trust"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg><div><h3>Back up before replacing a local database</h3><p>A snapshot transfer replaces the target database. Export a backup first if the device holds anything you have not duplicated elsewhere.</p></div></article><article class="lp-trust"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-triangle-alert" aria-hidden="true"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3" /><path d="M12 9v4" /><path d="M12 17h.01" /></svg><div><h3>Desktop builds are unsigned</h3><p>Until platform signing is configured, desktop artifacts are unsigned and will trigger an operating-system warning on first launch. Only run a build you downloaded from this repository's own Actions tab.</p></div></article></div></div></section><section class="lp-section" id="contribute" aria-labelledby="contribute-heading" data-od-id="contribute"><div class="lp-wrap"><h2 class="lp-h2" id="contribute-heading">Read the code before you trust it</h2><p class="lp-lede">The source is public, and the claims above are checkable in it. Issues and focused pull requests are welcome — the limitations are as open to discussion as the features.</p><div class="lp-contrib"><ul class="lp-list"><li><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg><span>Include the platform, the app version or commit, reproduction steps, and relevant logs.</span></li><li><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg><span>Keep reports specific — a narrow bug with clear steps is more useful than a broad feature wish.</span></li><li><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg><span>Do not attach database files or other private data to an issue. Sanitize screenshots first.</span></li><li><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check" aria-hidden="true"><path d="M20 6 9 17l-5-5" /></svg><span>Ideas and limitations are equally welcome. This is an early public release and the roadmap is still open.</span></li><li><svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-messages-square" aria-hidden="true"><path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2z" /><path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" /></svg><span>Report a problem or ask a question in the <a href="https://github.com/karefined-eng/the-mainframe/issues" target="_blank" rel="noreferrer noopener">issue tracker</a>.</span></li></ul><div class="lp-stack"><p class="lp-stack-label">Technical stack</p><dl><div><dt>Shell and native core</dt><dd>Tauri v2 with Rust</dd></div><div><dt>Interface</dt><dd>React, TypeScript, Vite, Tailwind CSS</dd></div><div><dt>Storage</dt><dd>SQLite through tauri-plugin-sql</dd></div><div><dt>Device transfer</dt><dd>Local-network sync implemented in Rust</dd></div></dl></div></div></div></section><section class="lp-final" aria-labelledby="final-heading" data-od-id="final-cta"><div class="lp-wrap"><h2 id="final-heading">Try it on one list you already have</h2><p>Copy the messiest list you are currently carrying around, paste it in, and see whether the rows it produces match how you actually think about the work. If they do not, that is useful feedback too.</p><div class="lp-cta-row"><a class="lp-btn lp-btn--primary" href="https://github.com/karefined-eng/the-mainframe/actions" target="_blank" rel="noreferrer noopener">Get a build from CI<svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-external-link" aria-hidden="true"><path d="M15 3h6v6" /><path d="M10 14 21 3" /><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" /></svg></a><a class="lp-btn lp-btn--ghost" href="https://github.com/karefined-eng/the-mainframe" target="_blank" rel="noreferrer noopener">Read the source first</a></div></div></section></main><footer class="lp-footer" data-od-id="footer"><div class="lp-wrap lp-footer-inner"><p>The Mainframe · early public release. Local-first, no required account, no telemetry service.</p><nav aria-label="Footer links"><a href="https://github.com/karefined-eng/the-mainframe" target="_blank" rel="noreferrer noopener">GitHub</a><a href="https://github.com/karefined-eng/the-mainframe/issues" target="_blank" rel="noreferrer noopener">Issues</a><a href="#trust">Limitations</a><a href="#hero">Back to top</a></nav></div></footer></div></div>
+    <script type="module" src="/src/main.tsx"></script>
+  
+
+
+</body>
+</html>

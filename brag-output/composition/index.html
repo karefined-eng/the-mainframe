@@ -1,0 +1,667 @@
+<!doctype html>
+<html lang="en" data-resolution="landscape">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>The Mainframe — brag</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      /* Local fonts shipped from the project's own @fontsource packages. */
+      @font-face {
+        font-family: "Inter";
+        font-style: normal;
+        font-weight: 400;
+        font-display: block;
+        src: url("assets/fonts/inter-latin-400-normal.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Inter";
+        font-style: normal;
+        font-weight: 500;
+        font-display: block;
+        src: url("assets/fonts/inter-latin-500-normal.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Inter";
+        font-style: normal;
+        font-weight: 600;
+        font-display: block;
+        src: url("assets/fonts/inter-latin-600-normal.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "Inter";
+        font-style: normal;
+        font-weight: 700;
+        font-display: block;
+        src: url("assets/fonts/inter-latin-700-normal.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "JetBrains Mono";
+        font-style: normal;
+        font-weight: 400;
+        font-display: block;
+        src: url("assets/fonts/jetbrains-mono-latin-400-normal.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "JetBrains Mono";
+        font-style: normal;
+        font-weight: 500;
+        font-display: block;
+        src: url("assets/fonts/jetbrains-mono-latin-500-normal.woff2") format("woff2");
+      }
+      @font-face {
+        font-family: "JetBrains Mono";
+        font-style: normal;
+        font-weight: 700;
+        font-display: block;
+        src: url("assets/fonts/jetbrains-mono-latin-700-normal.woff2") format("woff2");
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: #0e0e10;
+      }
+      #root {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #0e0e10;
+        color: #f2f2f0;
+        font-family: "Inter", system-ui, sans-serif;
+      }
+      .mono {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-variant-numeric: tabular-nums;
+      }
+      .clip {
+        position: absolute;
+        inset: 0;
+      }
+      .scene-inner {
+        position: absolute;
+        inset: 0;
+      }
+
+      /* The project's design tokens (src/index.css), applied at video scale. */
+
+      /* Scene 1 — the wall */
+      .s1-wall {
+        position: absolute;
+        left: 140px;
+        top: 170px;
+      }
+      .s1-line {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 27px;
+        line-height: 1.7;
+        color: #b1b3b7;
+        white-space: nowrap;
+      }
+      .s1-cursor {
+        display: inline-block;
+        width: 16px;
+        height: 34px;
+        background: #4a9eff;
+        vertical-align: -6px;
+        margin-left: 8px;
+      }
+      .s1-caption {
+        position: absolute;
+        left: 140px;
+        top: 800px;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 30px;
+        font-weight: 500;
+        color: #f2f2f0;
+      }
+
+      /* Scene 2 — paste panel becomes rows */
+      .s2-panel {
+        position: absolute;
+        left: 140px;
+        top: 110px;
+        width: 960px;
+        border: 2px solid #1f2024;
+        border-radius: 20px;
+        background: #1a1a1d;
+        overflow: hidden;
+      }
+      .s2-panel-bar {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 20px 28px;
+        border-bottom: 2px solid #1f2024;
+        background: #141518;
+      }
+      .s2-bar-tick {
+        width: 12px;
+        height: 12px;
+        border-radius: 3px;
+        background: #b1b3b7;
+      }
+      .s2-bar-title {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 24px;
+        color: #b1b3b7;
+      }
+      .s2-status {
+        margin-left: auto;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 24px;
+        font-weight: 500;
+        color: #4a9eff;
+      }
+      .s2-panel-body {
+        position: relative;
+        padding: 26px 28px 30px;
+      }
+      .s2-raw {
+        position: absolute;
+        left: 28px;
+        right: 28px;
+        top: 26px;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 26px;
+        line-height: 1.65;
+        color: #b1b3b7;
+      }
+      .s2-rows {
+        display: grid;
+      }
+      .s2-row {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 17px 0;
+        border-top: 2px solid #1f2024;
+      }
+      .s2-row:first-child {
+        border-top: 0;
+      }
+      .s2-row-tick {
+        width: 13px;
+        height: 13px;
+        border-radius: 3px;
+        background: #b1b3b7;
+        flex: none;
+      }
+      .s2-row-tick--accent {
+        background: #4a9eff;
+      }
+      .s2-row-title {
+        font-size: 30px;
+        font-weight: 500;
+        color: #f2f2f0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .s2-row-meta {
+        margin-left: auto;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 24px;
+        color: #b1b3b7;
+        white-space: nowrap;
+      }
+      .s2-more {
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 24px;
+        color: #b1b3b7;
+        padding: 14px 0 0;
+      }
+      .s2-caption1,
+      .s2-caption2 {
+        position: absolute;
+        left: 140px;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 32px;
+        font-weight: 500;
+        color: #f2f2f0;
+      }
+      .s2-caption1 {
+        top: 866px;
+      }
+      .s2-caption2 {
+        top: 920px;
+        color: #b1b3b7;
+      }
+
+      /* Scene 3 — What's Hot */
+      .s3-header {
+        position: absolute;
+        left: 140px;
+        top: 140px;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 26px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        color: #b1b3b7;
+      }
+      .s3-rule {
+        position: absolute;
+        left: 140px;
+        top: 196px;
+        width: 960px;
+        height: 2px;
+        background: #1f2024;
+        transform-origin: left center;
+      }
+      .s3-item {
+        position: absolute;
+        left: 140px;
+        width: 960px;
+        border-top: 2px solid #1f2024;
+        padding: 30px 0;
+      }
+      #s3-item-1 {
+        top: 240px;
+      }
+      #s3-item-2 {
+        top: 384px;
+      }
+      #s3-item-3 {
+        top: 528px;
+      }
+      .s3-item-rule {
+        position: absolute;
+        left: 0;
+        top: -2px;
+        width: 100%;
+        height: 2px;
+        background: #1f2024;
+        transform-origin: left center;
+      }
+      .s3-item-head {
+        display: flex;
+        align-items: baseline;
+        gap: 20px;
+      }
+      .s3-item-title {
+        font-size: 34px;
+        font-weight: 600;
+        color: #f2f2f0;
+      }
+      .s3-item-tag {
+        margin-left: auto;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 24px;
+        letter-spacing: 0.08em;
+        color: #b1b3b7;
+      }
+      .s3-item-reason {
+        margin-top: 10px;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 27px;
+        font-weight: 500;
+        color: #4a9eff;
+      }
+      .s3-caption {
+        position: absolute;
+        left: 140px;
+        top: 800px;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 32px;
+        font-weight: 500;
+        color: #f2f2f0;
+      }
+
+      /* Scene 4 — refusal list + outro */
+      .s4-statement {
+        position: absolute;
+        left: 140px;
+        top: 380px;
+        font-size: 120px;
+        font-weight: 700;
+        letter-spacing: -0.026em;
+        color: #f2f2f0;
+        white-space: nowrap;
+      }
+      .s4-lockup {
+        position: absolute;
+        left: 140px;
+        top: 400px;
+        display: flex;
+        align-items: flex-start;
+        gap: 36px;
+      }
+      .s4-mark {
+        width: 110px;
+        height: 110px;
+        flex: none;
+      }
+      .s4-name {
+        font-size: 52px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: #f2f2f0;
+        margin-top: 8px;
+      }
+      .s4-url {
+        margin-top: 26px;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 30px;
+        color: #f2f2f0;
+      }
+      .s4-cta {
+        margin-top: 12px;
+        font-family: "JetBrains Mono", ui-monospace, monospace;
+        font-size: 30px;
+        color: #b1b3b7;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="23"
+      data-width="1920"
+      data-height="1080"
+    >
+      <!-- Music bed: deadpan-recommended track, very low, fades to silence. -->
+      <audio
+        id="music"
+        src="assets/music/happy-beats-business-moves-vol-12-by-ende-dot-app.mp3"
+        data-start="0"
+        data-duration="23"
+        data-track-index="10"
+        data-volume="0.15"
+        data-fade-in="1.5"
+        data-fade-out="2.2"
+      ></audio>
+
+      <!-- Scene 1 — The wall (0 – 5.7) -->
+      <section id="s1" class="clip" data-start="0" data-duration="5.7" data-track-index="0">
+        <div id="s1-inner" class="scene-inner">
+          <div class="s1-wall">
+            <div class="s1-line">renew passport</div>
+            <div class="s1-line">standing desk — compare prices</div>
+            <div class="s1-line">CS50 week 3 problem set</div>
+            <div class="s1-line">email landlord about the leak</div>
+            <div class="s1-line">mom's birthday gift</div>
+            <div class="s1-line">idea: draft stopper but for sound</div>
+            <div class="s1-line">finish chapter 4 notes</div>
+            <div class="s1-line">cancel that subscription</div>
+            <div class="s1-line">bike tune-up before winter</div>
+            <div class="s1-line">certifications — pick one</div>
+            <div class="s1-line">backup the laptop<span id="s1-cursor" class="s1-cursor"></span></div>
+          </div>
+          <div id="s1-caption" class="s1-caption">You're already keeping these lists.</div>
+        </div>
+      </section>
+
+      <!-- Scene 2 — Paste becomes rows (5.3 – 12.0) -->
+      <section id="s2" class="clip" data-start="5.3" data-duration="6.7" data-track-index="1">
+        <div id="s2-inner" class="scene-inner">
+          <div id="s2-panel" class="s2-panel">
+            <div class="s2-panel-bar">
+              <span class="s2-bar-tick"></span>
+              <span class="s2-bar-tick"></span>
+              <span class="s2-bar-title mono">PASTE IMPORT</span>
+              <span id="s2-status" class="s2-status mono">11 lines detected</span>
+            </div>
+            <div class="s2-panel-body">
+              <div id="s2-raw" class="s2-raw">
+                renew passport<br />
+                standing desk — compare prices<br />
+                CS50 week 3 problem set<br />
+                email landlord about the leak<br />
+                mom's birthday gift<br />
+                …
+              </div>
+              <div class="s2-rows">
+                <div class="s2-row">
+                  <span class="s2-row-tick s2-row-tick--accent"></span>
+                  <span class="s2-row-title">renew passport</span>
+                  <span class="s2-row-meta mono">raw text kept</span>
+                </div>
+                <div class="s2-row">
+                  <span class="s2-row-tick"></span>
+                  <span class="s2-row-title">standing desk — compare prices</span>
+                  <span class="s2-row-meta mono">raw text kept</span>
+                </div>
+                <div class="s2-row">
+                  <span class="s2-row-tick"></span>
+                  <span class="s2-row-title">CS50 week 3 problem set</span>
+                  <span class="s2-row-meta mono">raw text kept</span>
+                </div>
+                <div class="s2-row">
+                  <span class="s2-row-tick"></span>
+                  <span class="s2-row-title">email landlord about the leak</span>
+                  <span class="s2-row-meta mono">raw text kept</span>
+                </div>
+                <div class="s2-row">
+                  <span class="s2-row-tick"></span>
+                  <span class="s2-row-title">mom's birthday gift</span>
+                  <span class="s2-row-meta mono">raw text kept</span>
+                </div>
+                <div class="s2-row">
+                  <span class="s2-row-tick"></span>
+                  <span class="s2-row-title">idea: draft stopper but for sound</span>
+                  <span class="s2-row-meta mono">raw text kept</span>
+                </div>
+                <div id="s2-more" class="s2-more">+5 more</div>
+              </div>
+            </div>
+          </div>
+          <div id="s2-caption1" class="s2-caption1">One line. One row.</div>
+          <div id="s2-caption2" class="s2-caption2">Nothing else inferred.</div>
+        </div>
+      </section>
+
+      <!-- Scene 3 — What's Hot (11.6 – 17.2) -->
+      <section id="s3" class="clip" data-start="11.6" data-duration="5.6" data-track-index="2">
+        <div id="s3-inner" class="scene-inner">
+          <div id="s3-header" class="s3-header">WHAT'S HOT</div>
+          <div id="s3-rule" class="s3-rule"></div>
+          <div id="s3-item-1" class="s3-item">
+            <div id="s3-rule-1" class="s3-item-rule"></div>
+            <div class="s3-item-head">
+              <span class="s3-item-title">standing desk — compare prices</span>
+              <span class="s3-item-tag mono">ACQUISITIONS</span>
+            </div>
+            <div class="s3-item-reason">Overdue by 3 days</div>
+          </div>
+          <div id="s3-item-2" class="s3-item">
+            <div id="s3-rule-2" class="s3-item-rule"></div>
+            <div class="s3-item-head">
+              <span class="s3-item-title">CS50 week 3 problem set</span>
+              <span class="s3-item-tag mono">STUDIES</span>
+            </div>
+            <div class="s3-item-reason">Due this week</div>
+          </div>
+          <div id="s3-item-3" class="s3-item">
+            <div id="s3-rule-3" class="s3-item-rule"></div>
+            <div class="s3-item-head">
+              <span class="s3-item-title">bike tune-up before winter</span>
+              <span class="s3-item-tag mono">GOALS</span>
+            </div>
+            <div class="s3-item-reason">No update in 21 days</div>
+          </div>
+          <div id="s3-caption" class="s3-caption">Says why each thing surfaced.</div>
+        </div>
+      </section>
+
+      <!-- Scene 4 — Refusal list + outro (16.8 – 23.0) -->
+      <section id="s4" class="clip" data-start="16.8" data-duration="6.2" data-track-index="3">
+        <div id="s4-inner" class="scene-inner">
+          <div id="st-account" class="s4-statement" data-layout-allow-overlap>No account.</div>
+          <div id="st-cloud" class="s4-statement" data-layout-allow-overlap>No cloud.</div>
+          <div id="st-telemetry" class="s4-statement" data-layout-allow-overlap>No telemetry.</div>
+          <div id="s4-lockup" class="s4-lockup">
+            <img id="s4-mark" class="s4-mark" src="assets/logo.svg" alt="The Mainframe mark" />
+            <div>
+              <div id="s4-name" class="s4-name">The Mainframe</div>
+              <div id="s4-url" class="s4-url mono">the-mainframe-app.vercel.app</div>
+              <div id="s4-cta" class="s4-cta mono">Read the source first.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SFX: scene 1 typing (deterministic file sequence, no Math.random) -->
+      <audio id="key-01" src="assets/sfx/keyboard/keypress-002.wav" data-start="0.4" data-duration="0.25" data-track-index="11" data-volume="0.28"></audio>
+      <audio id="key-02" src="assets/sfx/keyboard/keypress-007.wav" data-start="0.49" data-duration="0.25" data-track-index="12" data-volume="0.28"></audio>
+      <audio id="key-03" src="assets/sfx/keyboard/keypress-011.wav" data-start="0.58" data-duration="0.25" data-track-index="13" data-volume="0.28"></audio>
+      <audio id="key-04" src="assets/sfx/keyboard/keypress-004.wav" data-start="0.67" data-duration="0.25" data-track-index="14" data-volume="0.28"></audio>
+      <audio id="key-05" src="assets/sfx/keyboard/keypress-009.wav" data-start="0.76" data-duration="0.25" data-track-index="15" data-volume="0.28"></audio>
+      <audio id="key-06" src="assets/sfx/keyboard/keypress-001.wav" data-start="0.85" data-duration="0.25" data-track-index="16" data-volume="0.28"></audio>
+      <audio id="key-07" src="assets/sfx/keyboard/keypress-012.wav" data-start="0.94" data-duration="0.25" data-track-index="17" data-volume="0.28"></audio>
+      <audio id="key-08" src="assets/sfx/keyboard/keypress-005.wav" data-start="1.03" data-duration="0.25" data-track-index="18" data-volume="0.28"></audio>
+      <audio id="key-09" src="assets/sfx/keyboard/keypress-010.wav" data-start="1.12" data-duration="0.25" data-track-index="19" data-volume="0.28"></audio>
+      <audio id="key-10" src="assets/sfx/keyboard/keypress-003.wav" data-start="1.21" data-duration="0.25" data-track-index="20" data-volume="0.28"></audio>
+      <audio id="key-11" src="assets/sfx/keyboard/keypress-008.wav" data-start="1.3" data-duration="0.25" data-track-index="21" data-volume="0.28"></audio>
+
+      <!-- SFX: scene 2 paste click + row materialization -->
+      <audio id="sfx-paste" src="assets/sfx/interface/click_003.ogg" data-start="6.8" data-duration="0.01" data-track-index="22" data-volume="0.45"></audio>
+      <audio id="row-sfx-1" src="assets/sfx/interface/drop_001.ogg" data-start="7.09" data-duration="0.11" data-track-index="23" data-volume="0.42"></audio>
+      <audio id="row-sfx-2" src="assets/sfx/interface/drop_002.ogg" data-start="7.64" data-duration="0.19" data-track-index="24" data-volume="0.42"></audio>
+      <audio id="row-sfx-3" src="assets/sfx/interface/drop_001.ogg" data-start="8.19" data-duration="0.11" data-track-index="25" data-volume="0.42"></audio>
+      <audio id="row-sfx-4" src="assets/sfx/interface/drop_002.ogg" data-start="8.74" data-duration="0.19" data-track-index="26" data-volume="0.42"></audio>
+      <audio id="row-sfx-5" src="assets/sfx/interface/drop_001.ogg" data-start="9.29" data-duration="0.11" data-track-index="27" data-volume="0.42"></audio>
+      <audio id="row-sfx-6" src="assets/sfx/interface/drop_002.ogg" data-start="9.83" data-duration="0.19" data-track-index="28" data-volume="0.42"></audio>
+
+      <!-- SFX: scene 3 item ticks -->
+      <audio id="item-sfx-1" src="assets/sfx/interface/click_002.ogg" data-start="12.55" data-duration="0.01" data-track-index="29" data-volume="0.35"></audio>
+      <audio id="item-sfx-2" src="assets/sfx/interface/click_002.ogg" data-start="13.64" data-duration="0.01" data-track-index="30" data-volume="0.35"></audio>
+      <audio id="item-sfx-3" src="assets/sfx/interface/click_002.ogg" data-start="14.73" data-duration="0.01" data-track-index="31" data-volume="0.35"></audio>
+
+      <!-- SFX: scene 4 dry logo hit -->
+      <audio id="sfx-logo" src="assets/sfx/impact/impactSoft_medium_000.ogg" data-start="20.75" data-duration="0.12" data-track-index="32" data-volume="0.55"></audio>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+
+      /* ── Scene 1 — The wall ─────────────────────────────── */
+      tl.fromTo(
+        ".s1-line",
+        { opacity: 0, y: 18 },
+        { opacity: 1, y: 0, duration: 0.22, ease: "power3.out", stagger: 0.09 },
+        0.4
+      );
+      tl.fromTo("#s1-cursor", { opacity: 0 }, { opacity: 1, duration: 0.15 }, 1.5);
+      tl.fromTo(
+        "#s1-caption",
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.5, ease: "power2.out" },
+        3.2
+      );
+      tl.fromTo("#s1-inner", { opacity: 1 }, { opacity: 0, duration: 0.4, ease: "none" }, 5.3);
+
+      /* ── Scene 2 — Paste becomes rows ───────────────────── */
+      tl.fromTo("#s2-inner", { opacity: 0 }, { opacity: 1, duration: 0.45, ease: "none" }, 5.35);
+      tl.fromTo(
+        "#s2-panel",
+        { opacity: 0, y: 24, scale: 0.985 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.55, ease: "power2.out" },
+        5.5
+      );
+      tl.fromTo("#s2-raw", { opacity: 0 }, { opacity: 1, duration: 0.4, ease: "none" }, 5.95);
+      tl.fromTo("#s2-status", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 6.5);
+      tl.fromTo("#s2-raw", { opacity: 1 }, { opacity: 0, duration: 0.35, ease: "none", immediateRender: false }, 6.6);
+      // beat-grid: row 1 at 7.09s, row 2 at 7.64s, row 3 at 8.19s, row 4 at 8.74s, row 5 at 9.29s, row 6 at 9.83s
+      tl.fromTo(".s2-row:nth-child(1)", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, 7.09);
+      tl.fromTo(".s2-row:nth-child(2)", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, 7.64);
+      tl.fromTo(".s2-row:nth-child(3)", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, 8.19);
+      tl.fromTo(".s2-row:nth-child(4)", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, 8.74);
+      tl.fromTo(".s2-row:nth-child(5)", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, 9.29);
+      tl.fromTo(".s2-row:nth-child(6)", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, 9.83);
+      tl.fromTo("#s2-more", { opacity: 0 }, { opacity: 1, duration: 0.3 }, 10.15);
+      tl.fromTo(
+        "#s2-caption1",
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" },
+        9.95
+      );
+      tl.fromTo(
+        "#s2-caption2",
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.35, ease: "power2.out" },
+        10.6
+      );
+      tl.fromTo("#s2-inner", { opacity: 1 }, { opacity: 0, duration: 0.4, ease: "none", immediateRender: false }, 11.6);
+
+      /* ── Scene 3 — What's Hot ───────────────────────────── */
+      tl.fromTo("#s3-inner", { opacity: 0 }, { opacity: 1, duration: 0.45, ease: "none" }, 11.7);
+      tl.fromTo(
+        "#s3-header",
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" },
+        11.9
+      );
+      tl.fromTo("#s3-rule", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power2.inOut" }, 12.1);
+      // beat-grid: item 1 at 12.55s, item 2 at 13.64s, item 3 at 14.73s (every other beat)
+      tl.fromTo("#s3-rule-1", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power2.inOut" }, 12.45);
+      tl.fromTo("#s3-item-1", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 12.55);
+      tl.fromTo("#s3-rule-2", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power2.inOut" }, 13.54);
+      tl.fromTo("#s3-item-2", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 13.64);
+      tl.fromTo("#s3-rule-3", { scaleX: 0 }, { scaleX: 1, duration: 0.3, ease: "power2.inOut" }, 14.63);
+      tl.fromTo("#s3-item-3", { opacity: 0, y: 18 }, { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }, 14.73);
+      tl.fromTo(
+        "#s3-caption",
+        { opacity: 0, y: 10 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" },
+        15.5
+      );
+      tl.fromTo("#s3-inner", { opacity: 1 }, { opacity: 0, duration: 0.4, ease: "none", immediateRender: false }, 16.8);
+
+      /* ── Scene 4 — Refusal list + outro ─────────────────── */
+      tl.fromTo("#s4-inner", { opacity: 0 }, { opacity: 1, duration: 0.45, ease: "none" }, 16.9);
+      // beat-locked: 17.47s (strong cue)
+      tl.fromTo(
+        "#st-account",
+        { opacity: 0, y: 26 },
+        { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" },
+        17.47
+      );
+      tl.fromTo("#st-account", { opacity: 1, y: 0 }, { opacity: 0, y: -18, duration: 0.22, ease: "power2.in", immediateRender: false }, 18.32);
+      // beat-locked: 18.56s (strong cue)
+      tl.fromTo(
+        "#st-cloud",
+        { opacity: 0, y: 26 },
+        { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" },
+        18.56
+      );
+      tl.fromTo("#st-cloud", { opacity: 1, y: 0 }, { opacity: 0, y: -18, duration: 0.22, ease: "power2.in", immediateRender: false }, 19.42);
+      // beat-locked: 19.66s (strong cue)
+      tl.fromTo(
+        "#st-telemetry",
+        { opacity: 0, y: 26 },
+        { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" },
+        19.66
+      );
+      tl.fromTo("#st-telemetry", { opacity: 1, y: 0 }, { opacity: 0, y: -18, duration: 0.22, ease: "power2.in", immediateRender: false }, 20.55);
+      // beat-locked: 20.75s (beat grid) — logo lands
+      tl.fromTo(
+        "#s4-mark",
+        { opacity: 0, scale: 0.92 },
+        { opacity: 1, scale: 1, duration: 0.45, ease: "power2.out" },
+        20.75
+      );
+      tl.fromTo(
+        "#s4-name",
+        { opacity: 0, x: -14 },
+        { opacity: 1, x: 0, duration: 0.4, ease: "power2.out" },
+        20.9
+      );
+      tl.fromTo("#s4-url", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 21.15);
+      tl.fromTo("#s4-cta", { opacity: 0 }, { opacity: 1, duration: 0.4 }, 21.3);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>

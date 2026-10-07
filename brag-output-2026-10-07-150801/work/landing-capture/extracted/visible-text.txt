@@ -1,0 +1,152 @@
+[a] Skip to main content
+[a] The Mainframe
+[a] How it works
+[a] Features
+[a] Platforms
+[a] Limitations
+[a] GitHub
+[h1] A local-first home for every list you are already keeping.
+[p] The Mainframe is a private, offline life-management app for scattered projects, goals, courses, ideas, and purchases. Paste the lists you already have, keep the database on your own devices, and bring some order to what is currently spread across notes, messages, and memory.
+[p] Early public release · no versioned releases yet
+[a] Get a build from CI
+[a] Read the source first
+[p] Builds are unsigned CI artifacts, not releases — no accounts, no downloads page.
+[a] See platform status
+[span] mainframe · local
+[span] offline
+[p] You paste 4 lines
+[pre] AWS SAA - book exam slot
+LAN snapshot diff viewer
+27" 4K monitor
+Run 10k under 50 min
+[p] You get 4 rows
+[span] AWS SAA - book exam slot
+[span] Not started · no date
+[span] LAN snapshot diff viewer
+[span] Not started · no date
+[span] 27" 4K monitor
+[span] Not started · no date
+[span] Run 10k under 50 min
+[span] Not started · no date
+[p] Which need attention
+[strong] AWS SAA - book exam slot
+[span] Due this week
+[strong] LAN snapshot diff viewer
+[span] No update in 21 days
+[p] This is the whole transform. The app splits on newlines and files each line in the list you had open — it does not guess a domain or invent a due date.
+[h2] Built for people whose work does not fit in one list
+[p] Most life tools are either a generic task list you have to reshape around your life, or a workspace so broad that maintaining it becomes the work. The Mainframe starts from the lists a person actually keeps: studies, builds, acquisitions, long-term goals, and ventures.
+[h3] Developers and solo builders
+[p] Several builds, courses, and side projects running in parallel with no single place that shows all of them.
+[h3] Students and career switchers
+[p] Certification tracks, study material, and application deadlines spread across notes, browsers, and messages.
+[h3] Freelancers and creators
+[p] Client deliverables that recur, personal work that keeps getting postponed, and ideas that need somewhere to land.
+[h3] Anyone whose lists are everywhere
+[p] Task content split across note apps, chat threads, spreadsheets, and memory. The Mainframe is built to be the one place those lists come to rest.
+[h2] Paste, structure, decide, continue
+[p] Four steps, no setup ritual. The loop works the same offline as it does on a local network.
+[h3] Paste the list you already have
+[p] Copy a wall of unstructured text from wherever it currently lives and paste it in. Plain text is the only input path — there is no file-upload workflow and no format-specific parser to satisfy.
+[figcaption] Paste panel with a real list
+[p] Screenshot coming with the first release.
+[h3] Watch it become rows
+[p] Each non-empty line becomes one item, with the original line kept alongside it as raw import text. That is the whole transform: the app does not guess which domain a line belongs to, and it does not invent a due date for you.
+[figcaption] Rows in a domain list
+[p] Screenshot coming with the first release.
+[h3] See what needs attention
+[p] The dashboard pulls a short cross-domain shortlist and says why each entry surfaced, using plain reasons such as being overdue, being due this week, or not having been touched in a while.
+[figcaption] Cross-domain attention view
+[p] Screenshot coming with the first release.
+[h3] Stay offline, sync only when you choose
+[p] The app reads and writes a local SQLite database on each device. When you want the same snapshot on a second device, pair once on a trusted local network and transfer a validated snapshot.
+[figcaption] LAN sync pairing
+[p] Screenshot coming with the first release.
+[h2] Four things it does, and nothing else
+[p] Each pillar is a commitment about behavior, not a feature count. Technical detail belongs further down the page.
+[h3] Bring in a list
+[p] Paste messy plain text and start with structure. No template to fill in, no import wizard, and the source line stays attached to the row it produced.
+[h3] See what matters now
+[p] One combined view across every domain so parallel tracks stop competing for attention in your head. Each suggestion explains why it appeared.
+[h3] Keep it local
+[p] Offline-first SQLite storage with no required account. Your database is a file on your own device, not a row in someone else's service.
+[h3] Move a snapshot when you choose
+[p] Opt-in transfer between your own trusted devices with one-time pairing, bounded to a validated snapshot rather than continuous background sync.
+[h2] What you can actually run today
+[p] One Tauri v2 codebase, built by GitHub Actions for four platforms. Everything below is a build target, not a tested release.
+[caption] Platform status as documented in the repository README. No platform is marked as tested or released.
+[th] Platform
+[th] Current deliverable
+[th] Status
+[td] Windows 10/11
+[td] Desktop installer artifacts from GitHub Actions
+[span] Build target
+[span] Build target
+[td] macOS
+[td] .app / .dmg artifacts from GitHub Actions
+[span] Build target
+[span] Build target; signing and notarization still required for distribution
+[td] Linux
+[td] AppImage / deb artifacts from GitHub Actions
+[span] Build target
+[span] Build target; test on target distributions before release
+[td] Android
+[td] Signed release APK or unsigned debug APK artifact
+[span] Build target
+[span] Build target; Play Store bundle and device testing remain
+[td] iOS
+[td] Not currently configured
+[span] Not configured
+[span] Planned evaluation
+[a] Open the Actions tab
+[a] Build it locally instead
+[strong] How to get a build:
+[p] open the Actions tab, pick a
+[em] successful
+[p] run of the desktop or Android workflow, and download the artifact for your platform. Links to runs are not published here on purpose — an artifact only exists after a successful build, and this page will not point you at a build that failed. When versioning, signing, and device testing are done, these become versioned GitHub Releases.
+[h2] What it will not do, and what you should know
+[p] Two different lists. The first is what the app will never do to you. The second is what is genuinely limited today — stated plainly, because you should know it before you put real work in.
+[h3] What it will not do
+[h3] No required account or cloud service
+[p] The core workflow never calls a hosted backend. There is no sign-up, no subscription, and no telemetry service in the loop.
+[h3] Data stays on the device by default
+[p] Every device holds its own SQLite database and works with no network connection.
+[h3] No background sync
+[p] Nothing moves between your devices unless you start a transfer yourself and pair once to authorise it.
+[h3] Nothing is uploaded to build this page
+[p] This is a static page with no third-party scripts and no external fonts. The only measurement is the host's own cookie-free page-view counter — no accounts, no cross-site tracking, no personal data.
+[h3] What you should know before trusting it
+[h3] Devices do not merge automatically
+[p] Installing the app on a second machine does not combine the two databases. A snapshot transfer copies one device's database over the other's — it is not a merge.
+[h3] The current LAN transport is cleartext
+[p] Sync is HTTP on the local network, restricted to private addresses on port 9377 (discovery on 9378). Do not expose it to the public internet, use it on an untrusted network, or treat it as a backup.
+[h3] Pairing is short-lived by design
+[p] Pairing uses a one-time six-digit token that expires after 10 minutes. If pairing fails, start over rather than reusing a token.
+[h3] Back up before replacing a local database
+[p] A snapshot transfer replaces the target database. Export a backup first if the device holds anything you have not duplicated elsewhere.
+[h3] Desktop builds are unsigned
+[p] Until platform signing is configured, desktop artifacts are unsigned and will trigger an operating-system warning on first launch. Only run a build you downloaded from this repository's own Actions tab.
+[h2] Read the code before you trust it
+[p] The source is public, and the claims above are checkable in it. Issues and focused pull requests are welcome — the limitations are as open to discussion as the features.
+[span] Include the platform, the app version or commit, reproduction steps, and relevant logs.
+[span] Keep reports specific — a narrow bug with clear steps is more useful than a broad feature wish.
+[span] Do not attach database files or other private data to an issue. Sanitize screenshots first.
+[span] Ideas and limitations are equally welcome. This is an early public release and the roadmap is still open.
+[span] Report a problem or ask a question in the
+[a] issue tracker
+[p] Technical stack
+[dt] Shell and native core
+[dd] Tauri v2 with Rust
+[dt] Interface
+[dd] React, TypeScript, Vite, Tailwind CSS
+[dt] Storage
+[dd] SQLite through tauri-plugin-sql
+[dt] Device transfer
+[dd] Local-network sync implemented in Rust
+[h2] Try it on one list you already have
+[p] Copy the messiest list you are currently carrying around, paste it in, and see whether the rows it produces match how you actually think about the work. If they do not, that is useful feedback too.
+[a] Get a build from CI
+[a] Read the source first
+[p] The Mainframe · early public release. Local-first, no required account, no telemetry service.
+[a] Limitations
+[a] Back to top

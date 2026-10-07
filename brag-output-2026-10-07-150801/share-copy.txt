@@ -1,0 +1,3 @@
+I made a landing page that tells you what the product won't do.
+"What it will not do, and what you should know" — that's a real section heading, next to "Read the code before you trust it."
+The page is the pitch: https://the-mainframe-app.vercel.app

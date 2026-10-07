@@ -96,6 +96,20 @@ unique to this repo:
 - **Vercel CLI upload size:** without the root `.vercelignore`, deploys try to
   upload ~7.4 GB of `src-tauri/target` artifacts and abort. Keep the
   `.vercelignore` in sync when adding top-level directories.
+- **Visual-judge subagents can't launch:** spawning any `*:visual-judge`
+  subagent (documents/presentations/pdf/spreadsheets) fails with
+  `Provider unavailable / 供应商不存在或不可用 [reason=provider-not-found;
+  selection=account:bigmodel-individual-coding-plan/GLM-5.3-Flash]` — the
+  subagent's model provider isn't configured in this environment even though
+  the session model works. Workaround: inspect rendered PNGs yourself with the
+  Read tool (it renders images visually). Hit during the `/brag` run
+  (2026-10-07, `brag-output/`).
+- **Hyperframes renders need `HYPERFRAMES_SKIP_SKILLS=1` on `init`:** plain
+  `npx hyperframes init` probes GitHub for AI skills and can hang or prompt
+  interactively; `init --non-interactive` plus that env var is the quiet path.
+  The domain skills (`hyperframes-core`, etc.) are NOT preinstalled —
+  `npx hyperframes skills update` installs them to `~/.agents/skills/`, and
+  `npx hyperframes docs <topic>` is the always-available fallback.
 
 ## Workflows
 

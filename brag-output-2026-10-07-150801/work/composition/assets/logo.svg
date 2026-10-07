@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- The Mainframe mark: three dashboard rows, the active one accented. -->
+  <rect x="16" y="16" width="480" height="480" rx="116" fill="#0E0E10" stroke="#26272B" stroke-width="8"/>
+  <rect x="128" y="150" width="256" height="44" rx="22" fill="#F2F2F0"/>
+  <rect x="128" y="234" width="256" height="44" rx="22" fill="#4A9EFF"/>
+  <rect x="128" y="318" width="256" height="44" rx="22" fill="#F2F2F0"/>
+</svg>

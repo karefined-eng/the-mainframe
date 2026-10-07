@@ -1,0 +1,279 @@
+{
+  "typography": [
+    {
+      "role": "display",
+      "fontFamily": "Inter",
+      "fontSize": "55px",
+      "fontWeight": "700",
+      "lineHeight": "58.3px",
+      "letterSpacing": "-1.43px",
+      "color": "#F2F2F0",
+      "sampleText": "A local-first home for every list you are already keeping."
+    },
+    {
+      "role": "heading",
+      "fontFamily": "Inter",
+      "fontSize": "34px",
+      "fontWeight": "700",
+      "lineHeight": "39.44px",
+      "letterSpacing": "-0.748px",
+      "color": "#F2F2F0",
+      "sampleText": "Built for people whose work does not fit in one list"
+    },
+    {
+      "role": "body",
+      "fontFamily": "Inter",
+      "fontSize": "17.5px",
+      "fontWeight": "400",
+      "lineHeight": "29.4px",
+      "letterSpacing": "normal",
+      "color": "#B1B3B7",
+      "sampleText": "The Mainframe is a private, offline life-management app for "
+    },
+    {
+      "role": "heading-3",
+      "fontFamily": "Inter",
+      "fontSize": "17px",
+      "fontWeight": "600",
+      "lineHeight": "25.5px",
+      "letterSpacing": "-0.136px",
+      "color": "#F2F2F0",
+      "sampleText": "Paste the list you already have"
+    },
+    {
+      "role": "heading-3",
+      "fontFamily": "Inter",
+      "fontSize": "14.5px",
+      "fontWeight": "600",
+      "lineHeight": "21.75px",
+      "letterSpacing": "normal",
+      "color": "#F2F2F0",
+      "sampleText": "Developers and solo builders"
+    },
+    {
+      "role": "link",
+      "fontFamily": "Inter",
+      "fontSize": "14px",
+      "fontWeight": "600",
+      "lineHeight": "21px",
+      "letterSpacing": "normal",
+      "color": "#F2F2F0",
+      "sampleText": "Skip to main content"
+    },
+    {
+      "role": "body-small",
+      "fontFamily": "Inter",
+      "fontSize": "12px",
+      "fontWeight": "600",
+      "lineHeight": "18px",
+      "letterSpacing": "normal",
+      "color": "#F2F2F0",
+      "sampleText": "Paste panel with a real list"
+    },
+    {
+      "role": "code",
+      "fontFamily": "JetBrains Mono",
+      "fontSize": "12px",
+      "fontWeight": "400",
+      "lineHeight": "21.6px",
+      "letterSpacing": "normal",
+      "color": "#B1B3B7",
+      "sampleText": "AWS SAA - book exam slot LAN snapshot diff viewer 27\" 4K mon"
+    }
+  ],
+  "spacing": {
+    "observed": [
+      2,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      16,
+      18,
+      20,
+      22,
+      24
+    ],
+    "baseUnit": 4
+  },
+  "radius": [
+    "8px",
+    "10px",
+    "999px"
+  ],
+  "shadows": [],
+  "buttons": [
+    {
+      "label": "GitHub",
+      "background": "transparent",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#F2F2F0",
+      "padding": "8px 14px",
+      "borderRadius": "8px",
+      "border": "1px solid rgb(31, 32, 36)",
+      "boxShadow": "none",
+      "fontSize": "13.5px",
+      "fontWeight": "600",
+      "height": "38.25px"
+    },
+    {
+      "label": "Get a build from CIRead the source first",
+      "background": "transparent",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#F2F2F0",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "border": "0px solid rgb(242, 242, 240)",
+      "boxShadow": "none",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "height": "46px"
+    },
+    {
+      "label": "Get a build from CI",
+      "background": "#4A9EFF",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#071018",
+      "padding": "0px 20px",
+      "borderRadius": "10px",
+      "border": "1px solid rgb(74, 158, 255)",
+      "boxShadow": "none",
+      "fontSize": "15px",
+      "fontWeight": "600",
+      "height": "46px"
+    },
+    {
+      "label": "Builds are unsigned CI artifacts, not re",
+      "background": "transparent",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#B1B3B7",
+      "padding": "0px",
+      "borderRadius": "0px",
+      "border": "0px solid rgb(177, 179, 183)",
+      "boxShadow": "none",
+      "fontSize": "13.5px",
+      "fontWeight": "400",
+      "height": "43.7188px"
+    },
+    {
+      "label": "Build it locally instead",
+      "background": "transparent",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#F2F2F0",
+      "padding": "0px 20px",
+      "borderRadius": "10px",
+      "border": "1px solid rgb(31, 32, 36)",
+      "boxShadow": "none",
+      "fontSize": "15px",
+      "fontWeight": "600",
+      "height": "46px"
+    }
+  ],
+  "cards": [
+    {
+      "label": "card",
+      "background": "#1A1A1D",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#F2F2F0",
+      "padding": "0px",
+      "borderRadius": "14px",
+      "border": "1px solid rgb(31, 32, 36)",
+      "boxShadow": "none",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "height": "637.875px"
+    },
+    {
+      "label": "card",
+      "background": "transparent",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#F2F2F0",
+      "padding": "4px 16px 0px",
+      "borderRadius": "0px",
+      "border": "0px solid rgb(242, 242, 240)",
+      "boxShadow": "none",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "height": "531.875px"
+    },
+    {
+      "label": "card",
+      "background": "transparent",
+      "backgroundImage": "",
+      "backdropFilter": "",
+      "color": "#F2F2F0",
+      "padding": "26px 0px",
+      "borderRadius": "0px",
+      "border": "",
+      "boxShadow": "none",
+      "fontSize": "16px",
+      "fontWeight": "400",
+      "height": "212.578px"
+    }
+  ],
+  "nav": {
+    "label": "navigation",
+    "background": "color(srgb 0.054902 0.054902 0.0627451 / 0.9)",
+    "backgroundImage": "",
+    "backdropFilter": "blur(10px)",
+    "color": "#F2F2F0",
+    "padding": "0px",
+    "borderRadius": "0px",
+    "border": "",
+    "boxShadow": "none",
+    "fontSize": "16px",
+    "fontWeight": "400",
+    "height": "63px"
+  },
+  "chips": [
+    {
+      "label": "Build target",
+      "background": "transparent",
+      "color": "#4A9EFF",
+      "padding": "3px 9px",
+      "borderRadius": "999px",
+      "border": "1px solid color(srgb 0.197451 0.347843 0.527647)",
+      "boxShadow": "none",
+      "fontSize": "12px",
+      "fontWeight": "600",
+      "height": "26.9531px"
+    },
+    {
+      "label": "Not configured",
+      "background": "transparent",
+      "color": "#B1B3B7",
+      "padding": "3px 9px",
+      "borderRadius": "999px",
+      "border": "1px solid rgb(31, 32, 36)",
+      "boxShadow": "none",
+      "fontSize": "12px",
+      "fontWeight": "600",
+      "height": "26.9531px"
+    }
+  ],
+  "statCells": [],
+  "tabs": [],
+  "backgrounds": [],
+  "glass": [
+    {
+      "backdropFilter": "blur(10px)",
+      "background": "color(srgb 0.054902 0.054902 0.0627451 / 0.9)",
+      "border": "",
+      "borderRadius": "0px",
+      "boxShadow": "",
+      "area": 120960
+    }
+  ]
+}

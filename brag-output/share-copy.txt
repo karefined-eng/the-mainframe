@@ -1,0 +1,3 @@
+I made The Mainframe — a private, local-first life dashboard.
+Paste the messy list you already have; each line becomes one row, and the dashboard says why each thing needs attention.
+No account, no cloud, no telemetry: your database is a file on your device. https://the-mainframe-app.vercel.app
