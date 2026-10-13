@@ -121,3 +121,7 @@ The generated Android project under `src-tauri/gen/android` is committed because
 ## Contributing
 
 Issues and focused pull requests are welcome. Please include the platform, app version or commit, reproduction steps, and relevant logs. Avoid attaching database files or other private data.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

@@ -4,7 +4,7 @@ import { listen } from "@tauri-apps/api/event";
 import { Server, Download, RefreshCw, CheckCircle2, AlertTriangle, Loader2, QrCode, Search, Laptop, KeyRound } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { useSyncContext } from "../context/SyncContext";
-import { scan, Format } from "@tauri-apps/plugin-barcode-scanner";
+import { scan, Format, checkPermissions, requestPermissions } from "@tauri-apps/plugin-barcode-scanner";
 
 export default function SyncPanel() {
   const { setSyncInProgress } = useSyncContext();
@@ -108,6 +108,15 @@ export default function SyncPanel() {
     try {
       setScanStatus("scanning");
       setScanError(null);
+      let perm = await checkPermissions();
+      if (perm !== "granted") {
+        perm = await requestPermissions();
+        if (perm !== "granted") {
+          setScanStatus("error");
+          setScanError("Camera permission denied. Enable it in system settings to scan.");
+          return;
+        }
+      }
       const result = await scan({ formats: [Format.QRCode], cameraDirection: "back" });
       const value = result?.content;
       if (!value) {
@@ -207,7 +216,7 @@ export default function SyncPanel() {
                   Stop Broadcast
                 </button>
                 <p className="text-[11px] text-text-muted/50 text-center -mt-2">
-                  Phone scanning coming with Android APK
+                  Scan using the Android app or enter details manually
                 </p>
               </div>
             )}

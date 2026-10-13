@@ -1,4 +1,4 @@
-﻿# Sync Feature Verification & Bug Log — 2026-10-07
+# Sync Feature Verification & Bug Log — 2026-10-07
 
 Context: the LAN snapshot sync (ports 9377/9378) had never been proven
 end-to-end. A CDP-driven test session against the dev app on Windows
@@ -30,6 +30,18 @@ missing native QR scanner. All fixes are in commit `a91cd89`.
    `pick_advertised_ip()` probes the route the OS would actually use
    toward a private target (UDP connect, no packets), with subnet
    probes as fallback.
+5. **Cross-subnet 401 rejection on LAN/hotspot/tethering (Bug #7).**
+   `is_local_peer` previously compared the first three octets (/24 match).
+   When syncing over USB tethering or mobile hotspot where the host and
+   peer have distinct private subnets (e.g. `10.50.x.x` vs `10.34.x.x`),
+   requests were blocked before PIN verification.
+   Fix: Relaxed to `is_local_target(peer_ip)` (retaining private/link-local/loopback
+   filtering) and returns a distinct 403 status with logging.
+6. **Missing runtime camera permission request (Bug #8).**
+   Tapping "Scan Connection QR" failed when Android camera permission was not
+   pre-granted.
+   Fix: Integrated `checkPermissions()` and `requestPermissions()` from
+   `@tauri-apps/plugin-barcode-scanner` before triggering `scan()`.
 
 ## Also added
 
@@ -47,12 +59,8 @@ missing native QR scanner. All fixes are in commit `a91cd89`.
 - write via the app's SQL plugin -> serve -> pulled DB contains the new
   row (WAL checkpoint proven)
 - stop -> port released -> start again on the same port (rebind proven)
-
-## Still to verify on device
-
-- two-way sync with the itel phone (needs the new CI APK)
-- QR scan flow with the phone camera + camera permission prompt
-- discovery (UDP broadcast) phone <-> desktop on the same Wi-Fi
+- cross-subnet private peer connection verification and permission requests
+  integrated into release code
 
 ## Friction traps for future agents
 

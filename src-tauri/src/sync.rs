@@ -117,22 +117,12 @@ fn generate_pin() -> String {
     format!("{}-{}", &n.to_string()[..3], &n.to_string()[3..])
 }
 
-fn is_local_peer(local_ip: IpAddr, peer_ip: IpAddr) -> bool {
-    match (local_ip, peer_ip) {
-        (IpAddr::V4(local), IpAddr::V4(peer)) => {
-            is_local_target(IpAddr::V4(peer))
-                && (peer.is_loopback()
-                    || peer.is_link_local()
-                    || local.octets()[..3] == peer.octets()[..3])
-        }
-        (IpAddr::V6(local), IpAddr::V6(peer)) => {
-            is_local_target(IpAddr::V6(peer))
-                && (peer.is_loopback()
-                    || peer.is_unicast_link_local()
-                    || local.segments()[..4] == peer.segments()[..4])
-        }
-        _ => false,
-    }
+fn is_local_peer(peer_ip: IpAddr) -> bool {
+    // Only accept connections from private, loopback, or link-local addresses.
+    // We intentionally avoid checking matching /24 prefixes, because mobile hotspot,
+    // Wi-Fi, and USB tethering frequently route across distinct RFC1918 subnets
+    // (e.g., 10.50.x.x vs 10.34.x.x).
+    is_local_target(peer_ip)
 }
 
 fn is_local_target(ip: IpAddr) -> bool {
@@ -204,7 +194,6 @@ pub fn start_sync_server(app: AppHandle, state: State<'_, SyncState>) -> Result<
     *state.pin_expires_at.lock().unwrap() = Some(Instant::now() + PIN_TTL);
     let pin_state = state.pin.clone();
     let pin_expires_at = state.pin_expires_at.clone();
-    let local_ip_for_requests = local_ip;
 
     let db_path = get_db_path(&app)?;
 
@@ -228,8 +217,18 @@ pub fn start_sync_server(app: AppHandle, state: State<'_, SyncState>) -> Result<
             }
 
             let peer_is_local = peer_ip
-                .map(|ip| is_local_peer(local_ip_for_requests, ip))
+                .map(is_local_peer)
                 .unwrap_or(false);
+            if !peer_is_local {
+                eprintln!("[sync] Rejected non-local peer: {:?}", peer_ip);
+                let _ = request.respond(
+                    Response::from_string("Forbidden: non-local peer")
+                        .with_status_code(403)
+                        .with_header(Header::from_bytes(&b"Cache-Control"[..], &b"no-store"[..]).unwrap())
+                );
+                continue;
+            }
+
             let provided_pin = request_header(&request, "Authorization")
                 .and_then(|value| value.strip_prefix("Bearer "))
                 .map(str::trim)
@@ -243,14 +242,14 @@ pub fn start_sync_server(app: AppHandle, state: State<'_, SyncState>) -> Result<
                 .unwrap()
                 .map(|expires| Instant::now() < expires)
                 .unwrap_or(false);
-            let authed = peer_is_local
-                && pin_valid
+            let authed = pin_valid
                 && provided_pin
                     .zip(expected_pin.as_deref())
                     .map(|(provided, expected)| provided == expected)
                     .unwrap_or(false);
 
             if !authed {
+                eprintln!("[sync] Unauthorized: invalid or expired PIN from {:?}", peer_ip);
                 let _ = request.respond(unauthorized());
                 continue;
             }

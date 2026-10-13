@@ -3,6 +3,7 @@ name = "tauri-app"
 version = "0.1.0"
 description = "A private, local-first life management app for desktop and Android."
 authors = ["karefined-eng"]
+license = "MIT"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
