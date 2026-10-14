@@ -35,6 +35,7 @@ The Mainframe is a private, local-first life management application built with T
 
 - **Built-in `browser_subagent` (Playwright CDN 404):** The built-in Antigravity IDE browser agent fails to download Playwright driver on Windows. Write custom scripts or use terminal tools instead.
 - **PowerShell Command Separators:** Use `;` instead of `&&` when chaining commands in Windows PowerShell.
+- **Branch-only File Reads:** The workspace file reader only sees the checked-out branch. For a file present only on another Git branch, use `git show <branch>:<path>` instead of opening it by workspace path.
 - **PowerShell UTF-8 without BOM & Smart Quotes:** Windows PowerShell 5.1 interprets UTF-8 `.ps1` files without BOM in Windows-1252. The UTF-8 em-dash byte `0x94` (`—`) maps to `”` (right double quote) in Windows-1252, prematurely terminating quoted strings and exposing interior characters (like `&`) as bare syntax errors (`The ampersand (&) character is not allowed`). Workaround: Keep scripts pure ASCII (use `-` instead of `—`) or save with UTF-8 with BOM.
 - **CRLF vs LF Line Endings:** Files in this repository have CRLF line endings. Ensure patch tools use exact character sequences.
 - **PowerShell Binary Redirection:** `adb exec-out screencap -p > file` corrupts binary images due to CRLF translation. Use `adb shell screencap /sdcard/x.png` + `adb pull`.
