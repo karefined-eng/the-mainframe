@@ -54,7 +54,7 @@ jobs:
         shell: bash
         run: |
           CLEAN_KEY=$(printf "%s" "${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}" | tr -d '\r\n[:space:]')
-          TAURI_SIGNING_PRIVATE_KEY="$CLEAN_KEY" npm run tauri build
+          TAURI_SIGNING_PRIVATE_KEY="$CLEAN_KEY" TAURI_SIGNING_PRIVATE_KEY_PASSWORD="" npm run tauri build
 
       - name: Upload desktop artifacts
         uses: actions/upload-artifact@v4

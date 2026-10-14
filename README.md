@@ -116,22 +116,29 @@ If you cannot install native dependencies locally, the GitHub Actions workflows 
 
 ## Data & Sync Boundaries
 
-The default workflow is **fully local and offline**. Each device has its own SQLite database; installing the app on two devices does not automatically merge their data.
+The default workflow is **fully local and offline**. Each device has its own SQLite database with Write-Ahead Logging (WAL).
 
-LAN sync is opt-in and intentionally limited:
+Mainframe provides direct device-to-device local synchronization with two operational modes:
+
+| Mode | Behavior | Best For |
+|---|---|---|
+| **Bidirectional Merge** *(Recommended)* | Non-destructive differential exchange (`POST /sync/exchange`). Combines additions and newer edits from both devices without either device overwriting the other. | Day-to-day use across PC and Mobile |
+| **Mirror Snapshot** | Atomic snapshot replacement with automatic pre-merge backup (`mainframe_backup_<timestamp>.db`). | Fresh installs or one-way device restores |
+
+### Sync Network Constraints
 
 | Constraint | Detail |
 |---|---|
-| Network scope | Private/local addresses only (RFC 1918); public internet is rejected with HTTP 403 |
-| Authentication | Six-digit one-time bearer token, expires after 10 minutes |
-| Transfer limit | 64 MiB maximum |
-| Validation | SQLite integrity check before atomic database replacement |
-| Transport | HTTP cleartext on trusted LAN — **not** end-to-end encrypted |
-| Ports | 9377 (transfer), 9378 (discovery) |
+| Network scope | Private/local addresses only (RFC 1918) or wired USB (`adb reverse tcp:9377 tcp:9377`) |
+| Authentication | Six-digit one-time PIN bearer token, rotates after completed sync |
+| Transfer limit | 64 MiB maximum payload |
+| Validation | SQLite schema dynamic column mapping + integrity checks |
+| Transport | HTTP cleartext on trusted local network or USB reverse proxy |
+| Ports | 9377 (transfer / exchange), 9378 (UDP discovery beacon) |
 
-⚠️ Do not expose the sync port to the public Internet, use it on an untrusted network, or treat it as a cloud backup.
+⚠️ Do not expose sync ports to the public Internet or treat local sync as an external cloud backup.
 
-See the [Android production-readiness guide](10_ANDROID_PRODUCTION_READINESS.md) and [Security Review](SECURITY-REVIEW.md) for full details.
+See [docs/handoff/2026-10-14-bidirectional-merge-sync.md](docs/handoff/2026-10-14-bidirectional-merge-sync.md) for full protocol architecture.
 
 ---
 
