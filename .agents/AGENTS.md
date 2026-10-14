@@ -177,9 +177,8 @@ description: >
   Prevents buffer read decryption errors during automated desktop bundling in GitHub Actions CI when using passwordless signing keys.
 ---
 # Tauri Minisign Passwordless CI Signing
-When configuring GitHub Actions to sign Tauri desktop update artifacts with a passwordless Minisign key (generated with `tauri signer generate --ci` without password):
-1. Pass the private key via `TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}`.
-2. DO NOT pass `TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ""` as an empty string. If this variable is defined, Minisign attempts scrypt password decryption and aborts with `failed to decode secret key: incorrect updater private key password: failed to fill whole buffer`. Leave `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` completely unset.
+1. **Key Length Invariant (Private vs Public):** The Minisign public key is exactly 152 characters Base64, while the private key is 348 characters Base64. If the 152-character public key (`.pub`) is accidentally pasted into `TAURI_SIGNING_PRIVATE_KEY` instead of the 348-character secret key (`.key`), Minisign underflows its secret key read buffer and crashes with `failed to decode secret key: incorrect updater private key password: failed to fill whole buffer`. Always verify that `TAURI_SIGNING_PRIVATE_KEY` is the full 348-character private key.
+2. **Non-Interactive CI Password Handling:** For passwordless keys generated with `tauri signer generate --ci`, `TAURI_SIGNING_PRIVATE_KEY_PASSWORD=""` MUST be explicitly supplied in the environment. If omitted, the CLI attempts to read a password interactively from standard input, encounters closed EOF on CI runners, and aborts with `failed to fill whole buffer`.
 3. **Whitespace & Newline Sanitization:** Trailing newlines or CRLF characters in GitHub Actions secrets cause Tauri's Minisign Base64 decoder to fail with `failed to decode base64 key: Invalid symbol 10, offset <len>` (ASCII 10 is `\n`). Always strip newlines and spaces before invocation in CI: `CLEAN_KEY=$(printf "%s" "${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}" | tr -d '\r\n[:space:]')`.
 </RULE>
 
