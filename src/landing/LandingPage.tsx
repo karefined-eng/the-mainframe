@@ -30,7 +30,7 @@
  * section by section.
  */
 
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import {
   AlertTriangle,
   ArrowLeftRight,
@@ -39,6 +39,7 @@ import {
   Check,
   ClipboardPaste,
   CloudOff,
+  Copy,
   Database,
   Download,
   ExternalLink,
@@ -241,6 +242,41 @@ function StepFourVisual() {
   );
 }
 
+function TerminalCloneBox() {
+  const [copied, setCopied] = useState(false);
+  const command = "git clone https://github.com/karefined-eng/the-mainframe.git";
+
+  const handleCopy = () => {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(command).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      });
+    }
+  };
+
+  return (
+    <div className="lp-terminal-box">
+      <div className="lp-terminal-main">
+        <span className="lp-terminal-prefix">$</span>
+        <span className="lp-terminal-command">{command}</span>
+      </div>
+      <div className="lp-terminal-actions">
+        <button
+          type="button"
+          className="lp-terminal-copy-btn"
+          onClick={handleCopy}
+          aria-label={copied ? "Command copied to clipboard" : "Copy git clone command"}
+        >
+          {copied ? <Check size={13} aria-hidden="true" /> : <Copy size={13} aria-hidden="true" />}
+          <span>{copied ? "Copied" : "Copy"}</span>
+        </button>
+        <span className="lp-terminal-hint">Build from source · Tauri v2 + Rust</span>
+      </div>
+    </div>
+  );
+}
+
 const trustIcons = {
   CloudOff,
   Database,
@@ -281,6 +317,7 @@ export default function LandingPage() {
           >
             GitHub
             <ExternalLink size={14} aria-hidden="true" />
+            <span className="sr-only"> (opens in new tab)</span>
           </a>
         </div>
       </header>
@@ -313,6 +350,7 @@ export default function LandingPage() {
                 >
                   Download v0.1.0 (Free)
                   <ArrowRight size={16} aria-hidden="true" />
+                  <span className="sr-only"> (opens in new tab)</span>
                 </a>
                 <a
                   className="lp-btn lp-btn--ghost"
@@ -322,6 +360,8 @@ export default function LandingPage() {
                   data-od-id="cta-source"
                 >
                   View the source on GitHub
+                  <ExternalLink size={14} aria-hidden="true" />
+                  <span className="sr-only"> (opens in new tab)</span>
                 </a>
               </div>
               <p className="lp-cta-note">
@@ -537,6 +577,7 @@ export default function LandingPage() {
                   >
                     <Download size={14} aria-hidden="true" />
                     Download {asset.format.split(" ")[0]}
+                    <span className="sr-only"> (opens in new tab)</span>
                   </a>
                   {asset.secondary && (
                     <a
@@ -546,6 +587,7 @@ export default function LandingPage() {
                       rel="noreferrer noopener"
                     >
                       Also available as {asset.secondary.format}
+                      <span className="sr-only"> (opens in new tab)</span>
                     </a>
                   )}
                 </div>
@@ -553,13 +595,7 @@ export default function LandingPage() {
             ))}
           </div>
 
-          <div className="lp-terminal-box">
-            <div>
-              <span className="lp-terminal-prefix">$</span>
-              <span className="lp-terminal-command">git clone https://github.com/karefined-eng/the-mainframe.git</span>
-            </div>
-            <span className="lp-terminal-hint">Build from source · Tauri v2 + Rust</span>
-          </div>
+          <TerminalCloneBox />
 
           <div className="lp-table-wrap" style={{ marginTop: "32px" }}>
             <table className="lp-table">
@@ -599,6 +635,7 @@ export default function LandingPage() {
             >
               Download from GitHub Releases
               <ExternalLink size={15} aria-hidden="true" />
+              <span className="sr-only"> (opens in new tab)</span>
             </a>
             <a
               className="lp-btn lp-btn--ghost"
@@ -607,6 +644,7 @@ export default function LandingPage() {
               rel="noreferrer noopener"
             >
               Build it locally instead
+              <span className="sr-only"> (opens in new tab)</span>
             </a>
           </div>
           <p className="lp-download-note">
@@ -668,6 +706,7 @@ export default function LandingPage() {
                   Report a problem or ask a question in the{" "}
                   <a href={ISSUES_URL} target="_blank" rel="noreferrer noopener">
                     issue tracker
+                    <span className="sr-only"> (opens in new tab)</span>
                   </a>
                   .
                 </span>
@@ -706,6 +745,7 @@ export default function LandingPage() {
               >
                 Download v0.1.0
                 <ArrowRight size={16} aria-hidden="true" />
+                <span className="sr-only"> (opens in new tab)</span>
               </a>
               <a
                 className="lp-btn lp-btn--ghost"
@@ -714,6 +754,7 @@ export default function LandingPage() {
                 rel="noreferrer noopener"
               >
                 View the source on GitHub
+                <span className="sr-only"> (opens in new tab)</span>
               </a>
             </div>
           </div>
@@ -729,9 +770,11 @@ export default function LandingPage() {
           <nav aria-label="Footer links">
             <a href={REPO_URL} target="_blank" rel="noreferrer noopener">
               GitHub
+              <span className="sr-only"> (opens in new tab)</span>
             </a>
             <a href={ISSUES_URL} target="_blank" rel="noreferrer noopener">
               Issues
+              <span className="sr-only"> (opens in new tab)</span>
             </a>
             <a href="#trust">Limitations</a>
             <a href="#main">Back to top</a>

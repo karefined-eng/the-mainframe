@@ -11,9 +11,65 @@
  *   - Design System Tokens (#0E0E10, #1A1A1D, #141518, #4A9EFF, #F2F2F0, #B1B3B7)
  */
 
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import { ArrowRight, Check, HardDrive, Lock, RefreshCw, Sparkles, Terminal } from "lucide-react";
 import { playgroundPresets } from "./content";
+
+function parseCustomLines(text: string) {
+  const lines = text
+    .split("\n")
+    .map((l) => l.trim().replace(/^[-*•\d.)\]\s]+/, ""))
+    .filter((l) => l.length > 0);
+
+  if (lines.length === 0) return [];
+
+  return lines.slice(0, 5).map((rawLine, idx) => {
+    let line = rawLine;
+    const lower = line.toLowerCase();
+    let domain = "Build Ideas";
+    let tag = "Captured";
+    let tone: "accent" | "warning" | "neutral" = "neutral";
+
+    if (lower.startsWith("cert:") || lower.includes("exam") || lower.includes("course") || lower.includes("learn") || lower.includes("aws")) {
+      domain = "Certifications";
+      tag = "Study track";
+      tone = "warning";
+      line = line.replace(/^cert:\s*/i, "");
+    } else if (lower.startsWith("buy:") || lower.includes("buy") || lower.includes("purchase") || lower.includes("order") || lower.includes("monitor")) {
+      domain = "Acquisitions";
+      tag = "Wishlist";
+      tone = "neutral";
+      line = line.replace(/^buy:\s*/i, "");
+    } else if (lower.startsWith("goal:") || lower.includes("marathon") || lower.includes("target") || lower.includes("habit")) {
+      domain = "Goals";
+      tag = "Target milestone";
+      tone = "neutral";
+      line = line.replace(/^goal:\s*/i, "");
+    } else if (lower.startsWith("venture:") || lower.includes("client") || lower.includes("revenue") || lower.includes("launch")) {
+      domain = "Ventures";
+      tag = "Commercial loop";
+      tone = "accent";
+      line = line.replace(/^venture:\s*/i, "");
+    } else if (lower.startsWith("build:") || lower.includes("fix") || lower.includes("refactor") || lower.includes("git") || lower.includes("ssh")) {
+      domain = "Build Ideas";
+      tag = "Active build";
+      tone = "accent";
+      line = line.replace(/^build:\s*/i, "");
+    } else {
+      const domains = ["Goals", "Build Ideas", "Ventures", "Certifications", "Acquisitions"];
+      domain = domains[idx % domains.length];
+      tag = "Preserved verbatim";
+    }
+
+    return {
+      title: line,
+      domain,
+      tag,
+      note: "Preserved verbatim · 0 shame",
+      tone,
+    };
+  });
+}
 
 export default function Playground() {
   const [selectedPresetId, setSelectedPresetId] = useState(playgroundPresets[0].id);
@@ -23,6 +79,13 @@ export default function Playground() {
   const [, startTransition] = useTransition();
 
   const currentPreset = playgroundPresets.find((p) => p.id === selectedPresetId) ?? playgroundPresets[0];
+
+  const displayItems = useMemo(() => {
+    if (rawText.trim() === currentPreset.rawText.trim()) {
+      return currentPreset.items;
+    }
+    return parseCustomLines(rawText);
+  }, [rawText, currentPreset]);
 
   const handleSelectPreset = (presetId: string) => {
     const preset = playgroundPresets.find((p) => p.id === presetId);
@@ -149,21 +212,27 @@ export default function Playground() {
 
           <div className="lp-play-cards">
             {hasProcessed && !isProcessing ? (
-              currentPreset.items.map((item, idx) => (
-                <div className="lp-play-card" key={`${item.title}-${idx}`}>
-                  <div className="lp-play-card-top">
-                    <span className="lp-play-domain">
-                      <HardDrive size={11} className="lp-play-card-icon" aria-hidden="true" />
-                      {item.domain}
-                    </span>
-                    <span className={`lp-play-status lp-play-status--${item.tone}`}>
-                      {item.tag}
-                    </span>
+              displayItems.length > 0 ? (
+                displayItems.map((item, idx) => (
+                  <div className="lp-play-card" key={`${item.title}-${idx}`}>
+                    <div className="lp-play-card-top">
+                      <span className="lp-play-domain">
+                        <HardDrive size={11} className="lp-play-card-icon" aria-hidden="true" />
+                        {item.domain}
+                      </span>
+                      <span className={`lp-play-status lp-play-status--${item.tone}`}>
+                        {item.tag}
+                      </span>
+                    </div>
+                    <div className="lp-play-card-title">{item.title}</div>
+                    <div className="lp-play-card-note">{item.note}</div>
                   </div>
-                  <div className="lp-play-card-title">{item.title}</div>
-                  <div className="lp-play-card-note">{item.note}</div>
+                ))
+              ) : (
+                <div className="lp-play-empty">
+                  <span>Type or paste any messy notes on the left, then click Structure in 0.2s.</span>
                 </div>
-              ))
+              )
             ) : (
               <div className="lp-play-pending">
                 <span className="lp-play-pulse" />
