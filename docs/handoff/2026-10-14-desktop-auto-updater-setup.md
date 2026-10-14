@@ -68,14 +68,29 @@ The Tauri updater plugin does not run on Android or iOS. Attempting to compile i
 }
 ```
 
-### C. Permissions Capability (`src-tauri/capabilities/default.json`)
+### C. Permissions Capability (`src-tauri/capabilities/desktop-updater.json`)
+Because `tauri-plugin-updater` is not compiled on mobile, updater permissions must be defined in a dedicated platform-gated capability file rather than `default.json` (preventing Android ACL compile failures):
 ```json
-"permissions": [
-  "core:default",
-  "sql:default",
-  "store:default",
-  "updater:default"
-]
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "desktop-updater",
+  "description": "Desktop auto-updater capability",
+  "windows": ["*"],
+  "platforms": ["windows", "macOS", "linux"],
+  "permissions": [
+    "updater:default"
+  ]
+}
+```
+
+### D. CI Signing Password Environment Variable
+When Minisign keys are generated without a password, Tauri requires `TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ""` in CI to prevent interactive stdin buffer read errors (`failed to fill whole buffer`):
+```yaml
+      - name: Build desktop bundle
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ""
+        run: npm run tauri build
 ```
 
 ---
