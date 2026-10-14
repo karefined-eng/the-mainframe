@@ -195,3 +195,18 @@ Whenever a physical Android device is connected via USB:
 2. Instruct the user to broadcast from the data source device (`Send Database`).
 3. On the receiving Android device (`Receive Database`), pull directly from IP `127.0.0.1` and the 6-digit PIN. This eliminates all network failure points.
 </RULE>
+
+<RULE>
+---
+name: Research Library Authority
+description: >
+  Mandates that all architectural, UI/UX, and marketing copy decisions in The Mainframe strictly consult and adhere to the research library in docs/research/.
+---
+# Research Library Authority
+Before proposing or implementing major UI changes, notification features, or marketing copy:
+1. Ground yourself in `docs/origin.md` to honor the founder's emotional intent.
+2. Consult `docs/research/01_NEURO_UX_AND_COGNITIVE_PSYCHOLOGY.md` for cognitive load and working memory bounds (3–5 items).
+3. Consult `docs/research/02_COMPETITIVE_MOAT_AND_POSITIONING.md` to preserve the 4-pillar defensible moat.
+4. Consult `docs/research/03_SEARCH_INTENT_AND_ORGANIC_GROWTH.md` and `docs/research/search-intent-copywriting-framework.md` for search query alignment and conversion hooks.
+</RULE>
+

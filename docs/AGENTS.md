@@ -24,7 +24,20 @@ The Mainframe is a private, local-first life management application built with T
   - `scripts/setup-labels.ps1`: PowerShell script for GitHub label curation.
   - `scripts/set-repo-metadata.ps1`: PowerShell script for GitHub Topics + description (run once, requires network).
 
-## 2. Core Search & Grep Strategies
+- **Research & Foundations Library (`docs/research/`):**
+  - `docs/origin.md`: Foundational origin story, core reasoning, and psychological intent.
+  - `docs/research/01_NEURO_UX_AND_COGNITIVE_PSYCHOLOGY.md`: Working memory limits (3–5 items), zero-shame blunt re-entry, Zeigarnik open loops, implementation intentions.
+  - `docs/research/02_COMPETITIVE_MOAT_AND_POSITIONING.md`: The 4-pillar defensible moat (Neuro-UX, 5 domains, 3-sec capture, offline SQLite + P2P sync).
+  - `docs/research/03_SEARCH_INTENT_AND_ORGANIC_GROWTH.md`: High-volume verified search query matrix and community distribution playbooks.
+  - `docs/research/search-intent-copywriting-framework.md`: Line-by-line copy implementation guide across README, landing page, and meta tags.
+
+## 2. Mandatory Neuro-UX Constraints
+1. **Strict Chunking:** High-priority queues (What's Hot) must remain capped at 3–5 items.
+2. **Zero Shame Mechanics:** Never use punitive alerts, broken streaks, or red overdue text.
+3. **Additive Instant Feedback:** State changes must reflect on screen in milliseconds without waiting on network.
+4. **Preserve Action Triggers:** Verbatim user implementation intentions (`action_trigger`) must never be truncated.
+
+## 3. Core Search & Grep Strategies
 
 - Prefer `view_file` with line slices for reading targeted functions.
 - Run tests with `node --experimental-strip-types --test tests/*.test.ts`.
