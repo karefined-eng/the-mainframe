@@ -143,3 +143,55 @@ When implementing device-to-device data synchronization (e.g., between PC and Mo
 2. **Explicit Directional Control**: Always provide the user with explicit UI options to choose the sync direction (e.g., `PC -> Mobile`, `Mobile -> PC`, or `Merge`) similar to professional audio mixing consoles.
 3. **Transport Agnostic**: Support multiple localized transfer protocols where possible (Wired/USB via ADB reverse, Local Wi-Fi, QR code, Bluetooth) to prevent ecosystem lock-in and ensure offline capability.
 </RULE>
+
+<RULE>
+---
+name: Always Learn From Failures
+description: >
+  Mandates immediate root-cause investigation, permanent friction logging, and rule persistence whenever any build, CI pipeline, or execution fails.
+---
+# Always Learn From Failures
+Whenever any build, CI/CD pipeline (e.g., GitHub Actions), database migration, tool call, or test fails:
+1. **Never Blindly Retry:** Do not make speculative or trial-and-error edits without examining the full failure log. Inspect the exact stack trace, compiler error, or network payload.
+2. **Identify the Invariant:** Trace the failure to its foundational cause (e.g., platform scope mismatch, environment buffer EOF, local firewall drop).
+3. **Persist the Learning Immediately:** Document the trap, the reason it occurred, and the verified workaround in `AGENTS.md` and `docs/AGENTS.md` before concluding the session. Never leave the campsite without making future agents immune to the same failure.
+</RULE>
+
+<RULE>
+---
+name: Tauri Platform-Gated Capability Isolation
+description: >
+  Prevents Android/iOS compilation failures in Tauri v2 when using desktop-exclusive plugins (like tauri-plugin-updater).
+---
+# Tauri Platform-Gated Capability Isolation
+When adding plugins that only compile on desktop (e.g. `tauri-plugin-updater`), NEVER place their permissions in unconditional capability files (such as `src-tauri/capabilities/default.json`).
+Mobile targets (Android/iOS) do not have the plugin in their dependency tree, causing `cargo build` to fail when validating permissions during ACL compilation.
+Instead, always isolate desktop-only permissions into a dedicated capability file (e.g., `src-tauri/capabilities/desktop-updater.json`) with:
+`"platforms": ["windows", "macOS", "linux"]`
+</RULE>
+
+<RULE>
+---
+name: Tauri Minisign Passwordless CI Signing
+description: >
+  Prevents buffer read decryption errors during automated desktop bundling in GitHub Actions CI when using passwordless signing keys.
+---
+# Tauri Minisign Passwordless CI Signing
+When configuring GitHub Actions to sign Tauri desktop update artifacts with a passwordless Minisign key (generated with `tauri signer generate --ci` without password):
+1. Pass the private key via `TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}`.
+2. DO NOT pass `TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ""` as an empty string. If this variable is defined, Minisign attempts scrypt password decryption and aborts with `failed to decode secret key: incorrect updater private key password: failed to fill whole buffer`. Leave `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` completely unset.
+</RULE>
+
+<RULE>
+---
+name: Bulletproof ADB Reverse Wired Sync
+description: >
+  Standardizes wired USB synchronization as the primary reliable fallback when local Wi-Fi or firewall blocks device-to-device transfer.
+---
+# Bulletproof ADB Reverse Wired Sync
+When synchronizing the local SQLite database between PC and Android, local Wi-Fi is susceptible to router AP client isolation and Windows Defender Firewall inbound blocking on port 9377.
+Whenever a physical Android device is connected via USB:
+1. Run `adb reverse tcp:9377 tcp:9377` to tunnel Android port 9377 directly to the PC.
+2. Instruct the user to broadcast from the data source device (`Send Database`).
+3. On the receiving Android device (`Receive Database`), pull directly from IP `127.0.0.1` and the 6-digit PIN. This eliminates all network failure points.
+</RULE>
