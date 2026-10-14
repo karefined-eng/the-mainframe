@@ -124,6 +124,18 @@ Full architectural blueprint of the 23-command design system:
      - OS-specific terminal verification commands (`Get-FileHash` for Windows, `shasum -a 256` for macOS/Android, `sha256sum` for Linux).
      - Full 64-character SHA-256 digests matching GitHub Release v0.1.0 with a 1-click clipboard copy button.
 
+### E. Dynamic OS-Detection & 1-Click Hero Download
+1. **Client-Side Platform Sniffing (`useDetectedOS`):**
+   - Automatically detects user platform (`windows`, `mac`, `linux`, `android`) via `navigator.userAgent` and `navigator.platform` upon hydration.
+2. **Dynamic 1-Click Hero CTA (`<HeroDownloadCTA />`):**
+   - Renders a direct 1-click download button customized to the visitor's operating system with the exact package size:
+     - E.g. `Download for Windows (5.6 MB)` on Windows machines.
+     - E.g. `Download for macOS (8.0 MB)` on Mac machines.
+     - E.g. `Download for Linux (9.6 MB)` on Linux machines.
+     - E.g. `Download for Android (25.2 MB)` on Android devices.
+   - Provides a subtle, accessible secondary jump link: `Other platforms (macOS, Windows, Linux, Android) ↓` smoothly scrolling directly to `#platforms`.
+   - Preserves a clean fallback state (`Download v0.1.0 (Free)` jumping to `#platforms`) for unknown user agents or SSR.
+
 ---
 
 ## 5. Verification & Deployment Metrics
@@ -141,8 +153,8 @@ Full architectural blueprint of the 23-command design system:
 3. **Production Build:**
    ```bash
    npm run build
-   # Output: Built cleanly (dist/assets/index-DyGxgV2i.js, dist/assets/index-DJvVTcTx.css)
+   # Output: Built cleanly (dist/assets/index-CDaCrijA.js, dist/assets/index-DX9sdkq_.css)
    ```
 4. **Live Vercel Deployment:**
-   - **Commits:** `2ca2cc9` (adapt), `56ad664` (harden & polish), `6d7502a` (teardown), `77855ce` (downloads hub) pushed to `origin main`.
+   - **Commits:** `2ca2cc9` (adapt), `56ad664` (harden & polish), `6d7502a` (teardown), `77855ce` (downloads hub), `83b9e4a` (smart hero OS detection) pushed to `origin main`.
    - **Production URL:** [https://the-mainframe-app.vercel.app/](https://the-mainframe-app.vercel.app/)
