@@ -69,7 +69,17 @@ Full architectural blueprint of the 23-command design system:
   - **Android:** Direct Signed APK (`app-universal-release.apk`).
 - 1-click terminal clone box with copy button (`git clone https://github.com/karefined-eng/the-mainframe.git`).
 
-### 4. CSS Design Refinements (`src/landing/landing.css`)
+### 4. Architectural Trust & Limitations Hub (`src/landing/content.ts` & `LandingPage.tsx`)
+- Elevated the "The parts most landing pages leave out" section from a flat warning list into a high-craft 3-column architectural specification grid.
+- Replaced monolithic `AlertTriangle` warning icons with semantic Lucide iconography:
+  - **Zero-Cloud Architecture:** `CloudOff` with cyan/blue accent container.
+  - **Local SQLite Storage:** `Database` with offline guarantee label.
+  - **Non-Destructive Sync:** `GitCompare` highlighting differential merge and pre-merge backup snapshots.
+  - **Private LAN & USB:** `Cable` highlighting port 9377 and `adb reverse`.
+  - **10-Minute Ephemeral PIN:** `KeyRound` highlighting one-time short-lived token auth.
+  - **Packaging Transparency:** `ShieldAlert` with warm amber styling explicitly outlining unsigned CI builds for Windows SmartScreen & macOS Gatekeeper.
+
+### 5. CSS Design Refinements (`src/landing/landing.css`)
 - **Atmospheric Glow:** Subtle linear radial glow anchored behind the hero (`rgba(74, 158, 255, 0.12)`).
 - **Chamfer Sheen:** Top-edge specular highlight (`border-top: 1px solid rgba(255, 255, 255, 0.08)`).
 - **Hairline Ruled Grid:** Card-soup replaced with clean ruled containers (`lp-ruled`) inspired by Things 3 and Zed.
