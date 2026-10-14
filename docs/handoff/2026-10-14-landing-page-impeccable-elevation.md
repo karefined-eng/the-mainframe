@@ -110,6 +110,20 @@ Full architectural blueprint of the 23-command design system:
 2. **Refined Reduced Motion Implementation:** Updated `@media (prefers-reduced-motion: reduce)` from destructive `none !important` to `0.01ms !important` duration and `scroll-behavior: auto !important`, ensuring instant visual completion without breaking transition lifecycle events or causing flicker.
 3. **Zero Anti-Patterns & Brand Continuity:** Maintained Ponytail minimalist rules (zero emojis, exclusively `lucide-react`), immutable base tokens, and strict working-memory limits.
 
+### D. Cursor-Inspired Multi-Surface Download Hub
+1. **CPU Architecture Disambiguation:**
+   - Clearly labels CPU architectures across platforms: Apple Silicon (ARM64 / M1–M4), Windows (x86_64), Linux (Ubuntu, Debian, Fedora, RHEL), and Android (ARM64).
+2. **Lightweight Footprint Moat Callout:**
+   - Highlights the Tauri Rust performance advantage directly on cards: **5.6 MB** (Windows), **8.0 MB** (macOS), **9.6 MB** (Linux) — showing visitors that The Mainframe is ~10x to ~20x lighter than typical 150MB+ Electron apps.
+3. **Multi-Package Variant Chips:**
+   - Secondary packages are directly accessible with format and size chips:
+     - Windows: NSIS User (.exe, 5.6 MB) & MSI System (.msi, 7.2 MB).
+     - Linux: Debian package (.deb, 9.6 MB), Fedora package (.rpm, 9.6 MB), and AppImage (.AppImage, 83.7 MB).
+4. **Cryptographic SHA-256 Integrity Verification:**
+   - Each platform card includes an expandable drawer revealing:
+     - OS-specific terminal verification commands (`Get-FileHash` for Windows, `shasum -a 256` for macOS/Android, `sha256sum` for Linux).
+     - Full 64-character SHA-256 digests matching GitHub Release v0.1.0 with a 1-click clipboard copy button.
+
 ---
 
 ## 5. Verification & Deployment Metrics
@@ -122,14 +136,13 @@ Full architectural blueprint of the 23-command design system:
 2. **Unit & Integration Tests:**
    ```bash
    node --experimental-strip-types --test tests/*.test.ts
-   # Output: 5/5 tests passed (100%) in 340ms
+   # Output: 5/5 tests passed (100%)
    ```
 3. **Production Build:**
    ```bash
    npm run build
-   # Output: Built in 15.09s cleanly (dist/assets/index-DWtOUyn6.js, dist/assets/index-CJO_IlJn.css)
+   # Output: Built cleanly (dist/assets/index-DyGxgV2i.js, dist/assets/index-DJvVTcTx.css)
    ```
 4. **Live Vercel Deployment:**
-   - **Commits:** `2ca2cc9` (adapt), `56ad664` (harden & polish) pushed to `origin main`.
+   - **Commits:** `2ca2cc9` (adapt), `56ad664` (harden & polish), `6d7502a` (teardown), `77855ce` (downloads hub) pushed to `origin main`.
    - **Production URL:** [https://the-mainframe-app.vercel.app/](https://the-mainframe-app.vercel.app/)
-   - **Live Verification:** Verified bundle serving updated interactive playground parser, 1-click clipboard terminal box, screen-reader link hints, and 100% tokenized color hierarchy.
