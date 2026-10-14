@@ -149,7 +149,7 @@
   line-height: 1.68;
   color: var(--lp-muted);
   margin: 0;
-  max-width: 68ch;
+  max-width: 56ch;
 }
 
 /* A ruled block: dividers carry the structure, so no card chrome repeats. */
@@ -448,7 +448,7 @@
   margin: 0;
   padding: 12px 16px 14px;
   border-top: 1px solid var(--lp-border);
-  font-size: 11.5px;
+  font-size: 12.5px;
   color: var(--lp-muted);
 }
 
@@ -536,7 +536,7 @@
 }
 
 .lp-row-meta {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--lp-muted);
   white-space: nowrap;
   text-align: right;
@@ -579,7 +579,7 @@
 }
 
 .lp-hot span {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--lp-muted);
 }
 
@@ -638,7 +638,7 @@
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--lp-muted);
 }
 
@@ -752,7 +752,7 @@
   background: transparent;
   border: 0;
   color: var(--lp-muted);
-  font-size: 11.5px;
+  font-size: 12px;
   cursor: pointer;
   padding: 4px 8px;
   border-radius: 4px;
@@ -826,7 +826,7 @@
 }
 
 .lp-play-parse-hint {
-  font-size: 11.5px;
+  font-size: 12.5px;
   color: var(--lp-muted);
 }
 
@@ -858,20 +858,22 @@
 .lp-play-cards {
   display: flex;
   flex-direction: column;
-  gap: 7px;
   min-height: 180px;
 }
 
 .lp-play-card {
-  background: var(--lp-surface);
-  border: 1px solid var(--lp-border);
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  padding: 9px 12px;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid var(--lp-border);
+  padding: 11px 14px;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 4px;
   animation: lp-rise 240ms cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.lp-play-card:last-child {
+  border-bottom: 0;
 }
 
 .lp-play-card-top {
@@ -884,7 +886,7 @@
   display: flex;
   align-items: center;
   gap: 5px;
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 600;
   color: var(--lp-muted);
 }
@@ -894,9 +896,9 @@
 }
 
 .lp-play-status {
-  font-size: 10.5px;
+  font-size: 11.5px;
   font-weight: 600;
-  padding: 1px 6px;
+  padding: 3px 8px;
   border-radius: 4px;
 }
 
@@ -916,13 +918,13 @@
 }
 
 .lp-play-card-title {
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--lp-text);
 }
 
 .lp-play-card-note {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--lp-muted);
 }
 
@@ -979,7 +981,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 11.5px;
+  font-size: 12.5px;
   color: var(--lp-muted);
 }
 
@@ -1051,21 +1053,26 @@
 }
 
 .lp-neuro-items {
-  padding: 12px 16px;
+  padding: 4px 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 0;
 }
 
 .lp-neuro-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 10px;
-  border-radius: 6px;
-  background: var(--lp-bg);
-  border: 1px solid var(--lp-border);
-  font-size: 12px;
+  padding: 10px 0;
+  border-radius: 0;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--lp-border);
+  font-size: 12.5px;
+}
+
+.lp-neuro-row:first-child {
+  border-top: 0;
 }
 
 .lp-neuro-row--shame {
@@ -1079,30 +1086,35 @@
 }
 
 .lp-neuro-shame-tag {
-  font-size: 10.5px;
+  font-size: 11.5px;
   font-weight: 700;
   color: var(--lp-danger);
   background: color-mix(in srgb, var(--lp-danger) 15%, transparent);
-  padding: 1px 5px;
-  border-radius: 3px;
+  padding: 2px 7px;
+  border-radius: 4px;
 }
 
 .lp-neuro-calm-tag {
-  font-size: 10.5px;
+  font-size: 11.5px;
   font-weight: 600;
   color: var(--lp-accent);
   background: color-mix(in srgb, var(--lp-accent) 15%, transparent);
-  padding: 1px 5px;
-  border-radius: 3px;
+  padding: 2px 7px;
+  border-radius: 4px;
 }
 
 .lp-neuro-box-footer {
   padding: 10px 16px;
   background: var(--lp-surface-alt);
   border-top: 1px solid var(--lp-border);
+}
+
+.lp-neuro-box-footer p {
+  margin: 0;
   font-size: 12px;
   color: var(--lp-muted);
   line-height: 1.5;
+  max-width: 48ch;
 }
 
 /* ── Platform Download Hub ──────────────────────────────── */
@@ -1182,26 +1194,27 @@
 }
 
 .lp-platform-arch {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--lp-muted);
   line-height: 1.4;
 }
 
 .lp-platform-size-tag {
-  font-size: 10.5px;
+  font-size: 11.5px;
   font-weight: 600;
   color: var(--lp-accent);
   background: color-mix(in srgb, var(--lp-accent) 10%, transparent);
-  padding: 2px 6px;
+  padding: 3px 8px;
   border-radius: 4px;
   display: inline-flex;
   align-self: flex-start;
 }
 
 .lp-platform-detail {
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--lp-muted);
   margin: 0;
+  max-width: 60ch;
 }
 
 .lp-platform-cta {
@@ -1239,7 +1252,7 @@
 }
 
 .lp-btn-size-hint {
-  font-size: 11.5px;
+  font-size: 12px;
   opacity: 0.85;
   margin-left: 2px;
   font-weight: 500;
@@ -1253,7 +1266,7 @@
 }
 
 .lp-variant-label {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -1270,11 +1283,11 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 11px;
+  font-size: 11.5px;
   color: var(--lp-text);
   background: var(--lp-surface-alt);
   border: 1px solid var(--lp-border);
-  padding: 3px 7px;
+  padding: 4px 8px;
   border-radius: 5px;
   text-decoration: none;
   transition: all 120ms ease;
@@ -1287,7 +1300,7 @@
 }
 
 .lp-variant-size {
-  font-size: 9.5px;
+  font-size: 11px;
   color: var(--lp-muted);
 }
 
@@ -1305,7 +1318,7 @@
   background: transparent;
   border: 0;
   color: var(--lp-muted);
-  font-size: 11px;
+  font-size: 11.5px;
   cursor: pointer;
   padding: 4px 0;
   touch-action: manipulation;
@@ -1341,7 +1354,7 @@
 }
 
 .lp-checksum-cmd-label {
-  font-size: 9.5px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -1350,11 +1363,11 @@
 
 .lp-checksum-code {
   font-family: "JetBrains Mono", monospace;
-  font-size: 10.5px;
+  font-size: 11.5px;
   color: var(--lp-text);
   word-break: break-all;
   background: var(--lp-surface-alt);
-  padding: 3px 6px;
+  padding: 4px 8px;
   border-radius: 4px;
 }
 
@@ -1374,14 +1387,14 @@
 }
 
 .lp-checksum-digest-label {
-  font-size: 9.5px;
+  font-size: 11px;
   font-weight: 600;
   color: var(--lp-muted);
 }
 
 .lp-checksum-digest {
   font-family: "JetBrains Mono", monospace;
-  font-size: 9.5px;
+  font-size: 11px;
   color: var(--lp-accent);
   word-break: break-all;
   line-height: 1.35;
@@ -1391,8 +1404,8 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 3px 7px;
-  font-size: 10.5px;
+  padding: 4px 8px;
+  font-size: 11.5px;
   color: var(--lp-text);
   background: var(--lp-surface);
   border: 1px solid var(--lp-border);
@@ -1410,7 +1423,7 @@
 }
 
 .lp-platform-sec {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--lp-muted);
   text-decoration: underline;
   text-align: center;
@@ -1496,7 +1509,7 @@
 }
 
 .lp-terminal-hint {
-  font-size: 11.5px;
+  font-size: 12.5px;
   color: var(--lp-muted);
 }
 
@@ -1529,7 +1542,7 @@
 }
 
 .lp-aud {
-  padding: 22px 0;
+  padding: 22px 18px;
 }
 
 .lp-aud h3 {
@@ -1552,15 +1565,7 @@
   }
 
   .lp-aud {
-    padding: 22px 26px;
-  }
-
-  .lp-aud:nth-child(odd) {
-    padding-left: 0;
-  }
-
-  .lp-aud:nth-child(even) {
-    padding-right: 0;
+    padding: 22px 24px;
   }
 }
 
@@ -1572,7 +1577,7 @@
   font-size: 13.5px;
   line-height: 1.62;
   color: var(--lp-muted);
-  max-width: 78ch;
+  max-width: 66ch;
 }
 
 .lp-note strong {
@@ -1612,7 +1617,7 @@
   line-height: 1.68;
   color: var(--lp-muted);
   margin: 0;
-  max-width: 70ch;
+  max-width: 58ch;
 }
 
 @media (min-width: 880px) {
@@ -1692,23 +1697,24 @@
 }
 
 .lp-mockup-hint {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--lp-muted);
+  max-width: 68ch;
 }
 
 .lp-mockup-domain-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 8px;
-  padding: 12px;
-  background: var(--lp-bg);
+  gap: 1px;
+  padding: 0;
+  background: var(--lp-border);
 }
 
 .lp-mockup-domain-card {
-  background: var(--lp-surface);
-  border: 1px solid var(--lp-border);
-  border-radius: 6px;
-  padding: 9px 11px;
+  background: var(--lp-bg);
+  border: 0;
+  border-radius: 0;
+  padding: 11px 13px;
   display: flex;
   flex-direction: column;
   gap: 5px;
@@ -1721,18 +1727,18 @@
 }
 
 .lp-mockup-domain-name {
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--lp-text);
 }
 
 .lp-mockup-domain-count {
-  font-size: 10.5px;
+  font-size: 11.5px;
   color: var(--lp-muted);
 }
 
 .lp-mockup-domain-item {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--lp-muted);
   white-space: nowrap;
   overflow: hidden;
@@ -1753,21 +1759,26 @@
 }
 
 .lp-mockup-hot-list {
-  padding: 8px 12px;
+  padding: 6px 14px;
   background: var(--lp-bg);
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0;
 }
 
 .lp-mockup-hot-item {
-  background: var(--lp-surface);
-  border: 1px solid var(--lp-border);
-  border-radius: 6px;
-  padding: 8px 11px;
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--lp-border);
+  border-radius: 0;
+  padding: 10px 0;
   display: flex;
   flex-direction: column;
   gap: 3px;
+}
+
+.lp-mockup-hot-item:first-child {
+  border-top: 0;
 }
 
 .lp-mockup-hot-row {
@@ -1777,15 +1788,15 @@
 }
 
 .lp-mockup-hot-title {
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 500;
   color: var(--lp-text);
 }
 
 .lp-mockup-hot-tag {
-  font-size: 10px;
+  font-size: 11.5px;
   font-weight: 600;
-  padding: 1px 5px;
+  padding: 2px 7px;
   border-radius: 4px;
 }
 
@@ -1805,12 +1816,12 @@
 }
 
 .lp-mockup-hot-why {
-  font-size: 10.5px;
+  font-size: 12px;
   color: var(--lp-muted);
 }
 
 .lp-mockup-sync-body {
-  padding: 16px 12px;
+  padding: 18px 14px;
   background: var(--lp-bg);
   display: flex;
   align-items: center;
@@ -1827,19 +1838,19 @@
 }
 
 .lp-mockup-dev-name {
-  font-size: 12px;
+  font-size: 12.5px;
   font-weight: 600;
   color: var(--lp-text);
 }
 
 .lp-mockup-dev-ip {
   font-family: "JetBrains Mono", monospace;
-  font-size: 10.5px;
+  font-size: 11.5px;
   color: var(--lp-muted);
 }
 
 .lp-mockup-dev-status {
-  font-size: 10px;
+  font-size: 11.5px;
   color: var(--lp-success);
 }
 
@@ -1856,10 +1867,10 @@
 
 .lp-mockup-pin {
   font-family: "JetBrains Mono", monospace;
-  font-size: 11px;
+  font-size: 11.5px;
   font-weight: 700;
   letter-spacing: 0.08em;
-  padding: 2px 6px;
+  padding: 3px 8px;
   background: var(--lp-surface);
   border: 1px solid var(--lp-border);
   border-radius: 4px;
@@ -1867,7 +1878,7 @@
 }
 
 .lp-mockup-transfer {
-  font-size: 10px;
+  font-size: 11.5px;
   color: var(--lp-muted);
 }
 
@@ -2059,7 +2070,7 @@
   line-height: 1.62;
   color: var(--lp-muted);
   margin: 18px 0 0;
-  max-width: 78ch;
+  max-width: 66ch;
 }
 
 .lp-download-note strong {
@@ -2169,6 +2180,7 @@
   color: var(--lp-muted);
   margin: 0;
   flex: 1;
+  max-width: 55ch;
 }
 
 .lp-trust-footer {
@@ -2180,7 +2192,7 @@
 }
 
 .lp-trust-snippet {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--lp-muted);
   opacity: 0.85;
 }
@@ -2234,7 +2246,7 @@
 }
 
 .lp-stack-label {
-  font-size: 11.5px;
+  font-size: 12px;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--lp-muted);

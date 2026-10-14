@@ -661,7 +661,9 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="lp-neuro-box-footer">
-                47 overdue items accumulated. Flashing red badges and broken streaks trigger avoidance loops and mental paralysis.
+                <p>
+                  47 overdue items accumulated. Flashing red badges and broken streaks trigger avoidance loops and mental paralysis.
+                </p>
               </div>
             </div>
 
@@ -701,7 +703,9 @@ export default function LandingPage() {
                 </div>
               </div>
               <div className="lp-neuro-box-footer">
-                Attention capped strictly at 3–5 items based on cognitive working memory limits. Returning after time away presents calm, neutral facts with zero guilt.
+                <p>
+                  Attention capped strictly at 3–5 items based on cognitive working memory limits. Returning after time away presents calm, neutral facts with zero guilt.
+                </p>
               </div>
             </div>
           </div>
