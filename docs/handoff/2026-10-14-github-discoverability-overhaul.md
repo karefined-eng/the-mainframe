@@ -25,8 +25,16 @@ This sprint completed the full GitHub discoverability, repository branding, and 
    - Fixed Windows PowerShell 5.1 UTF-8 without BOM em-dash (`—` / `0x94`) tokenization bug in `scripts/set-repo-metadata.ps1`.
    - Documented the quirk and workaround in `docs/AGENTS.md`.
 
-## 2. Verification
-
 - All 15 GitHub topics and description verified via `gh repo view`.
 - Issue labels verified via `gh label list`.
 - Repo metadata script execution verified.
+
+## 3. Public Release & v0.1.0 Status
+
+- **Repository Visibility:** Changed from `PRIVATE` to `PUBLIC` (`gh repo edit karefined-eng/the-mainframe --visibility public`).
+- **Release v0.1.0 (Draft):** Drafted with complete release notes, tagged `v0.1.0`.
+- **Attached Release Assets:**
+  - `The.Mainframe_0.1.0_x64-setup.exe` (Windows NSIS setup installer, 5.8 MB)
+  - `The.Mainframe_0.1.0_x64_en-US.msi` (Windows MSI installer package, 7.5 MB)
+  - `app-universal-release.apk` (Android release APK, 26.4 MB)
+- **Draft URL:** https://github.com/karefined-eng/the-mainframe/releases
