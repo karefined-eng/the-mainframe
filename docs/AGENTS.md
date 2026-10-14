@@ -29,7 +29,10 @@ The Mainframe is a private, local-first life management application built with T
   - `docs/research/01_NEURO_UX_AND_COGNITIVE_PSYCHOLOGY.md`: Working memory limits (3–5 items), zero-shame blunt re-entry, Zeigarnik open loops, implementation intentions.
   - `docs/research/02_COMPETITIVE_MOAT_AND_POSITIONING.md`: The 4-pillar defensible moat (Neuro-UX, 5 domains, 3-sec capture, offline SQLite + P2P sync).
   - `docs/research/03_SEARCH_INTENT_AND_ORGANIC_GROWTH.md`: High-volume verified search query matrix and community distribution playbooks.
+  - `docs/research/04_COMPETITOR_LANDING_PAGE_TEARDOWNS.md`: Exhaustive teardowns of 11 competitors (Linear, Raycast, Obsidian, Anytype, Things 3, Zed, LocalSend, Todoist, Superhuman, Logseq, Notion).
+  - `docs/research/05_IMPECCABLE_DESIGN_METHODOLOGY.md`: Full 23-command reference, craft floor, surface modes (Persuade, Operate, Read), and absolute bans.
   - `docs/research/search-intent-copywriting-framework.md`: Line-by-line copy implementation guide across README, landing page, and meta tags.
+  - `DESIGN.md` & `PRODUCT.md`: Root-level design token locks and product positioning anchors.
 
 ## 2. Mandatory Neuro-UX Constraints
 1. **Strict Chunking:** High-priority queues (What's Hot) must remain capped at 3–5 items.
@@ -41,13 +44,16 @@ The Mainframe is a private, local-first life management application built with T
 
 - Prefer `view_file` with line slices for reading targeted functions.
 - Run tests with `node --experimental-strip-types --test tests/*.test.ts`.
+- Run frontend anti-pattern audit with `npx impeccable detect`.
 - Verify Rust code with `cargo check --manifest-path src-tauri/Cargo.toml`.
 - Verify TypeScript & Vite bundle with `npm run build`.
 
-## 3. Known Tool Quirks & Environment Traps (Friction Log)
+## 4. Known Tool Quirks & Environment Traps (Friction Log)
 
 - **Built-in `browser_subagent` (Playwright CDN 404):** The built-in Antigravity IDE browser agent fails to download Playwright driver on Windows. Write custom scripts or use terminal tools instead.
 - **PowerShell Command Separators:** Use `;` instead of `&&` when chaining commands in Windows PowerShell.
+- **Windows PowerShell `curl` Alias Trap:** In Windows PowerShell, `curl` is aliased to `Invoke-WebRequest`. Piping or backgrounding this alias can cause hung tasks. Always explicitly call `curl.exe` for fast, headless HTTP checks.
+- **Impeccable Detector Font Calibration:** `npx impeccable detect` flags popular fonts like `Inter` as `overused-font`. Because `Inter` is our locked design system token in `src/index.css` and `DESIGN.md`, do not change the font. Instead, add an ignore rule via `.impeccable/config.json` (`npx impeccable ignores add-value overused-font Inter`).
 - **Branch-only File Reads:** The workspace file reader only sees the checked-out branch. For a file present only on another Git branch, use `git show <branch>:<path>` instead of opening it by workspace path.
 - **PowerShell UTF-8 without BOM & Smart Quotes:** Windows PowerShell 5.1 interprets UTF-8 `.ps1` files without BOM in Windows-1252. The UTF-8 em-dash byte `0x94` (`—`) maps to `”` (right double quote) in Windows-1252, prematurely terminating quoted strings and exposing interior characters (like `&`) as bare syntax errors (`The ampersand (&) character is not allowed`). Workaround: Keep scripts pure ASCII (use `-` instead of `—`) or save with UTF-8 with BOM.
 - **CRLF vs LF Line Endings:** Files in this repository have CRLF line endings. Ensure patch tools use exact character sequences.
@@ -62,6 +68,7 @@ The Mainframe is a private, local-first life management application built with T
   2. *Non-Interactive CI Password Handling:* For passwordless keys generated with `tauri signer generate --ci`, `TAURI_SIGNING_PRIVATE_KEY_PASSWORD=""` must be explicitly provided in the workflow environment. If omitted, the signer attempts to prompt standard input for a password, encounters closed EOF on headless CI runners, and fails with `failed to fill whole buffer`.
   3. *Whitespace & Newline Sanitization:* Trailing newlines or CRLF characters in GitHub Secrets cause Tauri's Minisign Base64 decoder to fail with `failed to decode base64 key: Invalid symbol 10, offset <len>` (ASCII 10 is `\n`). Always strip newlines and spaces in CI before invocation: `CLEAN_KEY=$(printf "%s" "${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}" | tr -d '\r\n[:space:]')`.
 - **Bulletproof ADB Reverse Wired Sync:** When Wi-Fi LAN sync fails due to Windows Defender Firewall blocking inbound port 9377 or Wi-Fi router AP client isolation, use wired ADB reverse tunneling over USB. Run `adb reverse tcp:9377 tcp:9377`. Then have the PC broadcast (`Send Database`), and on the Android phone (`Receive Database`), pull using IP `127.0.0.1` and the 6-digit PIN. This bypasses Wi-Fi routers and local firewalls entirely with zero packet loss.
+
 
 
 
