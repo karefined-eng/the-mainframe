@@ -21,15 +21,19 @@ export const ACTIONS_URL = `${REPO_URL}/actions`;
 // as a release number would be an unsupported claim.
 
 export const pageMeta = {
-  title: "The Mainframe — Local-First Life Management",
+  title: "The Mainframe — Calm, Local-First Personal Operating System",
   description:
-    "A private, offline-first life management app for courses, projects, goals, ideas, purchases, and ventures. Built with Tauri, React, Rust, and SQLite.",
+    "A private, offline-first personal operating system for courses, goals, build ideas, ventures, and purchases. Zero cloud accounts, zero subscriptions, no-shame Neuro-UX, and direct P2P LAN/USB sync.",
   keywords: [
     "local-first productivity app",
-    "offline life management",
-    "private personal dashboard",
-    "cross-platform desktop and Android",
-    "SQLite productivity app",
+    "offline personal dashboard",
+    "personal operating system",
+    "adhd friendly task manager",
+    "to do list without guilt",
+    "notion alternative offline",
+    "sqlite productivity app",
+    "cross-platform desktop and android",
+    "p2p device sync",
   ],
 };
 
@@ -44,19 +48,19 @@ export const navLinks = [
 export const audience = [
   {
     title: "Developers and solo builders",
-    body: "Several builds, courses, and side projects running in parallel with no single place that shows all of them.",
+    body: "Several builds, courses, and ventures running in parallel with no single place that shows all of them without infinite setup.",
   },
   {
     title: "Students and career switchers",
-    body: "Certification tracks, study material, and application deadlines spread across notes, browsers, and messages.",
+    body: "Certification paths, study material, and skill roadmaps spread across notes, browsers, and messages without a calm home base.",
   },
   {
     title: "Freelancers and creators",
-    body: "Client deliverables that recur, personal work that keeps getting postponed, and ideas that need somewhere to land.",
+    body: "Personal projects that keep getting postponed, ideas that need somewhere to land, and zero desire to manage complex databases.",
   },
   {
-    title: "Anyone whose lists are everywhere",
-    body: "Task content split across note apps, chat threads, spreadsheets, and memory. The Mainframe is built to be the one place those lists come to rest.",
+    title: "Anyone overwhelmed by to-do list guilt",
+    body: "Tired of apps greeting you with walls of red overdue badges and broken streaks. The Mainframe welcomes you back with calm, chunked re-entry.",
   },
 ];
 
@@ -64,28 +68,28 @@ export const walkthrough = [
   {
     step: "01",
     title: "Paste the list you already have",
-    body: "Copy a wall of unstructured text from wherever it currently lives and paste it in. Plain text is the only input path — there is no file-upload workflow and no format-specific parser to satisfy.",
+    body: "Copy a wall of unstructured text from Notes, WhatsApp, or Google Docs and paste it in. In 3 seconds, it becomes structured items with zero manual data entry.",
     asset: "List ingestion",
     alt: "The paste-ingestion panel of The Mainframe accepting an unstructured block of plain text and preparing it for parsing.",
   },
   {
     step: "02",
     title: "Watch it become structured items",
-    body: "Each pasted line becomes an item with a status, an optional target date, and the original text preserved alongside it. The raw paste stays attached, so nothing is silently dropped in the transform.",
+    body: "Each line becomes an actionable card across your 5 domains: Goals, Build Ideas, Ventures, Courses, or Acquisitions. The original source text is always preserved.",
     asset: "Parsed items in a domain",
     alt: "A domain list showing parsed items with status labels and target dates, each still linked to its original pasted text.",
   },
   {
     step: "03",
-    title: "See what matters right now",
-    body: "The dashboard surfaces a short cross-domain shortlist and states why each entry surfaced. It is a suggestion you can ignore, not a queue you are failing to clear.",
+    title: "See what matters right now (No shame)",
+    body: "The What's Hot dashboard strictly caps focus to 3–5 items based on cognitive working memory. Returning after time away presents calm re-entry, not an accusation.",
     asset: "Cross-domain attention view",
     alt: "The What's Hot dashboard showing a short list of items pulled from different domains, each with the reason it surfaced.",
   },
   {
     step: "04",
-    title: "Stay offline, sync only when you choose",
-    body: "The app reads and writes a local SQLite database on each device. When you want the same snapshot on a second device, pair once on a trusted local network and transfer a validated snapshot.",
+    title: "Stay offline, sync across devices on your terms",
+    body: "Your data lives strictly in a local SQLite database. Seamlessly sync between your PC and Android phone over your local Wi-Fi or USB cable using bidirectional differential merge.",
     asset: "LAN sync pairing",
     alt: "The sync pairing screen with a one-time pairing code, with all network addresses and pairing values redacted.",
   },
@@ -94,23 +98,23 @@ export const walkthrough = [
 export const pillars = [
   {
     icon: "clipboard-paste",
-    title: "Bring in a list",
-    body: "Paste messy plain text and start with structure. No template to fill in, no import wizard, and the source text stays attached to the items it produced.",
+    title: "Bring in a list in 3 seconds",
+    body: "Paste messy plain text and get structured cards immediately. No blank-canvas fatigue, no database schema design, and no retyping.",
   },
   {
     icon: "flame",
-    title: "See what matters now",
-    body: "One combined view across every domain so parallel tracks stop competing for attention in your head. Each suggestion explains why it appeared.",
+    title: "Calm focus, zero shame",
+    body: "High-priority queues strictly capped at 3–5 items. Overdue tasks are framed neutrally as opportunities to restart—never punitive red text or broken streaks.",
   },
   {
     icon: "hard-drive",
-    title: "Keep it local",
-    body: "Offline-first SQLite storage with no required account. Your database is a file on your own device, not a row in someone else's service.",
+    title: "100% Offline & Sovereign",
+    body: "Your database is a local SQLite file on your device. Zero cloud dependencies, zero mandatory accounts, zero telemetry, and zero monthly subscriptions.",
   },
   {
     icon: "arrow-left-right",
-    title: "Move a snapshot when you choose",
-    body: "Opt-in transfer between your own trusted devices with one-time pairing, bounded to a validated snapshot rather than continuous background sync.",
+    title: "Direct Device-to-Device Sync",
+    body: "Non-destructive bidirectional differential merge across PC and Android over local Wi-Fi or wired USB. Both devices stay up to date without any cloud middleman.",
   },
 ];
 

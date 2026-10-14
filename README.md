@@ -5,10 +5,10 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Tauri v2](https://img.shields.io/badge/Tauri-v2-FFC131?logo=tauri&logoColor=white)](https://v2.tauri.app/)
 
-> **Your calm command center for everything you're learning, building, pursuing, and acquiring.**
+> **The calm, local-first personal operating system for everything you're learning, building, pursuing, and acquiring.**
 
-A **private, offline-first** life management app for desktop and Android.  
-No account required. No cloud. Your data stays on your devices — always.
+A **private, offline-first personal dashboard** for Windows, macOS, Linux, and Android.  
+Zero accounts. Zero cloud lock-in. Zero subscription fees. No-shame Neuro-UX design.
 
 ![Rust](https://img.shields.io/badge/Rust-000000?logo=rust&logoColor=white)
 ![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)
@@ -20,14 +20,31 @@ No account required. No cloud. Your data stays on your devices — always.
 
 ## Why The Mainframe
 
-Most productivity tools are either generic task lists or broad cloud platforms. The Mainframe is a **focused, privacy-first alternative**:
+Most productivity tools fail because of two extremes:
+1. **The To-Do List Shame Spiral:** Apps like Todoist and TickTick punish missed days with rolling overdue dates, red alert badges, and broken streaks—triggering avoidance loops and abandonment.
+2. **The Modular Setup Trap:** Tools like Notion, Obsidian, and Anytype require hours of manual database schema building, turning system maintenance into a distraction from actual execution.
+3. **Scattered Parallel Ambitions:** Ambitious builders don't just have flat "chores." They have **Courses** they are taking, **Build Ideas** they are prototyping, **Ventures** they are operating, **Goals** they are measuring, and **Acquisitions** they are researching.
 
-- **Local-first and offline** — your database lives on your device, not a server
-- **Five connected domains** — courses & certifications, build ideas, acquisitions, long-term goals, and ventures
-- **Plain-text capture** — paste an unstructured wall of text and turn it into organized, browsable rows in seconds
-- **What's Hot dashboard** — an urgency-scored view surfaces what actually needs attention across all your domains
-- **Optional LAN sync** — move a bounded snapshot between your devices over a trusted local network with a one-time PIN — no cloud intermediary
-- **Cross-platform** — one Tauri v2 codebase builds for Windows, macOS, Linux, and Android
+The Mainframe sits in the calm, defensible sweet spot: **pre-modeled life domains, zero configuration, no-shame re-entry, and 100% offline sovereignty.**
+
+### How The Mainframe Compares
+
+| Feature / Trait | Standard To-Do Apps (Todoist, TickTick) | Database Builders (Notion, Anytype) | The Mainframe |
+|---|---|---|---|
+| **Data Storage** | Proprietary Cloud | Cloud / Complex Hybrid | **100% Local SQLite (Offline-First)** |
+| **Pricing** | Monthly Subscription ($4–$10/mo) | Free tier with paid walls | **100% Free & Open Source (FOSS)** |
+| **Setup Time** | Minimal (flat lists) | Hours of template tuning | **Instant (5 Pre-modeled Domains)** |
+| **Overdue Handling** | Punitive red badges & broken streaks | Manual formula / user-built | **Neuro-UX: Neutral re-entry (No shame)** |
+| **Cross-Device Sync** | Centralized cloud server | Cloud sync | **P2P LAN / USB Bidirectional Merge** |
+| **Scope of Life** | Flat chores & checklists | Requires relational schemas | **Courses, Goals, Ideas, Ventures, Purchases** |
+
+### Core Pillars
+- **Strict Chunking & No-Shame Re-entry (Neuro-UX)** — Working memory is respected by capping high-priority focus to 3–5 items. Returning after time away is met with neutral, supportive prompts ("needs attention", "continue where you left off") rather than an accusation wall.
+- **Five Pre-Structured Domains** — Instant homes for Courses & Certifications, Build Ideas, Acquisitions, Long-Term Goals, and Ventures with zero database setup.
+- **3-Second Plaintext Capture** — Paste unformatted text dumps from Apple Notes, WhatsApp, or Google Docs; The Mainframe parses them directly into structured cards without retyping.
+- **Sovereign Local-First Architecture** — Your database is a local SQLite file with Write-Ahead Logging (WAL). Zero cloud telemetry, zero accounts.
+- **Direct Device-to-Device Sync** — Non-destructive differential merge across PC and Android over your local Wi-Fi or wired USB (`adb reverse`). No cloud middleman.
+- **Native Cross-Platform Performance** — Built with Tauri v2 (Rust backend) for ultra-low memory footprint and instant boot times on Windows, macOS, Linux, and Android.
 
 ```mermaid
 graph LR
