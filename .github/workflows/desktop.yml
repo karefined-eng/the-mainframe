@@ -51,6 +51,8 @@ jobs:
         run: npm ci
 
       - name: Build desktop bundle
+        env:
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
         run: npm run tauri build
 
       - name: Upload desktop artifacts

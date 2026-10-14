@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { getDb, domains } from "../App";
 import { showToast } from "./Toast";
-import { Bell, Database as DbIcon, Info } from "lucide-react";
+import { Bell, Database as DbIcon, Info, Sparkles, Download, RefreshCw, CheckCircle2, AlertCircle } from "lucide-react";
+import { check } from "@tauri-apps/plugin-updater";
 
 type Density = "minimal" | "balanced" | "intensive";
 const validSettingKeys = new Set(["notification_density", "notifications_enabled"]);
@@ -11,6 +12,67 @@ export default function Settings() {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [dbStats, setDbStats] = useState<Record<string, number>>({});
   const [saved, setSaved] = useState(false);
+
+  // Auto-updater state
+  const [checkingUpdate, setCheckingUpdate] = useState(false);
+  const [updateStatus, setUpdateStatus] = useState<"idle" | "available" | "up_to_date" | "downloading" | "downloaded" | "error">("idle");
+  const [updateInfo, setUpdateInfo] = useState<{ version: string; body?: string } | null>(null);
+  const [downloadProgress, setDownloadProgress] = useState<number>(0);
+  const [updateError, setUpdateError] = useState<string | null>(null);
+
+  const handleCheckForUpdates = async () => {
+    setCheckingUpdate(true);
+    setUpdateError(null);
+    try {
+      const isTauri = typeof window !== "undefined" && ("__TAURI_INTERNALS__" in window || "__TAURI__" in window);
+      if (!isTauri) {
+        setUpdateStatus("up_to_date");
+        setCheckingUpdate(false);
+        return;
+      }
+      const update = await check();
+      if (update && update.available) {
+        setUpdateInfo({ version: update.version, body: update.body });
+        setUpdateStatus("available");
+      } else {
+        setUpdateStatus("up_to_date");
+      }
+    } catch (err) {
+      console.error("Update check failed", err);
+      setUpdateError(String(err));
+      setUpdateStatus("error");
+    } finally {
+      setCheckingUpdate(false);
+    }
+  };
+
+  const handleInstallUpdate = async () => {
+    setUpdateStatus("downloading");
+    setDownloadProgress(0);
+    try {
+      const update = await check();
+      if (!update) throw new Error("No update found");
+      let downloaded = 0;
+      let total = 0;
+      await update.downloadAndInstall((event) => {
+        if (event.event === "Started") {
+          total = event.data.contentLength || 0;
+        } else if (event.event === "Progress") {
+          downloaded += event.data.chunkLength;
+          if (total > 0) {
+            setDownloadProgress(Math.round((downloaded / total) * 100));
+          }
+        } else if (event.event === "Finished") {
+          setUpdateStatus("downloaded");
+        }
+      });
+      setUpdateStatus("downloaded");
+    } catch (err) {
+      console.error("Update install failed", err);
+      setUpdateError(String(err));
+      setUpdateStatus("error");
+    }
+  };
 
   useEffect(() => {
     (async () => {
@@ -156,6 +218,93 @@ export default function Settings() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* Application Updates Section */}
+      <section className="flex flex-col gap-4 rounded-2xl border border-border bg-surface-alt p-6">
+        <div className="flex items-center justify-between">
+          <h4 className="m-0 text-base font-semibold flex items-center gap-2">
+            <Sparkles className="w-5 h-5 text-accent" />
+            Application Updates
+          </h4>
+          <span className="text-xs font-mono text-text-muted bg-surface px-2.5 py-1 rounded-md border border-border">
+            v0.1.0
+          </span>
+        </div>
+
+        <p className="text-xs text-text-muted m-0">
+          The Mainframe securely checks GitHub Releases for signed update packages and verifies cryptographic signatures before installing.
+        </p>
+
+        {updateStatus === "available" && updateInfo && (
+          <div className="rounded-xl border border-accent/40 bg-accent/5 p-4 flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <span className="text-sm font-semibold text-text">New Version Available</span>
+                <p className="text-xs text-accent font-mono m-0 mt-0.5">Version {updateInfo.version}</p>
+              </div>
+              <button
+                onClick={handleInstallUpdate}
+                className="rounded-lg bg-accent px-4 py-2 text-sm font-medium text-bg hover:bg-accent/90 transition-colors cursor-pointer flex items-center gap-2"
+              >
+                <Download className="w-4 h-4" /> Install Update
+              </button>
+            </div>
+            {updateInfo.body && (
+              <div className="text-xs text-text-muted max-h-32 overflow-y-auto bg-surface/50 p-2.5 rounded-lg border border-border">
+                {updateInfo.body}
+              </div>
+            )}
+          </div>
+        )}
+
+        {updateStatus === "downloading" && (
+          <div className="rounded-xl border border-border bg-surface p-4 flex flex-col gap-2">
+            <div className="flex justify-between text-xs text-text-muted">
+              <span>Downloading update...</span>
+              <span>{downloadProgress}%</span>
+            </div>
+            <div className="w-full h-2 rounded-full bg-surface-alt overflow-hidden">
+              <div
+                className="h-full bg-accent transition-all duration-300 rounded-full"
+                style={{ width: `${downloadProgress}%` }}
+              />
+            </div>
+          </div>
+        )}
+
+        {updateStatus === "downloaded" && (
+          <div className="rounded-xl border border-success/30 bg-success/10 p-4 flex items-center justify-between">
+            <div className="flex items-center gap-2 text-success text-sm font-medium">
+              <CheckCircle2 className="w-4 h-4" /> Update ready to apply. Please restart the app.
+            </div>
+          </div>
+        )}
+
+        {updateStatus === "up_to_date" && (
+          <div className="rounded-xl border border-border bg-surface p-3 flex items-center gap-2 text-xs text-text-muted">
+            <CheckCircle2 className="w-4 h-4 text-success" />
+            The Mainframe is up to date. You are running the latest version.
+          </div>
+        )}
+
+        {updateStatus === "error" && (
+          <div className="rounded-xl border border-danger/30 bg-danger/10 p-3 flex items-center gap-2 text-xs text-danger">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>Update status: {updateError}</span>
+          </div>
+        )}
+
+        <div className="pt-1 flex items-center gap-3">
+          <button
+            onClick={handleCheckForUpdates}
+            disabled={checkingUpdate || updateStatus === "downloading"}
+            className="rounded-lg border border-border bg-surface px-4 py-2 text-sm text-text hover:border-accent/50 hover:text-accent transition-colors cursor-pointer flex items-center gap-2 disabled:opacity-50"
+          >
+            <RefreshCw className={`w-4 h-4 ${checkingUpdate ? "animate-spin text-accent" : ""}`} />
+            {checkingUpdate ? "Checking Releases..." : "Check for Updates"}
+          </button>
         </div>
       </section>
 

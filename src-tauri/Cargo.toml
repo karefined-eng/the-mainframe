@@ -31,3 +31,6 @@ rand = "0.8"
 rusqlite = { version = "0.32", features = ["bundled"] }
 tauri-plugin-barcode-scanner = "2.5.1"
 
+[target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
+tauri-plugin-updater = "2"
+

@@ -262,6 +262,12 @@ pub fn run() {
         builder = builder.plugin(tauri_plugin_barcode_scanner::init());
     }
 
+    // updater is desktop-only (Windows, macOS, Linux).
+    #[cfg(not(any(target_os = "android", target_os = "ios")))]
+    {
+        builder = builder.plugin(tauri_plugin_updater::Builder::new().build());
+    }
+
     builder
         .invoke_handler(tauri::generate_handler![
             sync::start_sync_server,

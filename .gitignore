@@ -32,6 +32,10 @@ audio_converted_transcription_*.txt
 *transcript*.txt
 organize_imports.bat
 
+# Tauri Signing / Updater Keys
+*.key
+src-tauri/*.key
+
 dist-installers/
 .zcode/
 
