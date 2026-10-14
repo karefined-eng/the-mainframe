@@ -1,0 +1,51 @@
+name: Feature Request
+description: Propose a new feature or enhancement. Read the local-first constraint below first.
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Core constraint:** The Mainframe is a local-first, offline-first app. Features that require a cloud account, always-on server, or mandatory internet connection are outside the project's scope.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem are you trying to solve?
+      description: Describe the workflow friction or gap you have encountered. Concrete examples help.
+      placeholder: "When I try to do X, I have to Y which is inefficient because..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Describe what you would like to happen. Include wireframes or examples if helpful.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: local_first_check
+    attributes:
+      label: Does this feature require a server, cloud service, or internet connection?
+      options:
+        - "No — works fully offline"
+        - "Optional internet only (e.g., for import from a URL)"
+        - "Yes — requires a server or account (likely out of scope)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you have considered
+      description: Are there workarounds or other approaches you have tried?
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues and this has not been proposed before
+          required: true

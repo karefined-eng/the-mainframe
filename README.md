@@ -1,127 +1,189 @@
 # The Mainframe
 
-**A private, local-first life management app for people whose work, learning, ideas, and goals do not fit in one list.**
+[![Desktop Builds](https://github.com/karefined-eng/the-mainframe/actions/workflows/desktop.yml/badge.svg)](https://github.com/karefined-eng/the-mainframe/actions/workflows/desktop.yml)
+[![Android APK](https://github.com/karefined-eng/the-mainframe/actions/workflows/android.yml/badge.svg)](https://github.com/karefined-eng/the-mainframe/actions/workflows/android.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Tauri v2](https://img.shields.io/badge/Tauri-v2-FFC131?logo=tauri&logoColor=white)](https://v2.tauri.app/)
 
-The Mainframe brings studies, build ideas, acquisitions, long-term goals, and ventures into one focused dashboard. It is built for offline use with a local SQLite database, so your data stays on your devices instead of requiring an account, cloud subscription, or hosted service.
+> **Your calm command center for everything you're learning, building, pursuing, and acquiring.**
 
-> **Early public release:** The Mainframe is under active development. Desktop builds and Android APKs are available through GitHub Actions artifacts while the first stable public release is prepared.
+A **private, offline-first** life management app for desktop and Android.  
+No account required. No cloud. Your data stays on your devices — always.
+
+![Rust](https://img.shields.io/badge/Rust-000000?logo=rust&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![SQLite](https://img.shields.io/badge/SQLite-07405E?logo=sqlite&logoColor=white)
+![Android](https://img.shields.io/badge/Android-3DDC84?logo=android&logoColor=white)
+
+---
 
 ## Why The Mainframe
 
-Most productivity tools are either generic task lists or broad workspace platforms. The Mainframe is a focused, privacy-first alternative for personal planning:
+Most productivity tools are either generic task lists or broad cloud platforms. The Mainframe is a **focused, privacy-first alternative**:
 
-- **Local-first and offline:** Your database is stored locally on each device.
-- **Five connected domains:** Studies and certifications, build ideas, acquisitions, long-term goals, and ventures.
-- **Plain-text capture:** Turn an unstructured wall of text into organized items.
-- **What's Hot dashboard:** Surface the work that needs attention across domains.
-- **Optional LAN sync:** Move a bounded database snapshot between trusted devices on the same local network with one-time pairing.
-- **Cross-platform foundation:** One Tauri v2 codebase targets Windows, macOS, Linux, and Android.
+- **Local-first and offline** — your database lives on your device, not a server
+- **Five connected domains** — courses & certifications, build ideas, acquisitions, long-term goals, and ventures
+- **Plain-text capture** — paste an unstructured wall of text and turn it into organized, browsable rows in seconds
+- **What's Hot dashboard** — an urgency-scored view surfaces what actually needs attention across all your domains
+- **Optional LAN sync** — move a bounded snapshot between your devices over a trusted local network with a one-time PIN — no cloud intermediary
+- **Cross-platform** — one Tauri v2 codebase builds for Windows, macOS, Linux, and Android
 
-The app does not require a hosted account, telemetry service, or Internet connection for its core local workflow.
+```mermaid
+graph LR
+    subgraph "Your Devices (Local-First)"
+        PC["Desktop\n(Windows / macOS / Linux)"]
+        DB1[("SQLite DB")]
+        Phone["Android App"]
+        DB2[("SQLite DB")]
+    end
+    subgraph "Optional LAN Sync (private network only)"
+        SYNC["One-time PIN pairing\nPorts 9377/9378"]
+    end
+    PC <--> DB1
+    Phone <--> DB2
+    DB1 <-- "Snapshot transfer (opt-in)" --> SYNC
+    SYNC --> DB2
+    Internet((Internet)) -. "never touches your data" .-> PC
+```
 
-## Platform support
+---
 
-| Platform | Current deliverable | Status |
-| --- | --- | --- |
-| Windows 10/11 | Desktop installer artifacts from GitHub Actions | Build target |
-| macOS | `.app`/`.dmg` artifacts from GitHub Actions | Build target; signing/notarization still required for distribution |
-| Linux | AppImage/deb artifacts from GitHub Actions | Build target; test on target distributions before release |
-| Android | Signed release APK or unsigned debug APK artifact | Build target; Play Store bundle and device testing remain |
-| iOS | Not currently configured | Planned evaluation |
+## Platform Support
 
-Desktop CI artifacts are unsigned unless platform signing is added. Android release signing is optional and uses repository secrets; see the [Android distribution guide](10_ANDROID_PRODUCTION_READINESS.md).
+| Platform | Deliverable | Status |
+|---|---|---|
+| Windows 10/11 | Desktop installer via GitHub Actions | ✅ Build target |
+| macOS | `.app` / `.dmg` via GitHub Actions | ✅ Build target · signing/notarization pending |
+| Linux | AppImage / `.deb` via GitHub Actions | ✅ Build target · test on target distros |
+| Android | Signed release APK or debug APK | ✅ Build target · Play Store bundle pending |
+| iOS | — | Planned evaluation |
 
-## Download a build
+> **Early public release.** Builds are available as GitHub Actions artifacts while the first stable, signed release is prepared. See [Download a build](#download-a-build).
 
-The repository's **Actions** tab contains the latest build artifacts:
+---
 
-1. Open the [Android APK workflow](../../actions/workflows/android.yml) or [desktop workflow](../../actions/workflows/desktop.yml).
-2. Open a successful run.
-3. Download the artifact for your platform.
+## Download a Build
 
-These are CI artifacts, not yet versioned GitHub Releases. Before wider distribution, each platform needs real-device testing, versioned release notes, and its platform-specific signing/notarization.
+1. Open the [Desktop builds workflow](../../actions/workflows/desktop.yml) or [Android APK workflow](../../actions/workflows/android.yml)
+2. Click a successful run
+3. Download the artifact for your platform
 
-## Data and sync boundaries
+These are CI artifacts, not yet versioned GitHub Releases. Each platform still needs real-device testing and platform-specific signing before wider distribution.
 
-The default workflow is local and offline. Each device has its own SQLite database; installing the app on two devices does not automatically merge their data.
+---
 
-LAN sync is opt-in and intentionally limited:
-
-- It is restricted to private/local network addresses and port `9377` (discovery uses `9378`).
-- Pairing uses a six-digit, one-time bearer token that expires after 10 minutes.
-- Transfers are limited to 64 MiB and validated before atomic replacement.
-- The current transport is HTTP cleartext on the trusted LAN, not end-to-end encryption.
-- Do not expose the sync port to the public Internet, use it on an untrusted network, or treat it as a cloud backup.
-
-Read the [Android production-readiness guide](10_ANDROID_PRODUCTION_READINESS.md) for the complete security, signing, and release limitations.
-
-## Quick start for contributors
+## Quick Start (Contributors)
 
 ### Prerequisites
 
-- Node.js 18 or newer
-- Rust via [rustup](https://rustup.rs/)
-- Platform dependencies for [Tauri v2](https://v2.tauri.app/start/prerequisites/)
-- Android Studio and Android SDK only for Android development
+- [Node.js 18+](https://nodejs.org/)
+- [Rust via rustup](https://rustup.rs/)
+- [Tauri v2 platform dependencies](https://v2.tauri.app/start/prerequisites/)
+- Android Studio + Android SDK (Android builds only)
 
-### Run the app
+### Run locally
 
 ```bash
+git clone https://github.com/karefined-eng/the-mainframe.git
+cd the-mainframe
 npm install
 
-# Desktop development
+# Desktop dev server
 npm run tauri dev
 
-# Android development
+# Android dev (connect device or start emulator first)
 npm run tauri android dev
 ```
 
-### Build locally
+### Run tests
 
 ```bash
-# Frontend type-check and production bundle
-npm run build
-
-# Native desktop bundle
-npm run tauri build
-
-# Android APK
-npm run tauri android build -- --target aarch64 --apk
+node --experimental-strip-types --test tests/*.test.ts
 ```
 
-If your machine cannot install Android or native desktop dependencies, use the GitHub Actions workflows instead. They build from a clean hosted runner and upload the resulting artifacts.
+### Build
+
+```bash
+npm run build          # frontend type-check + bundle
+npm run tauri build    # native desktop bundle
+npm run tauri android build -- --target aarch64 --apk  # Android APK
+```
+
+If you cannot install native dependencies locally, the GitHub Actions workflows build from a clean runner — fork the repo, push a branch, and download the artifact.
+
+---
+
+## Data & Sync Boundaries
+
+The default workflow is **fully local and offline**. Each device has its own SQLite database; installing the app on two devices does not automatically merge their data.
+
+LAN sync is opt-in and intentionally limited:
+
+| Constraint | Detail |
+|---|---|
+| Network scope | Private/local addresses only (RFC 1918); public internet is rejected with HTTP 403 |
+| Authentication | Six-digit one-time bearer token, expires after 10 minutes |
+| Transfer limit | 64 MiB maximum |
+| Validation | SQLite integrity check before atomic database replacement |
+| Transport | HTTP cleartext on trusted LAN — **not** end-to-end encrypted |
+| Ports | 9377 (transfer), 9378 (discovery) |
+
+⚠️ Do not expose the sync port to the public Internet, use it on an untrusted network, or treat it as a cloud backup.
+
+See the [Android production-readiness guide](10_ANDROID_PRODUCTION_READINESS.md) and [Security Review](SECURITY-REVIEW.md) for full details.
+
+---
 
 ## Technology
 
-- [Tauri v2](https://v2.tauri.app/) with Rust
-- React, TypeScript, Vite, and Tailwind CSS
-- SQLite through `tauri-plugin-sql`
-- Local-network sync implemented in Rust
+| Layer | Stack |
+|---|---|
+| App framework | [Tauri v2](https://v2.tauri.app/) |
+| Backend / sync | Rust (`tiny_http`, `ureq`, `rusqlite`) |
+| Frontend | React 19, TypeScript, Vite, Tailwind CSS v4 |
+| Database | SQLite via `tauri-plugin-sql` |
+| Mobile | Android (aarch64) via Tauri Android |
+| Icons | `lucide-react` |
 
-## Project documentation
+---
 
-- [Android production-readiness and release guide](10_ANDROID_PRODUCTION_READINESS.md)
-- [Market and product research](11_MARKET_AND_PRODUCT_RESEARCH.md)
-- [Project brief](00_PROJECT_BRIEF.md)
-- [Data schema](01_DATA_SCHEMA.md)
-- [Tech stack and setup](02_TECH_STACK_AND_SETUP.md)
-- [Open product decisions](08_OPEN_DECISIONS_FOR_YOU.md)
+## Project Documentation
 
-The generated Android project under `src-tauri/gen/android` is committed because CI builds directly from it. Regenerate it only when changing Android configuration, then review the generated diff.
+| Document | Purpose |
+|---|---|
+| [Project brief](00_PROJECT_BRIEF.md) | Product scope and design decisions |
+| [Data schema](01_DATA_SCHEMA.md) | SQLite table definitions and migrations |
+| [Tech stack and setup](02_TECH_STACK_AND_SETUP.md) | Toolchain and build configuration |
+| [Notification engine](06_NOTIFICATION_ENGINE.md) | Urgency scoring algorithm |
+| [Android production guide](10_ANDROID_PRODUCTION_READINESS.md) | Signing, distribution, device testing |
+| [Security Review](SECURITY-REVIEW.md) | Security audit findings and disposition |
+| [Agent docs (AGENTS.md)](docs/AGENTS.md) | Architecture map and environment traps for AI agents |
 
-## Roadmap to a stable public release
+The generated Android project under `src-tauri/gen/android` is committed because CI builds directly from it. Regenerate it only when changing Android configuration, then review the diff carefully.
 
-- Test the desktop installers on supported Windows, macOS, and Linux environments.
-- Add macOS signing/notarization and Windows/Linux distribution checks.
-- Test Android installation, upgrades, lifecycle behavior, and LAN sync on real devices.
-- Move LAN sync to encrypted transport before recommending it on networks that are not fully trusted.
-- Publish versioned release artifacts, changelogs, privacy information, and backup guidance.
-- Evaluate iOS support after the desktop and Android release paths are stable.
+---
+
+## Roadmap
+
+- [ ] Test desktop installers on Windows, macOS, and Linux environments
+- [ ] macOS signing / notarization and Windows / Linux distribution hardening
+- [ ] Android device testing: install, upgrade, lifecycle, and LAN sync
+- [ ] Encrypted transport for LAN sync
+- [ ] Versioned release artifacts with changelogs and privacy documentation
+- [ ] iOS support evaluation
+
+---
 
 ## Contributing
 
-Issues and focused pull requests are welcome. Please include the platform, app version or commit, reproduction steps, and relevant logs. Avoid attaching database files or other private data.
+Contributions are welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request.
+
+When filing an issue, include your platform, app version or commit, reproduction steps, and relevant logs.  
+**Do not attach database files or screenshots containing personal data.**
+
+---
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License — see [LICENSE](LICENSE) for details.

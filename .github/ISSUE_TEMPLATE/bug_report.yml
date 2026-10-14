@@ -1,0 +1,95 @@
+name: Bug Report
+description: Report a bug in The Mainframe — include platform, version, and reproduction steps.
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Before filing:** check [existing issues](https://github.com/karefined-eng/the-mainframe/issues) to avoid duplicates.
+        **Privacy reminder:** Do NOT attach `.db` files or screenshots containing personal task data, PINs, or LAN addresses.
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Which platform are you running The Mainframe on?
+      options:
+        - Windows 10/11
+        - macOS
+        - Linux
+        - Android
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: App version or commit
+      description: Check the app's About section or run `git rev-parse --short HEAD`.
+      placeholder: "e.g. 0.1.0 or e8c0473"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: A clear description of the bug.
+      placeholder: "When I do X, Y happens instead of Z."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: The exact sequence of actions that triggers the bug.
+      placeholder: |
+        1. Open the app
+        2. Navigate to...
+        3. Click...
+        4. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behaviour
+      placeholder: "What did you expect to happen?"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: feature_area
+    attributes:
+      label: Feature area
+      options:
+        - Dashboard / What's Hot
+        - Domain view (certifications / goals / ventures / etc.)
+        - Import / plain-text capture
+        - LAN sync
+        - Calendar
+        - General app (startup, navigation, settings)
+        - CI / build
+        - Other
+    validations:
+      required: false
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs or error output
+      description: Paste console output, Tauri dev logs, or `adb logcat` output. Remove any personal data.
+      render: shell
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Checklist
+      options:
+        - label: I have searched existing issues and this is not a duplicate
+          required: true
+        - label: I have NOT attached any database file or screenshot containing personal data
+          required: true

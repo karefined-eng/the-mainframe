@@ -15,6 +15,14 @@ The Mainframe is a private, local-first life management application built with T
   - `src-tauri/tauri.conf.json`: Tauri configuration, window dimensions, CSP security policies, and SQLite plugin preloads.
 - **Database:**
   - SQLite managed via `tauri-plugin-sql` and direct backend connections during sync snapshotting.
+- **Community & Discoverability Files:**
+  - `CONTRIBUTING.md`: Dev setup, project structure, PR workflow, environment traps.
+  - `.github/ISSUE_TEMPLATE/`: Structured YAML templates (bug_report.yml, feature_request.yml, config.yml).
+  - `.github/SECURITY.md`: Security policy activating GitHub's Security Policy badge.
+  - `.github/FUNDING.yml`: Sponsor button foundation.
+  - `public/landing/social-preview.jpg`: 16:9 social preview image for GitHub/Twitter/Discord.
+  - `scripts/setup-labels.ps1`: PowerShell script for GitHub label curation.
+  - `scripts/set-repo-metadata.ps1`: PowerShell script for GitHub Topics + description (run once, requires network).
 
 ## 2. Core Search & Grep Strategies
 
@@ -27,6 +35,7 @@ The Mainframe is a private, local-first life management application built with T
 
 - **Built-in `browser_subagent` (Playwright CDN 404):** The built-in Antigravity IDE browser agent fails to download Playwright driver on Windows. Write custom scripts or use terminal tools instead.
 - **PowerShell Command Separators:** Use `;` instead of `&&` when chaining commands in Windows PowerShell.
+- **PowerShell UTF-8 without BOM & Smart Quotes:** Windows PowerShell 5.1 interprets UTF-8 `.ps1` files without BOM in Windows-1252. The UTF-8 em-dash byte `0x94` (`—`) maps to `”` (right double quote) in Windows-1252, prematurely terminating quoted strings and exposing interior characters (like `&`) as bare syntax errors (`The ampersand (&) character is not allowed`). Workaround: Keep scripts pure ASCII (use `-` instead of `—`) or save with UTF-8 with BOM.
 - **CRLF vs LF Line Endings:** Files in this repository have CRLF line endings. Ensure patch tools use exact character sequences.
 - **PowerShell Binary Redirection:** `adb exec-out screencap -p > file` corrupts binary images due to CRLF translation. Use `adb shell screencap /sdcard/x.png` + `adb pull`.
 - **`tiny_http` Port Rebinding:** `tiny_http`'s server thread blocks on `incoming_requests()`. When stopping, a thread must exit cleanly or be nudged via a loopback connection before rebinding port 9377.
