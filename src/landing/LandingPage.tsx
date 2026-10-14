@@ -239,6 +239,8 @@ function StepFourVisual() {
       </div>
     </div>
   );
+}
+
 const trustIcons = {
   CloudOff,
   Database,
@@ -618,16 +620,31 @@ export default function LandingPage() {
           title="The parts most landing pages leave out"
           lede="You should know these before you put anything real into the app. They are stated here rather than buried in a footer."
         >
-          <div className="lp-ruled lp-trust-grid">
-            {limitations.map((item) => (
-              <article className="lp-trust" key={item.title}>
-                <AlertTriangle size={18} aria-hidden="true" strokeWidth={1.75} />
-                <div>
-                  <h3>{item.title}</h3>
-                  <p>{item.body}</p>
-                </div>
-              </article>
-            ))}
+          <div className="lp-trust-grid" data-od-id="trust-limitations-grid">
+            {limitations.map((item) => {
+              const Icon = trustIcons[item.icon];
+              const isAdvisory = item.tone === "advisory";
+              return (
+                <article
+                  className={`lp-trust-card ${isAdvisory ? "lp-trust-card--advisory" : "lp-trust-card--guarantee"}`}
+                  key={item.title}
+                >
+                  <div className="lp-trust-card-header">
+                    <div className="lp-trust-icon-box" aria-hidden="true">
+                      <Icon size={16} strokeWidth={2} />
+                    </div>
+                    <span className="lp-trust-badge lp-mono">{item.badge}</span>
+                  </div>
+                  <h3 className="lp-trust-title">{item.title}</h3>
+                  <p className="lp-trust-body">{item.body}</p>
+                  {item.technicalSnippet && (
+                    <div className="lp-trust-footer">
+                      <span className="lp-trust-snippet lp-mono">{item.technicalSnippet}</span>
+                    </div>
+                  )}
+                </article>
+              );
+            })}
           </div>
         </Section>
 
