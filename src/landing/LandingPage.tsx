@@ -37,6 +37,8 @@ import {
   ArrowRight,
   Cable,
   Check,
+  ChevronDown,
+  ChevronUp,
   ClipboardPaste,
   CloudOff,
   Copy,
@@ -49,7 +51,10 @@ import {
   Info,
   KeyRound,
   MessagesSquare,
+  Monitor,
   ShieldAlert,
+  ShieldCheck,
+  Smartphone,
 } from "lucide-react";
 import { applyLandingMetadata } from "./metadata";
 import Playground from "./Playground";
@@ -65,6 +70,7 @@ import {
   pillars,
   platformRows,
   releaseAssets,
+  type ReleaseAsset,
   techStack,
   walkthrough,
 } from "./content";
@@ -272,6 +278,121 @@ function TerminalCloneBox() {
           <span>{copied ? "Copied" : "Copy"}</span>
         </button>
         <span className="lp-terminal-hint">Build from source · Tauri v2 + Rust</span>
+      </div>
+    </div>
+  );
+}
+
+function PlatformDownloadCard({ asset }: { asset: ReleaseAsset }) {
+  const [showChecksum, setShowChecksum] = useState(false);
+  const [copiedDigest, setCopiedDigest] = useState<string | null>(null);
+
+  const primaryPackage = asset.packages[0];
+
+  const handleCopyDigest = (digest: string) => {
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
+      navigator.clipboard.writeText(digest).then(() => {
+        setCopiedDigest(digest);
+        setTimeout(() => setCopiedDigest(null), 2000);
+      });
+    }
+  };
+
+  return (
+    <div className="lp-platform-card" data-od-id={`download-${asset.id}`}>
+      <div className="lp-platform-header">
+        <div className="lp-platform-header-left">
+          {asset.category === "Desktop" ? (
+            <Monitor size={15} className="lp-platform-type-icon" aria-hidden="true" />
+          ) : (
+            <Smartphone size={15} className="lp-platform-type-icon" aria-hidden="true" />
+          )}
+          <span className="lp-platform-name">{asset.platform}</span>
+        </div>
+        <span className="lp-platform-badge">{asset.badge}</span>
+      </div>
+
+      <div className="lp-platform-meta">
+        <span className="lp-platform-arch">{asset.architecture}</span>
+        <span className="lp-platform-size-tag">{asset.sizeHighlight}</span>
+      </div>
+
+      <div className="lp-platform-cta">
+        <a
+          className="lp-platform-btn"
+          href={primaryPackage.url}
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          <Download size={14} aria-hidden="true" />
+          <span>Download {primaryPackage.format}</span>
+          <span className="lp-btn-size-hint">({primaryPackage.size})</span>
+          <span className="sr-only"> (opens in new tab)</span>
+        </a>
+
+        {asset.packages.length > 1 && (
+          <div className="lp-platform-variants">
+            <span className="lp-variant-label">Additional packages:</span>
+            <div className="lp-variant-list">
+              {asset.packages.slice(1).map((pkg) => (
+                <a
+                  key={pkg.format}
+                  className="lp-variant-chip"
+                  href={pkg.url}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
+                  <span>{pkg.format}</span>
+                  <span className="lp-variant-size">({pkg.size})</span>
+                  <span className="sr-only"> (opens in new tab)</span>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <div className="lp-checksum-box">
+        <button
+          type="button"
+          className="lp-checksum-toggle"
+          onClick={() => setShowChecksum(!showChecksum)}
+          aria-expanded={showChecksum}
+        >
+          <span className="lp-checksum-toggle-left">
+            <ShieldCheck size={12} aria-hidden="true" />
+            <span>{showChecksum ? "Hide verification" : "Verify SHA-256 Checksum"}</span>
+          </span>
+          {showChecksum ? <ChevronUp size={12} aria-hidden="true" /> : <ChevronDown size={12} aria-hidden="true" />}
+        </button>
+
+        {showChecksum && (
+          <div className="lp-checksum-drawer">
+            <div className="lp-checksum-cmd-row">
+              <span className="lp-checksum-cmd-label">Verify command</span>
+              <code className="lp-checksum-code">{asset.verifyCommand}</code>
+            </div>
+            <div className="lp-checksum-digest-row">
+              <div className="lp-checksum-digest-wrap">
+                <span className="lp-checksum-digest-label">SHA-256 ({primaryPackage.filename})</span>
+                <code className="lp-checksum-digest">{primaryPackage.digest}</code>
+              </div>
+              <button
+                type="button"
+                className="lp-checksum-copy-btn"
+                onClick={() => handleCopyDigest(primaryPackage.digest)}
+                aria-label={copiedDigest === primaryPackage.digest ? "Hash copied" : "Copy hash"}
+              >
+                {copiedDigest === primaryPackage.digest ? (
+                  <Check size={11} aria-hidden="true" />
+                ) : (
+                  <Copy size={11} aria-hidden="true" />
+                )}
+                <span>{copiedDigest === primaryPackage.digest ? "Copied" : "Copy"}</span>
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -562,36 +683,7 @@ export default function LandingPage() {
         >
           <div className="lp-platform-hub" data-od-id="platform-download-hub">
             {releaseAssets.map((asset) => (
-              <div className="lp-platform-card" key={asset.platform}>
-                <div className="lp-platform-header">
-                  <span className="lp-platform-name">{asset.platform}</span>
-                  <span className="lp-platform-badge">{asset.badge}</span>
-                </div>
-                <p className="lp-platform-detail lp-mono">{asset.filename}</p>
-                <div className="lp-platform-cta">
-                  <a
-                    className="lp-platform-btn"
-                    href={asset.url}
-                    target="_blank"
-                    rel="noreferrer noopener"
-                  >
-                    <Download size={14} aria-hidden="true" />
-                    Download {asset.format.split(" ")[0]}
-                    <span className="sr-only"> (opens in new tab)</span>
-                  </a>
-                  {asset.secondary && (
-                    <a
-                      className="lp-platform-sec"
-                      href={asset.secondary.url}
-                      target="_blank"
-                      rel="noreferrer noopener"
-                    >
-                      Also available as {asset.secondary.format}
-                      <span className="sr-only"> (opens in new tab)</span>
-                    </a>
-                  )}
-                </div>
-              </div>
+              <PlatformDownloadCard key={asset.id} asset={asset} />
             ))}
           </div>
 

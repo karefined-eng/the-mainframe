@@ -334,42 +334,153 @@ export const playgroundPresets = [
   },
 ];
 
-export const releaseAssets = [
+export interface ReleasePackage {
+  format: string;
+  type: string;
+  filename: string;
+  size: string;
+  url: string;
+  digest: string;
+}
+
+export interface ReleaseAsset {
+  id: string;
+  platform: string;
+  category: "Desktop" | "Mobile";
+  architecture: string;
+  sizeHighlight: string;
+  badge: string;
+  filename: string;
+  format: string;
+  url: string;
+  verifyCommand: string;
+  secondary?: {
+    format: string;
+    url: string;
+  };
+  packages: ReleasePackage[];
+}
+
+export const releaseAssets: ReleaseAsset[] = [
   {
+    id: "windows",
     platform: "Windows",
+    category: "Desktop",
     badge: "Windows 10 / 11 (x64)",
-    filename: "The-Mainframe_0.1.0_x64-setup.exe",
+    architecture: "x86_64 · Intel / AMD",
+    sizeHighlight: "5.6 MB · 10x lighter than Electron",
+    filename: "The.Mainframe_0.1.0_x64-setup.exe",
     format: "NSIS Installer (.exe)",
-    url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/The-Mainframe_0.1.0_x64-setup.exe",
+    url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/The.Mainframe_0.1.0_x64-setup.exe",
+    verifyCommand: "Get-FileHash The.Mainframe_0.1.0_x64-setup.exe -Algorithm SHA256",
     secondary: {
       format: "MSI (.msi)",
-      url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/The-Mainframe_0.1.0_x64_en-US.msi",
+      url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/The.Mainframe_0.1.0_x64_en-US.msi",
     },
+    packages: [
+      {
+        format: "NSIS (.exe)",
+        type: "User Installer (Recommended)",
+        filename: "The.Mainframe_0.1.0_x64-setup.exe",
+        size: "5.6 MB",
+        url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/The.Mainframe_0.1.0_x64-setup.exe",
+        digest: "150f0852ffd43bb7f60277ccf3dfd6c441f3b12da818a0bbc507be856779dcb2",
+      },
+      {
+        format: "MSI (.msi)",
+        type: "System Installer (Enterprise / IT)",
+        filename: "The.Mainframe_0.1.0_x64_en-US.msi",
+        size: "7.2 MB",
+        url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/The.Mainframe_0.1.0_x64_en-US.msi",
+        digest: "a737f9e65159e11c1dc44afec098c7afdb728d950e14e9da8c99e008b717c001",
+      },
+    ],
   },
   {
+    id: "macos",
     platform: "macOS",
+    category: "Desktop",
     badge: "Apple Silicon (aarch64)",
-    filename: "The-Mainframe_0.1.0_aarch64.dmg",
+    architecture: "ARM64 · Apple M1 / M2 / M3 / M4",
+    sizeHighlight: "8.0 MB · Zero Electron runtime overhead",
+    filename: "The.Mainframe_0.1.0_aarch64.dmg",
     format: "Disk Image (.dmg)",
-    url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/The-Mainframe_0.1.0_aarch64.dmg",
+    url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/The.Mainframe_0.1.0_aarch64.dmg",
+    verifyCommand: "shasum -a 256 The.Mainframe_0.1.0_aarch64.dmg",
+    packages: [
+      {
+        format: "Disk Image (.dmg)",
+        type: "Apple Silicon Native (aarch64)",
+        filename: "The.Mainframe_0.1.0_aarch64.dmg",
+        size: "8.0 MB",
+        url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/The.Mainframe_0.1.0_aarch64.dmg",
+        digest: "29b7499bed37445aea0dc64a21c3cdd3801b0886dccc3c304381b97795953757",
+      },
+    ],
   },
   {
+    id: "linux",
     platform: "Linux",
+    category: "Desktop",
     badge: "x86_64 / amd64",
-    filename: "the-mainframe_0.1.0_amd64.AppImage",
-    format: "AppImage (.AppImage)",
-    url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/the-mainframe_0.1.0_amd64.AppImage",
+    architecture: "x86_64 · Ubuntu, Fedora, Arch, Debian",
+    sizeHighlight: "9.6 MB · Native WebKitGTK",
+    filename: "The.Mainframe_0.1.0_amd64.deb",
+    format: "Debian (.deb)",
+    url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/The.Mainframe_0.1.0_amd64.deb",
+    verifyCommand: "sha256sum The.Mainframe_0.1.0_amd64.deb",
     secondary: {
-      format: "Debian (.deb)",
-      url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/the-mainframe_0.1.0_amd64.deb",
+      format: "RPM (.rpm)",
+      url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/The.Mainframe-0.1.0-1.x86_64.rpm",
     },
+    packages: [
+      {
+        format: "Debian (.deb)",
+        type: "Ubuntu / Debian Package",
+        filename: "The.Mainframe_0.1.0_amd64.deb",
+        size: "9.6 MB",
+        url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/The.Mainframe_0.1.0_amd64.deb",
+        digest: "3fedd1835a9d4fd826567e2c4e94c22d8bf794e7038c4ec2f7367923ca970416",
+      },
+      {
+        format: "RPM (.rpm)",
+        type: "Fedora / RHEL / openSUSE Package",
+        filename: "The.Mainframe-0.1.0-1.x86_64.rpm",
+        size: "9.6 MB",
+        url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/The.Mainframe-0.1.0-1.x86_64.rpm",
+        digest: "e72c61d40508d7a826583ab1e1a06c6665dc6d55d8b436a26f80990d5e99ec8b",
+      },
+      {
+        format: "AppImage (.AppImage)",
+        type: "Universal Standalone Binary",
+        filename: "The.Mainframe_0.1.0_amd64.AppImage",
+        size: "83.7 MB",
+        url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/The.Mainframe_0.1.0_amd64.AppImage",
+        digest: "2be80cddce3a182c0538db932c9d982ba8460b40170415104111153efd477532",
+      },
+    ],
   },
   {
+    id: "android",
     platform: "Android",
+    category: "Mobile",
     badge: "Universal APK",
+    architecture: "ARM64 · Phone / Tablet",
+    sizeHighlight: "25.2 MB · Direct P2P LAN/USB sync",
     filename: "app-universal-release.apk",
     format: "Signed Release APK (.apk)",
     url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/app-universal-release.apk",
+    verifyCommand: "shasum -a 256 app-universal-release.apk",
+    packages: [
+      {
+        format: "Signed APK (.apk)",
+        type: "Direct Sideload (Universal aarch64)",
+        filename: "app-universal-release.apk",
+        size: "25.2 MB",
+        url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/app-universal-release.apk",
+        digest: "5a6e5883fc0a77f3b62f4354cfdc86db3d8d4673997ac05aee1c69c4c3842150",
+      },
+    ],
   },
 ];
 
