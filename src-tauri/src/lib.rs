@@ -273,6 +273,7 @@ pub fn run() {
             sync::start_sync_server,
             sync::stop_sync_server,
             sync::pull_from_device,
+            sync::bidirectional_sync,
             sync::discover_devices
         ])
         .run(tauri::generate_context!())

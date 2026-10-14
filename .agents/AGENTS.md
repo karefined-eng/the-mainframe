@@ -180,6 +180,7 @@ description: >
 When configuring GitHub Actions to sign Tauri desktop update artifacts with a passwordless Minisign key (generated with `tauri signer generate --ci` without password):
 1. Pass the private key via `TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}`.
 2. DO NOT pass `TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ""` as an empty string. If this variable is defined, Minisign attempts scrypt password decryption and aborts with `failed to decode secret key: incorrect updater private key password: failed to fill whole buffer`. Leave `TAURI_SIGNING_PRIVATE_KEY_PASSWORD` completely unset.
+3. **Whitespace & Newline Sanitization:** Trailing newlines or CRLF characters in GitHub Actions secrets cause Tauri's Minisign Base64 decoder to fail with `failed to decode base64 key: Invalid symbol 10, offset <len>` (ASCII 10 is `\n`). Always strip newlines and spaces before invocation in CI: `CLEAN_KEY=$(printf "%s" "${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}" | tr -d '\r\n[:space:]')`.
 </RULE>
 
 <RULE>

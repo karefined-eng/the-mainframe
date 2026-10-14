@@ -50,16 +50,11 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci
 
-      - name: Set up signing key file
+      - name: Build desktop bundle
         shell: bash
         run: |
-          mkdir -p "$RUNNER_TEMP/tauri-keys"
-          echo "${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}" > "$RUNNER_TEMP/tauri-keys/updater.key"
-
-      - name: Build desktop bundle
-        env:
-          TAURI_SIGNING_PRIVATE_KEY: ${{ runner.temp }}/tauri-keys/updater.key
-        run: npm run tauri build
+          CLEAN_KEY=$(printf "%s" "${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}" | tr -d '\r\n[:space:]')
+          TAURI_SIGNING_PRIVATE_KEY="$CLEAN_KEY" npm run tauri build
 
       - name: Upload desktop artifacts
         uses: actions/upload-artifact@v4

@@ -146,6 +146,437 @@ fn unauthorized() -> Response<std::io::Cursor<Vec<u8>>> {
         .with_header(Header::from_bytes(&b"Cache-Control"[..], &b"no-store"[..]).unwrap())
 }
 
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, Default)]
+pub struct SyncExchangePayload {
+    pub device_name: String,
+    pub timestamp: u64,
+    pub domains: std::collections::HashMap<String, Vec<serde_json::Map<String, serde_json::Value>>>,
+    pub cards: Vec<CardSyncRecord>,
+    pub item_updates: Vec<ItemUpdateSyncRecord>,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
+pub struct CardSyncRecord {
+    pub domain: String,
+    pub item_title: String,
+    pub title: String,
+    pub draft_content: Option<String>,
+    pub order_index: i64,
+    pub created_at: String,
+    pub updated_at: String,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
+pub struct ItemUpdateSyncRecord {
+    pub domain: String,
+    pub item_title: String,
+    pub content: String,
+    pub created_at: String,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug, Default)]
+pub struct SyncMergeStats {
+    pub inserted: usize,
+    pub updated: usize,
+    pub remote_inserted: usize,
+    pub remote_updated: usize,
+}
+
+const DOMAIN_TABLES: &[&str] = &[
+    "certifications",
+    "acquisitions",
+    "goals",
+    "build_ideas",
+    "ventures",
+    "writing",
+    "skills",
+    "experiences",
+];
+
+fn table_exists(conn: &rusqlite::Connection, table: &str) -> bool {
+    conn.query_row(
+        "SELECT 1 FROM sqlite_master WHERE type='table' AND name = ?",
+        [table],
+        |_| Ok(()),
+    )
+    .is_ok()
+}
+
+fn get_table_columns(conn: &rusqlite::Connection, table: &str) -> Result<Vec<String>, String> {
+    let mut stmt = conn
+        .prepare(&format!("PRAGMA table_info({})", table))
+        .map_err(|e| e.to_string())?;
+    let cols = stmt
+        .query_map([], |row| row.get::<_, String>(1))
+        .map_err(|e| e.to_string())?
+        .filter_map(Result::ok)
+        .filter(|c| c != "id")
+        .collect();
+    Ok(cols)
+}
+
+fn json_to_sqlite(val: &serde_json::Value) -> rusqlite::types::Value {
+    match val {
+        serde_json::Value::Null => rusqlite::types::Value::Null,
+        serde_json::Value::Bool(b) => rusqlite::types::Value::Integer(if *b { 1 } else { 0 }),
+        serde_json::Value::Number(n) => {
+            if let Some(i) = n.as_i64() {
+                rusqlite::types::Value::Integer(i)
+            } else if let Some(f) = n.as_f64() {
+                rusqlite::types::Value::Real(f)
+            } else {
+                rusqlite::types::Value::Null
+            }
+        }
+        serde_json::Value::String(s) => rusqlite::types::Value::Text(s.clone()),
+        _ => rusqlite::types::Value::Text(val.to_string()),
+    }
+}
+
+pub fn export_database_to_payload(db_path: &PathBuf) -> Result<SyncExchangePayload, String> {
+    let conn = rusqlite::Connection::open(db_path)
+        .map_err(|e| format!("Failed to open DB for export: {}", e))?;
+    let _ = conn.busy_timeout(Duration::from_secs(5));
+
+    let mut domains = std::collections::HashMap::new();
+
+    for table in DOMAIN_TABLES {
+        if !table_exists(&conn, table) {
+            continue;
+        }
+
+        let mut stmt = conn
+            .prepare(&format!("SELECT * FROM {}", table))
+            .map_err(|e| format!("Failed to prepare select on {}: {}", table, e))?;
+
+        let col_names: Vec<String> = stmt
+            .column_names()
+            .into_iter()
+            .map(|s| s.to_string())
+            .collect();
+
+        let rows_iter = stmt
+            .query_map([], |row| {
+                let mut map = serde_json::Map::new();
+                for (idx, name) in col_names.iter().enumerate() {
+                    let val_ref = row.get_ref(idx)?;
+                    let json_val = match val_ref {
+                        rusqlite::types::ValueRef::Null => serde_json::Value::Null,
+                        rusqlite::types::ValueRef::Integer(v) => serde_json::Value::from(v),
+                        rusqlite::types::ValueRef::Real(v) => serde_json::Number::from_f64(v)
+                            .map(serde_json::Value::Number)
+                            .unwrap_or(serde_json::Value::Null),
+                        rusqlite::types::ValueRef::Text(v) => {
+                            serde_json::Value::String(String::from_utf8_lossy(v).into_owned())
+                        }
+                        rusqlite::types::ValueRef::Blob(_) => serde_json::Value::Null,
+                    };
+                    map.insert(name.clone(), json_val);
+                }
+                Ok(map)
+            })
+            .map_err(|e| format!("Query error on {}: {}", table, e))?;
+
+        let mut rows = Vec::new();
+        for r in rows_iter {
+            if let Ok(row_map) = r {
+                rows.push(row_map);
+            }
+        }
+        domains.insert(table.to_string(), rows);
+    }
+
+    // Export cards with parent item titles
+    let mut cards = Vec::new();
+    if table_exists(&conn, "cards") {
+        for domain in DOMAIN_TABLES {
+            if !table_exists(&conn, domain) {
+                continue;
+            }
+            let sql = format!(
+                "SELECT c.title, c.draft_content, c.order_index, c.created_at, c.updated_at, d.title as item_title \
+                 FROM cards c JOIN {} d ON c.row_id = d.id WHERE c.domain = ?",
+                domain
+            );
+            if let Ok(mut stmt) = conn.prepare(&sql) {
+                if let Ok(rows) = stmt.query_map([*domain], |row| {
+                    Ok(CardSyncRecord {
+                        domain: domain.to_string(),
+                        item_title: row.get(5)?,
+                        title: row.get(0)?,
+                        draft_content: row.get(1)?,
+                        order_index: row.get(2)?,
+                        created_at: row.get(3)?,
+                        updated_at: row.get(4)?,
+                    })
+                }) {
+                    for card in rows.flatten() {
+                        cards.push(card);
+                    }
+                }
+            }
+        }
+    }
+
+    // Export item_updates with parent item titles
+    let mut item_updates = Vec::new();
+    if table_exists(&conn, "item_updates") {
+        for domain in DOMAIN_TABLES {
+            if !table_exists(&conn, domain) {
+                continue;
+            }
+            let sql = format!(
+                "SELECT u.content, u.created_at, d.title as item_title \
+                 FROM item_updates u JOIN {} d ON u.row_id = d.id WHERE u.domain = ?",
+                domain
+            );
+            if let Ok(mut stmt) = conn.prepare(&sql) {
+                if let Ok(rows) = stmt.query_map([*domain], |row| {
+                    Ok(ItemUpdateSyncRecord {
+                        domain: domain.to_string(),
+                        item_title: row.get(2)?,
+                        content: row.get(0)?,
+                        created_at: row.get(1)?,
+                    })
+                }) {
+                    for update in rows.flatten() {
+                        item_updates.push(update);
+                    }
+                }
+            }
+        }
+    }
+
+    let timestamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_secs();
+
+    let hostname = std::env::var("COMPUTERNAME")
+        .or_else(|_| std::env::var("USER"))
+        .unwrap_or_else(|_| "Mainframe".to_string());
+
+    Ok(SyncExchangePayload {
+        device_name: hostname,
+        timestamp,
+        domains,
+        cards,
+        item_updates,
+    })
+}
+
+pub fn merge_payload_into_db(
+    db_path: &PathBuf,
+    payload: &SyncExchangePayload,
+) -> Result<(usize, usize), String> {
+    let mut conn = rusqlite::Connection::open(db_path)
+        .map_err(|e| format!("Failed to open DB for merge: {}", e))?;
+    let _ = conn.busy_timeout(Duration::from_secs(5));
+
+    let tx = conn
+        .transaction()
+        .map_err(|e| format!("Failed to start merge transaction: {}", e))?;
+
+    let mut total_inserted = 0;
+    let mut total_updated = 0;
+
+    for (table, rows) in &payload.domains {
+        if !table_exists(&tx, table) {
+            continue;
+        }
+
+        let local_cols = match get_table_columns(&tx, table) {
+            Ok(cols) => cols,
+            Err(_) => continue,
+        };
+
+        for row in rows {
+            let title = match row.get("title").and_then(|v| v.as_str()) {
+                Some(t) if !t.trim().is_empty() => t.trim(),
+                _ => continue,
+            };
+
+            let existing: Option<String> = tx
+                .query_row(
+                    &format!("SELECT updated_at FROM {} WHERE title = ?", table),
+                    [title],
+                    |r| r.get(0),
+                )
+                .ok();
+
+            match existing {
+                None => {
+                    // Item does not exist locally -> INSERT
+                    let mut cols_to_insert = Vec::new();
+                    let mut values = Vec::new();
+
+                    for col in &local_cols {
+                        if let Some(val) = row.get(col) {
+                            cols_to_insert.push(col.as_str());
+                            values.push(json_to_sqlite(val));
+                        }
+                    }
+
+                    if cols_to_insert.is_empty() {
+                        continue;
+                    }
+
+                    let placeholders = vec!["?"; cols_to_insert.len()].join(", ");
+                    let sql = format!(
+                        "INSERT INTO {} ({}) VALUES ({})",
+                        table,
+                        cols_to_insert.join(", "),
+                        placeholders
+                    );
+
+                    if tx
+                        .execute(&sql, rusqlite::params_from_iter(values.iter()))
+                        .is_ok()
+                    {
+                        total_inserted += 1;
+                    }
+                }
+                Some(existing_updated_at) => {
+                    // Item exists -> compare timestamps
+                    let incoming_updated_at = row
+                        .get("updated_at")
+                        .and_then(|v| v.as_str())
+                        .unwrap_or("");
+
+                    if incoming_updated_at > existing_updated_at.as_str() {
+                        let mut set_clauses = Vec::new();
+                        let mut values = Vec::new();
+
+                        for col in &local_cols {
+                            if col == "title" || col == "created_at" {
+                                continue;
+                            }
+                            if let Some(val) = row.get(col) {
+                                set_clauses.push(format!("{} = ?", col));
+                                values.push(json_to_sqlite(val));
+                            }
+                        }
+
+                        if set_clauses.is_empty() {
+                            continue;
+                        }
+
+                        values.push(rusqlite::types::Value::Text(title.to_string()));
+                        let sql = format!(
+                            "UPDATE {} SET {} WHERE title = ?",
+                            table,
+                            set_clauses.join(", ")
+                        );
+
+                        if tx
+                            .execute(&sql, rusqlite::params_from_iter(values.iter()))
+                            .is_ok()
+                        {
+                            total_updated += 1;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Merge Cards
+    if table_exists(&tx, "cards") {
+        for card in &payload.cards {
+            if !table_exists(&tx, &card.domain) {
+                continue;
+            }
+            let parent_id: Option<i64> = tx
+                .query_row(
+                    &format!("SELECT id FROM {} WHERE title = ?", card.domain),
+                    [&card.item_title],
+                    |r| r.get(0),
+                )
+                .ok();
+
+            let parent_id = match parent_id {
+                Some(id) => id,
+                None => continue,
+            };
+
+            let existing_card: Option<(i64, String)> = tx
+                .query_row(
+                    "SELECT id, updated_at FROM cards WHERE domain = ? AND row_id = ? AND title = ?",
+                    rusqlite::params![card.domain, parent_id, card.title],
+                    |r| Ok((r.get(0)?, r.get(1)?)),
+                )
+                .ok();
+
+            match existing_card {
+                None => {
+                    let _ = tx.execute(
+                        "INSERT INTO cards (domain, row_id, title, draft_content, order_index, created_at, updated_at) \
+                         VALUES (?, ?, ?, ?, ?, ?, ?)",
+                        rusqlite::params![
+                            card.domain,
+                            parent_id,
+                            card.title,
+                            card.draft_content,
+                            card.order_index,
+                            card.created_at,
+                            card.updated_at
+                        ],
+                    );
+                }
+                Some((card_id, existing_updated)) => {
+                    if card.updated_at.as_str() > existing_updated.as_str() {
+                        let _ = tx.execute(
+                            "UPDATE cards SET draft_content = ?, order_index = ?, updated_at = ? WHERE id = ?",
+                            rusqlite::params![card.draft_content, card.order_index, card.updated_at, card_id],
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    // Merge Item Updates
+    if table_exists(&tx, "item_updates") {
+        for update in &payload.item_updates {
+            if !table_exists(&tx, &update.domain) {
+                continue;
+            }
+            let parent_id: Option<i64> = tx
+                .query_row(
+                    &format!("SELECT id FROM {} WHERE title = ?", update.domain),
+                    [&update.item_title],
+                    |r| r.get(0),
+                )
+                .ok();
+
+            let parent_id = match parent_id {
+                Some(id) => id,
+                None => continue,
+            };
+
+            let exists: bool = tx
+                .query_row(
+                    "SELECT 1 FROM item_updates WHERE domain = ? AND row_id = ? AND content = ? AND created_at = ?",
+                    rusqlite::params![update.domain, parent_id, update.content, update.created_at],
+                    |_| Ok(()),
+                )
+                .is_ok();
+
+            if !exists {
+                let _ = tx.execute(
+                    "INSERT INTO item_updates (domain, row_id, content, created_at) VALUES (?, ?, ?, ?)",
+                    rusqlite::params![update.domain, parent_id, update.content, update.created_at],
+                );
+            }
+        }
+    }
+
+    tx.commit()
+        .map_err(|e| format!("Failed to commit merge transaction: {}", e))?;
+
+    Ok((total_inserted, total_updated))
+}
+
 #[derive(serde::Serialize)]
 pub struct ServeInfo {
     pub addr: String,
@@ -196,12 +627,13 @@ pub fn start_sync_server(app: AppHandle, state: State<'_, SyncState>) -> Result<
     let pin_expires_at = state.pin_expires_at.clone();
 
     let db_path = get_db_path(&app)?;
+    let app_clone = app.clone();
 
     let server_arc_clone = server_arc.clone();
     let stop_flag = state.is_stopped.clone();
     stop_flag.store(false, Ordering::SeqCst);
     thread::spawn(move || {
-        for request in server_arc_clone.incoming_requests() {
+        for mut request in server_arc_clone.incoming_requests() {
             if stop_flag.load(Ordering::SeqCst) {
                 // stop_sync_server was called: exit the loop so the thread
                 // drops its Server Arc and the listener socket closes,
@@ -211,7 +643,10 @@ pub fn start_sync_server(app: AppHandle, state: State<'_, SyncState>) -> Result<
             let path = request.url().split('?').next().unwrap_or_default();
             let peer_ip = request.remote_addr().map(SocketAddr::ip);
 
-            if request.method() != &Method::Get || path != "/db" {
+            let is_get_db = request.method() == &Method::Get && path == "/db";
+            let is_sync_exchange = request.method() == &Method::Post && path == "/sync/exchange";
+
+            if !is_get_db && !is_sync_exchange {
                 let _ = request.respond(Response::from_string("Not Found").with_status_code(404));
                 continue;
             }
@@ -261,6 +696,74 @@ pub fn start_sync_server(app: AppHandle, state: State<'_, SyncState>) -> Result<
                     Response::from_string(format!("Sync refused: {}", err))
                         .with_status_code(503),
                 );
+                continue;
+            }
+
+            if is_sync_exchange {
+                let mut body = Vec::new();
+                if request.as_reader().take((MAX_DATABASE_BYTES + 1) as u64).read_to_end(&mut body).is_err() || body.len() > MAX_DATABASE_BYTES {
+                    let _ = request.respond(Response::from_string("Bad Request or Payload Too Large").with_status_code(400));
+                    continue;
+                }
+
+                let client_payload: SyncExchangePayload = match serde_json::from_slice(&body) {
+                    Ok(p) => p,
+                    Err(e) => {
+                        eprintln!("[sync] JSON parse error: {}", e);
+                        let _ = request.respond(Response::from_string(format!("Invalid JSON: {}", e)).with_status_code(400));
+                        continue;
+                    }
+                };
+
+                let server_payload = match export_database_to_payload(&db_path) {
+                    Ok(p) => p,
+                    Err(e) => {
+                        let _ = request.respond(Response::from_string(format!("Export failed: {}", e)).with_status_code(500));
+                        continue;
+                    }
+                };
+
+                let merge_stats = match merge_payload_into_db(&db_path, &client_payload) {
+                    Ok(stats) => stats,
+                    Err(e) => {
+                        eprintln!("[sync] Merge error on server: {}", e);
+                        let _ = request.respond(Response::from_string(format!("Merge failed: {}", e)).with_status_code(500));
+                        continue;
+                    }
+                };
+
+                // Signal frontend to reload
+                let _ = app_clone.emit("db_swap_complete", ());
+
+                #[derive(serde::Serialize)]
+                struct ExchangeResponse {
+                    server_inserted: usize,
+                    server_updated: usize,
+                    payload: SyncExchangePayload,
+                }
+
+                let resp_obj = ExchangeResponse {
+                    server_inserted: merge_stats.0,
+                    server_updated: merge_stats.1,
+                    payload: server_payload,
+                };
+
+                let resp_json = match serde_json::to_vec(&resp_obj) {
+                    Ok(j) => j,
+                    Err(e) => {
+                        let _ = request.respond(Response::from_string(format!("Serialization failed: {}", e)).with_status_code(500));
+                        continue;
+                    }
+                };
+
+                // Invalidate PIN after successful exchange
+                *pin_state.lock().unwrap() = None;
+                *pin_expires_at.lock().unwrap() = None;
+
+                let response = Response::from_data(resp_json).with_header(
+                    Header::from_bytes(&b"Content-Type"[..], &b"application/json"[..]).unwrap(),
+                );
+                let _ = request.respond(response);
                 continue;
             }
 
@@ -506,3 +1009,107 @@ pub async fn pull_from_device(app: AppHandle, ip_port: String, pin: String) -> R
 
     Ok(())
 }
+
+#[tauri::command]
+pub async fn bidirectional_sync(
+    app: AppHandle,
+    ip_port: String,
+    pin: String,
+) -> Result<SyncMergeStats, String> {
+    let target = ip_port
+        .trim()
+        .parse::<SocketAddr>()
+        .map_err(|_| "Enter a numeric local IP address and port.".to_string())?;
+    if target.port() != SYNC_PORT || !target.ip().is_ipv4() {
+        return Err(format!(
+            "Sync only supports local IPv4 addresses on port {}.",
+            SYNC_PORT
+        ));
+    }
+    if !is_local_target(target.ip()) {
+        return Err("Sync targets must be on a private or local network.".to_string());
+    }
+    let pin_raw = pin.replace('-', "");
+    if pin_raw.len() != 6 || !pin_raw.chars().all(|ch| ch.is_ascii_digit()) {
+        return Err("PIN must contain six digits.".to_string());
+    }
+
+    let db_path = get_db_path(&app)?;
+
+    // 1. Checkpoint WAL on local DB
+    checkpoint_wal(&db_path)?;
+
+    // 2. Export local DB payload
+    let local_payload = export_database_to_payload(&db_path)?;
+
+    let url = format!("http://{}/sync/exchange", target);
+
+    let body_bytes = serde_json::to_vec(&local_payload)
+        .map_err(|e| format!("Failed to serialize payload: {}", e))?;
+
+    // 3. Send to remote server
+    let response = ureq::post(&url)
+        .set("Authorization", &format!("Bearer {}", pin_raw))
+        .set("Content-Type", "application/json")
+        .timeout(Duration::from_secs(30))
+        .send_bytes(&body_bytes)
+        .map_err(|e| {
+            let msg = e.to_string();
+            if msg.contains("refused") || msg.contains("timed out") {
+                "Connection refused or timed out. Ensure the source device is broadcasting."
+                    .to_string()
+            } else if msg.contains("401") || msg.contains("Unauthorized") {
+                "Invalid PIN. Please check the code shown on the source device.".to_string()
+            } else {
+                format!("Failed to connect: {}", msg)
+            }
+        })?;
+
+    if response.status() == 401 {
+        return Err("Invalid PIN. Please check the code shown on the source device.".to_string());
+    }
+    if response.status() != 200 {
+        return Err(format!("Server returned status: {}", response.status()));
+    }
+
+    #[derive(serde::Deserialize)]
+    struct ExchangeResponse {
+        server_inserted: usize,
+        server_updated: usize,
+        payload: SyncExchangePayload,
+    }
+
+    let mut resp_bytes = Vec::new();
+    response
+        .into_reader()
+        .take((MAX_DATABASE_BYTES + 1) as u64)
+        .read_to_end(&mut resp_bytes)
+        .map_err(|e| format!("Failed to read response: {}", e))?;
+
+    let exchange_resp: ExchangeResponse = serde_json::from_slice(&resp_bytes)
+        .map_err(|e| format!("Failed to parse response from remote device: {}", e))?;
+
+    // 4. Backup existing DB before merging
+    let timestamp = SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .unwrap_or_default()
+        .as_secs();
+    if db_path.exists() {
+        let backup_path = db_path.with_file_name(format!("mainframe_merge_backup_{}.db", timestamp));
+        let _ = fs::copy(&db_path, &backup_path);
+    }
+
+    // 5. Merge remote payload into local DB
+    let (local_inserted, local_updated) = merge_payload_into_db(&db_path, &exchange_resp.payload)?;
+
+    // 6. Signal frontend to refresh
+    let _ = app.emit("db_swap_complete", ());
+
+    Ok(SyncMergeStats {
+        inserted: local_inserted,
+        updated: local_updated,
+        remote_inserted: exchange_resp.server_inserted,
+        remote_updated: exchange_resp.server_updated,
+    })
+}
+

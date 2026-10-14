@@ -1,10 +1,17 @@
 import { useState, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
-import { Server, Download, RefreshCw, CheckCircle2, AlertTriangle, Loader2, QrCode, Search, Laptop, KeyRound } from "lucide-react";
+import { Server, Download, RefreshCw, CheckCircle2, AlertTriangle, Loader2, QrCode, Search, Laptop, KeyRound, ArrowUpDown } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import { useSyncContext } from "../context/SyncContext";
 import { scan, Format, checkPermissions, requestPermissions } from "@tauri-apps/plugin-barcode-scanner";
+
+export interface SyncMergeStats {
+  inserted: number;
+  updated: number;
+  remote_inserted: number;
+  remote_updated: number;
+}
 
 export default function SyncPanel() {
   const { setSyncInProgress } = useSyncContext();
@@ -14,10 +21,12 @@ export default function SyncPanel() {
   const [servePin, setServePin] = useState<string | null>(null);
   const [serveError, setServeError] = useState<string | null>(null);
 
+  const [syncMode, setSyncMode] = useState<"merge" | "mirror">("merge");
   const [pullStatus, setPullStatus] = useState<"idle" | "pulling" | "success" | "error">("idle");
   const [pullIp, setPullIp] = useState("");
   const [pullPin, setPullPin] = useState("");
   const [pullError, setPullError] = useState<string | null>(null);
+  const [mergeStats, setMergeStats] = useState<SyncMergeStats | null>(null);
 
   const [discoveredDevices, setDiscoveredDevices] = useState<{ ip: string; name: string }[]>([]);
   const [isDiscovering, setIsDiscovering] = useState(false);
@@ -28,7 +37,10 @@ export default function SyncPanel() {
   // Stop server and listen for db_swap_complete event on mount/unmount
   useEffect(() => {
     const unlisten = listen("db_swap_complete", () => {
-      window.location.reload();
+      // Allow user to read stats for a moment before refreshing
+      setTimeout(() => {
+        window.location.reload();
+      }, 1200);
     });
 
     return () => {
@@ -67,7 +79,7 @@ export default function SyncPanel() {
     }
   };
 
-  const handlePull = async (targetIp: string = pullIp, targetPin: string = pullPin) => {
+  const handleSyncAction = async (targetIp: string = pullIp, targetPin: string = pullPin) => {
     if (!targetIp.trim() || !targetPin.trim()) return;
 
     if (serveStatus === "serving") await handleStopServe();
@@ -75,17 +87,22 @@ export default function SyncPanel() {
     try {
       setPullStatus("pulling");
       setPullError(null);
+      setMergeStats(null);
       setSyncInProgress(true);
 
       let target = targetIp.trim().replace(/^https?:\/\//, "");
       if (!target.includes(":")) target = `${target}:9377`;
 
-      await invoke("pull_from_device", { ipPort: target, pin: targetPin.trim() });
+      if (syncMode === "merge") {
+        const stats = await invoke<SyncMergeStats>("bidirectional_sync", { ipPort: target, pin: targetPin.trim() });
+        setMergeStats(stats);
+      } else {
+        await invoke("pull_from_device", { ipPort: target, pin: targetPin.trim() });
+      }
 
       setPullStatus("success");
       setPullIp("");
       setPullPin("");
-      // Page reload is triggered by db_swap_complete event from Rust
     } catch (err: any) {
       setSyncInProgress(false);
       const msg = err.toString();
@@ -134,8 +151,8 @@ export default function SyncPanel() {
       setPullIp(port && port !== "9377" ? `${ip}:${port}` : ip);
       setPullPin(`${pin.slice(0, 3)}-${pin.slice(3)}`);
       setScanStatus("idle");
-      // Auto-start the pull with the scanned details.
-      await handlePull(`${ip}${port && port !== "9377" ? `:${port}` : ""}`, `${pin.slice(0, 3)}-${pin.slice(3)}`);
+      // Auto-start the sync with the scanned details.
+      await handleSyncAction(`${ip}${port && port !== "9377" ? `:${port}` : ""}`, `${pin.slice(0, 3)}-${pin.slice(3)}`);
     } catch (err: any) {
       const msg = String(err?.message || err);
       setScanStatus("error");
@@ -176,7 +193,7 @@ export default function SyncPanel() {
               Make Available
             </h2>
             <p className="text-sm text-text-muted leading-relaxed">
-              Broadcast this device on the local network. Another Mainframe on the same Wi-Fi can pull your data using the PIN shown below.
+              Broadcast this device on the local network. Another Mainframe on the same Wi-Fi or USB connection can exchange data with you using the PIN below.
             </p>
           </div>
 
@@ -206,7 +223,7 @@ export default function SyncPanel() {
                   <div className="rounded-xl border border-border bg-surface px-5 py-3">
                     <p className="text-xs text-text-muted mb-1 uppercase tracking-widest">One-Time PIN</p>
                     <p className="font-mono text-3xl font-bold tracking-widest text-accent">{servePin}</p>
-                    <p className="text-[10px] text-text-muted/60 mt-1">PIN rotates after each successful sync</p>
+                    <p className="text-[10px] text-text-muted/60 mt-1">PIN rotates after each completed sync</p>
                   </div>
                 </div>
                 <button
@@ -230,19 +247,54 @@ export default function SyncPanel() {
           </div>
         </div>
 
-        {/* Pull Panel */}
+        {/* Sync / Pull Panel */}
         <div className="rounded-2xl border border-border bg-surface p-8 shadow-sm flex flex-col">
-          <div className="mb-8">
+          <div className="mb-6">
             <h2 className="mb-2 flex items-center gap-2 text-xl font-medium tracking-tight text-text">
-              <Download className="h-5 w-5 text-accent" />
-              Sync from Device
+              <ArrowUpDown className="h-5 w-5 text-accent" />
+              Device Synchronization
             </h2>
             <p className="text-sm text-text-muted leading-relaxed">
-              Pull data from another active Mainframe on your network.{" "}
-              <strong className="block mt-2 font-medium text-warning">
-                A local backup of your current data is made automatically before any overwrite.
-              </strong>
+              Connect to another active Mainframe on your local network or via USB.
             </p>
+          </div>
+
+          {/* Sync Mode Selector */}
+          <div className="mb-6 rounded-xl border border-border bg-bg p-1.5 flex gap-1.5">
+            <button
+              onClick={() => setSyncMode("merge")}
+              className={`flex-1 flex items-center justify-center gap-2 rounded-lg py-2.5 px-3 text-xs font-medium transition-all cursor-pointer ${
+                syncMode === "merge"
+                  ? "bg-accent text-bg shadow-sm"
+                  : "text-text-muted hover:text-text hover:bg-surface/50"
+              }`}
+            >
+              <ArrowUpDown className="h-3.5 w-3.5" />
+              Bidirectional Merge
+            </button>
+            <button
+              onClick={() => setSyncMode("mirror")}
+              className={`flex-1 flex items-center justify-center gap-2 rounded-lg py-2.5 px-3 text-xs font-medium transition-all cursor-pointer ${
+                syncMode === "mirror"
+                  ? "bg-accent text-bg shadow-sm"
+                  : "text-text-muted hover:text-text hover:bg-surface/50"
+              }`}
+            >
+              <Download className="h-3.5 w-3.5" />
+              Mirror Snapshot
+            </button>
+          </div>
+
+          <div className="mb-6 text-xs text-text-muted/80 leading-relaxed bg-bg/50 rounded-xl p-3 border border-border/50">
+            {syncMode === "merge" ? (
+              <span>
+                <strong className="text-text font-medium">Non-destructive merge:</strong> Combines additions and newer edits from both devices. Neither device wipes the other.
+              </span>
+            ) : (
+              <span>
+                <strong className="text-warning font-medium">Full snapshot replace:</strong> Replaces your local database with an exact copy of the source device (an automatic backup is created).
+              </span>
+            )}
           </div>
 
           <div className="mb-6 flex flex-col gap-4">
@@ -290,13 +342,13 @@ export default function SyncPanel() {
           </button>
 
           {scanStatus === "error" && scanError && (
-            <div className="flex items-start gap-3 rounded-xl border border-danger/20 bg-danger/5 p-4 text-sm text-danger">
+            <div className="flex items-start gap-3 rounded-xl border border-danger/20 bg-danger/5 p-4 text-sm text-danger mt-3">
               <AlertTriangle className="h-5 w-5 shrink-0" />
               <span className="leading-relaxed">{scanError}</span>
             </div>
           )}
 
-          <div className="mt-auto flex flex-col gap-4">
+          <div className="mt-auto flex flex-col gap-4 pt-6">
             <div className="relative flex items-center gap-4">
               <div className="h-px flex-1 bg-border" />
               <span className="text-xs font-medium tracking-widest text-text-muted uppercase">Connection Details</span>
@@ -323,22 +375,47 @@ export default function SyncPanel() {
                 disabled={pullStatus === "pulling" || pullStatus === "success"}
                 maxLength={7}
                 className="font-mono flex-1 bg-transparent outline-none text-sm text-text placeholder:text-text-muted/40"
-                onKeyDown={(e) => e.key === "Enter" && handlePull()}
+                onKeyDown={(e) => e.key === "Enter" && handleSyncAction()}
               />
             </div>
 
             <button
-              onClick={() => handlePull()}
+              onClick={() => handleSyncAction()}
               disabled={!pullIp.trim() || !pullPin.trim() || pullStatus === "pulling" || pullStatus === "success"}
-              className="flex items-center justify-center rounded-xl bg-accent px-6 py-3.5 text-sm font-medium text-bg transition-transform hover:-translate-y-[1px] active:translate-y-0 disabled:opacity-40 disabled:translate-y-0 cursor-pointer"
+              className="flex items-center justify-center gap-2 rounded-xl bg-accent px-6 py-3.5 text-sm font-medium text-bg transition-transform hover:-translate-y-[1px] active:translate-y-0 disabled:opacity-40 disabled:translate-y-0 cursor-pointer"
             >
-              {pullStatus === "pulling" ? <Loader2 className="h-4 w-4 animate-spin" /> : "Sync Now"}
+              {pullStatus === "pulling" ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : syncMode === "merge" ? (
+                <ArrowUpDown className="h-4 w-4" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              {pullStatus === "pulling"
+                ? syncMode === "merge"
+                  ? "Merging Changes..."
+                  : "Pulling Snapshot..."
+                : syncMode === "merge"
+                ? "Merge & Sync Now"
+                : "Mirror Snapshot"}
             </button>
 
-            {pullStatus === "success" && (
+            {pullStatus === "success" && mergeStats && (
+              <div className="flex flex-col gap-1.5 rounded-xl bg-success/10 p-4 text-sm text-success">
+                <div className="flex items-center gap-2 font-medium">
+                  <CheckCircle2 className="h-5 w-5 shrink-0" />
+                  <span>Bidirectional Merge Complete</span>
+                </div>
+                <p className="text-xs text-text-muted pl-7">
+                  Received {mergeStats.inserted} new items, {mergeStats.updated} updated. Remote device received {mergeStats.remote_inserted} new items.
+                </p>
+              </div>
+            )}
+
+            {pullStatus === "success" && !mergeStats && (
               <div className="flex items-center gap-3 rounded-xl bg-success/10 p-4 text-sm text-success">
                 <CheckCircle2 className="h-5 w-5 shrink-0" />
-                <span className="font-medium">Database verified and synced. Reloading...</span>
+                <span className="font-medium">Snapshot verified and applied. Reloading...</span>
               </div>
             )}
 
@@ -355,3 +432,4 @@ export default function SyncPanel() {
     </div>
   );
 }
+
