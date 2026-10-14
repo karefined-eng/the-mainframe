@@ -239,7 +239,14 @@ function StepFourVisual() {
       </div>
     </div>
   );
-}
+const trustIcons = {
+  CloudOff,
+  Database,
+  GitCompare,
+  Cable,
+  KeyRound,
+  ShieldAlert,
+} as const;
 
 export default function LandingPage() {
   useEffect(() => applyLandingMetadata(), []);
