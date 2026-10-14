@@ -58,7 +58,7 @@ jobs:
 
       - name: Build desktop bundle
         env:
-          TAURI_SIGNING_PRIVATE_KEY_PATH: ${{ runner.temp }}/tauri-keys/updater.key
+          TAURI_SIGNING_PRIVATE_KEY: ${{ runner.temp }}/tauri-keys/updater.key
         run: npm run tauri build
 
       - name: Upload desktop artifacts
