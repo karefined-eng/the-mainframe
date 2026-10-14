@@ -306,6 +306,43 @@
   flex: none;
 }
 
+.lp-hero-download-block {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lp-hero-btn-size {
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.85;
+  margin-left: 2px;
+}
+
+.lp-hero-platform-sub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--lp-muted);
+}
+
+.lp-hero-sep {
+  opacity: 0.35;
+}
+
+.lp-hero-other-link {
+  color: var(--lp-muted);
+  text-decoration: underline;
+  transition: color 120ms ease;
+  touch-action: manipulation;
+}
+
+.lp-hero-other-link:hover {
+  color: var(--lp-accent);
+}
+
 .lp-cta-row {
   display: flex;
   flex-wrap: wrap;

@@ -248,6 +248,104 @@ function StepFourVisual() {
   );
 }
 
+function useDetectedOS() {
+  const [os, setOS] = useState<"windows" | "mac" | "linux" | "android" | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.navigator) return;
+    const ua = (navigator.userAgent || "").toLowerCase();
+    const platform = (navigator.platform || "").toLowerCase();
+
+    if (/android/.test(ua)) {
+      setOS("android");
+    } else if (/windows|win32|win64/.test(ua) || /win/.test(platform)) {
+      setOS("windows");
+    } else if (/macintel|macintosh|mac/.test(ua) || /mac/.test(platform)) {
+      setOS("mac");
+    } else if (/linux/.test(ua) || /linux/.test(platform)) {
+      setOS("linux");
+    }
+  }, []);
+
+  return os;
+}
+
+function HeroDownloadCTA() {
+  const os = useDetectedOS();
+
+  const detectedAsset = releaseAssets.find((a) => {
+    if (os === "windows") return a.id === "windows";
+    if (os === "mac") return a.id === "macos";
+    if (os === "linux") return a.id === "linux";
+    if (os === "android") return a.id === "android";
+    return false;
+  });
+
+  if (detectedAsset) {
+    const pkg = detectedAsset.packages[0];
+    return (
+      <div className="lp-hero-download-block">
+        <div className="lp-cta-row">
+          <a
+            className="lp-btn lp-btn--primary"
+            href={pkg.url}
+            target="_blank"
+            rel="noreferrer noopener"
+            data-od-id="cta-download-smart"
+          >
+            <Download size={16} aria-hidden="true" />
+            <span>Download for {detectedAsset.platform}</span>
+            <span className="lp-hero-btn-size">({pkg.size})</span>
+            <span className="sr-only"> (opens in new tab)</span>
+          </a>
+          <a
+            className="lp-btn lp-btn--ghost"
+            href={REPO_URL}
+            target="_blank"
+            rel="noreferrer noopener"
+            data-od-id="cta-source"
+          >
+            View the source on GitHub
+            <ExternalLink size={14} aria-hidden="true" />
+            <span className="sr-only"> (opens in new tab)</span>
+          </a>
+        </div>
+        <div className="lp-hero-platform-sub">
+          <span>{detectedAsset.architecture} · v0.1.0</span>
+          <span className="lp-hero-sep">·</span>
+          <a href="#platforms" className="lp-hero-other-link">
+            Other platforms (macOS, Windows, Linux, Android) ↓
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="lp-cta-row">
+      <a
+        className="lp-btn lp-btn--primary"
+        href="#platforms"
+        data-od-id="cta-download"
+      >
+        Download v0.1.0 (Free)
+        <ArrowRight size={16} aria-hidden="true" />
+      </a>
+      <a
+        className="lp-btn lp-btn--ghost"
+        href={REPO_URL}
+        target="_blank"
+        rel="noreferrer noopener"
+        data-od-id="cta-source"
+      >
+        View the source on GitHub
+        <ExternalLink size={14} aria-hidden="true" />
+        <span className="sr-only"> (opens in new tab)</span>
+      </a>
+    </div>
+  );
+}
+
 function TerminalCloneBox() {
   const [copied, setCopied] = useState(false);
   const command = "git clone https://github.com/karefined-eng/the-mainframe.git";
@@ -461,30 +559,7 @@ export default function LandingPage() {
                 <span className="lp-dot" aria-hidden="true" />
                 Initial Public Release · v0.1.0 available for Windows, macOS, Linux, and Android
               </p>
-              <div className="lp-cta-row">
-                <a
-                  className="lp-btn lp-btn--primary"
-                  href={RELEASES_URL}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  data-od-id="cta-download"
-                >
-                  Download v0.1.0 (Free)
-                  <ArrowRight size={16} aria-hidden="true" />
-                  <span className="sr-only"> (opens in new tab)</span>
-                </a>
-                <a
-                  className="lp-btn lp-btn--ghost"
-                  href={REPO_URL}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  data-od-id="cta-source"
-                >
-                  View the source on GitHub
-                  <ExternalLink size={14} aria-hidden="true" />
-                  <span className="sr-only"> (opens in new tab)</span>
-                </a>
-              </div>
+              <HeroDownloadCTA />
               <p className="lp-cta-note">
                 <strong>100% Free & Open Source:</strong> Installers available for Windows (.exe/.msi), macOS (.dmg), Linux (.AppImage/.deb/.rpm), and Android (.apk). Zero accounts, zero cloud, zero telemetry.
               </p>
