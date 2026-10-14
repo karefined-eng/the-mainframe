@@ -87,29 +87,49 @@ Full architectural blueprint of the 23-command design system:
 
 ---
 
-## 4. Verification & Deployment Metrics
+## 4. Full Impeccable Sequence Executed: Adapt, Harden & Polish
 
-1. **Impeccable Anti-Pattern Detection:**
-   ```bash
-   npx impeccable detect
-   # Output: 0 anti-patterns detected
-   ```
-2. **TypeScript & Static Analysis:**
+### A. `/impeccable adapt` (Mobile Ergonomics & Responsive Resilience)
+1. **Touch Target Enforcement:** All interactive controls (preset selectors, domain tabs, primary CTAs, platform download anchors, action buttons) enforce a strict minimum 44px touch target via `min-height: 44px` or transparent pseudo-element hit-area expansion (`::after` with `min-width: 44px; min-height: 44px`).
+2. **iOS Safari Zoom Prevention:** Inputs and textareas enforce a 16px font-size floor on screens ≤767px (`.lp-play-textarea { font-size: 16px; }`), completely preventing iOS Safari from triggering disruptive auto-zoom upon keyboard activation.
+3. **Ergonomic Horizontal Scrolling:** Preset selector chips feature momentum touch scrolling (`-webkit-overflow-scrolling: touch; scrollbar-width: none;`) with horizontal padding buffers preventing edge clipping.
+
+### B. `/impeccable harden` (Edge-Case Handling & Assistive Accessibility)
+1. **Dynamic Client-Side Ingestion Parser:** `Playground.tsx` incorporates a live parsing engine (`parseCustomLines`) that analyzes user-typed text lines, automatically classifies items into The Mainframe's 5 domains using domain-specific heuristics, and caps results at 5 items to maintain working memory boundaries.
+2. **Graceful Zero-State:** Handled empty and whitespace-only textarea inputs with a dedicated empty state (`.lp-play-empty`) featuring polite dashed boundaries and helpful onboarding copy.
+3. **Interactive Clipboard Terminal Box:** Implemented `<TerminalCloneBox />` in `LandingPage.tsx` with 1-click clipboard integration, visual 2-second "Copied" feedback state, and full keyboard accessibility.
+4. **Accessible External Navigation:** Appended `<span className="sr-only"> (opens in new tab)</span>` to all external links (`target="_blank"`) across the page, satisfying WCAG 3.2.5 without altering visual layout.
+
+### C. `/impeccable polish` (Design Tokens & Motion Refinement)
+1. **100% Tokenized Color System:** Promoted all raw hex colors to CSS custom properties in `.lp`:
+   - `--lp-accent-hover: #6bb0ff`
+   - `--lp-danger: #f87171`
+   - `--lp-success: #3ddc84`
+   - `--lp-accent-ink: #071018`
+   Every hex code in `src/landing/landing.css` is now declared exclusively in the root token block with zero raw hex literals in component rules.
+2. **Refined Reduced Motion Implementation:** Updated `@media (prefers-reduced-motion: reduce)` from destructive `none !important` to `0.01ms !important` duration and `scroll-behavior: auto !important`, ensuring instant visual completion without breaking transition lifecycle events or causing flicker.
+3. **Zero Anti-Patterns & Brand Continuity:** Maintained Ponytail minimalist rules (zero emojis, exclusively `lucide-react`), immutable base tokens, and strict working-memory limits.
+
+---
+
+## 5. Verification & Deployment Metrics
+
+1. **TypeScript & Static Analysis:**
    ```bash
    npx tsc --noEmit
    # Output: 0 errors
    ```
-3. **Unit & Integration Tests:**
+2. **Unit & Integration Tests:**
    ```bash
    node --experimental-strip-types --test tests/*.test.ts
-   # Output: 5/5 tests passed (100%)
+   # Output: 5/5 tests passed (100%) in 340ms
    ```
-4. **Production Build:**
+3. **Production Build:**
    ```bash
    npm run build
-   # Output: Built in 30.1s cleanly (dist/assets/index-Dcb_PtPY.js, dist/assets/index-DPgyKAHB.css)
+   # Output: Built in 15.09s cleanly (dist/assets/index-DWtOUyn6.js, dist/assets/index-CJO_IlJn.css)
    ```
-5. **Live Vercel Deployment:**
-   - **Commit:** `51d8952` pushed to `origin main`.
-   - **Production URL:** `https://the-mainframe-app.vercel.app/`
-   - **Verification:** Verified live bundle serving `index-Dcb_PtPY.js` with interactive ingestion simulator, zero-shame visualizer, and direct v0.1.0 release download assets.
+4. **Live Vercel Deployment:**
+   - **Commits:** `2ca2cc9` (adapt), `56ad664` (harden & polish) pushed to `origin main`.
+   - **Production URL:** [https://the-mainframe-app.vercel.app/](https://the-mainframe-app.vercel.app/)
+   - **Live Verification:** Verified bundle serving updated interactive playground parser, 1-click clipboard terminal box, screen-reader link hints, and 100% tokenized color hierarchy.
