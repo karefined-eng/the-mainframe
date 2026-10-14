@@ -192,32 +192,80 @@ export const platformRows = [
   },
 ];
 
-export const limitations = [
+export interface TrustItem {
+  id: string;
+  category: string;
+  badge: string;
+  title: string;
+  body: string;
+  tone: "guarantee" | "advisory";
+  icon: "CloudOff" | "Database" | "GitCompare" | "Cable" | "KeyRound" | "ShieldAlert";
+  technicalSnippet?: string;
+}
+
+export const limitations: TrustItem[] = [
   {
+    id: "zero-cloud",
+    category: "Architecture",
+    badge: "ZERO-CLOUD ARCHITECTURE",
     title: "No required account or cloud service",
     body: "The core workflow never calls a hosted backend. There is no sign-up, no monthly subscription fee, and zero telemetry tracking.",
+    tone: "guarantee",
+    icon: "CloudOff",
+    technicalSnippet: "0 hosted servers · 0 telemetry endpoints",
   },
   {
+    id: "local-storage",
+    category: "Storage",
+    badge: "LOCAL SQLITE STORAGE",
     title: "Data is local to each device by default",
     body: "Every device holds its own SQLite database. Installing the app twice does not automatically connect two devices until you initiate sync.",
+    tone: "guarantee",
+    icon: "Database",
+    technicalSnippet: "SQLite with WAL · 100% offline",
   },
   {
+    id: "bidirectional-sync",
+    category: "Data Integrity",
+    badge: "DIFFERENTIAL MERGE",
     title: "Non-destructive bidirectional differential sync",
     body: "P2P sync exchanges only newer items and modifications between paired devices. Alternatively, one-way mirror snapshot is available with automatic pre-merge backup.",
+    tone: "guarantee",
+    icon: "GitCompare",
+    technicalSnippet: "Pre-merge automatic backup snapshot",
   },
   {
+    id: "local-transport",
+    category: "Transport",
+    badge: "PRIVATE SUBNET & USB",
     title: "Local network and wired USB transfer",
     body: "Sync operates over your private Wi-Fi (port 9377) or wired USB via adb reverse. Do not expose sync ports to the public internet.",
+    tone: "guarantee",
+    icon: "Cable",
+    technicalSnippet: "Port 9377 · adb reverse tcp:9377",
   },
   {
+    id: "pairing-token",
+    category: "Authentication",
+    badge: "10-MINUTE PIN TOKEN",
     title: "Pairing is short-lived by design",
     body: "Pairing uses a one-time six-digit PIN token that expires after 10 minutes. If pairing fails, start over rather than reusing a token.",
+    tone: "guarantee",
+    icon: "KeyRound",
+    technicalSnippet: "One-time 6-digit PIN · 10m TTL",
   },
   {
+    id: "unsigned-builds",
+    category: "Packaging",
+    badge: "RELEASE ADVISORY",
     title: "Desktop builds are unsigned for initial release",
     body: "Windows and macOS will display a first-launch security prompt (SmartScreen / Gatekeeper). Click 'Run Anyway' on Windows or right-click 'Open' on macOS.",
+    tone: "advisory",
+    icon: "ShieldAlert",
+    technicalSnippet: "CI-built binary · EV signing pending",
   },
 ];
+
 
 export const contributionNotes = [
   "Include the platform, the app version (v0.1.0) or commit, reproduction steps, and relevant logs.",

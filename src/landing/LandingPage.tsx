@@ -35,14 +35,20 @@ import {
   AlertTriangle,
   ArrowLeftRight,
   ArrowRight,
+  Cable,
   Check,
   ClipboardPaste,
+  CloudOff,
+  Database,
   Download,
   ExternalLink,
   Flame,
+  GitCompare,
   HardDrive,
   Info,
+  KeyRound,
   MessagesSquare,
+  ShieldAlert,
 } from "lucide-react";
 import { applyLandingMetadata } from "./metadata";
 import Playground from "./Playground";
