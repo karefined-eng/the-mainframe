@@ -23,6 +23,11 @@ dist-ssr
 *.sln
 *.sw?
 
+# Agent local directories
+.claude/
+.cursor/
+.gemini/
+
 # Import Directory & Private Local Data
 imports/
 *_import.json
