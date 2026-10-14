@@ -50,6 +50,7 @@ import {
   RELEASES_URL,
   REPO_URL,
   audience,
+  comparisonRows,
   contributionNotes,
   limitations,
   navLinks,
@@ -124,21 +125,131 @@ function Section({
   );
 }
 
-/**
- * Honest placeholder for a product screenshot. Publishing real captures is
- * blocked on sanitized sample data, so the slot states the required asset and
- * the redaction rule instead of showing a stand-in image.
- */
-function ScreenshotSlot({ name, alt }: { name: string; alt: string }) {
+function StepOneVisual() {
   return (
-    <figure className="lp-figure">
-      <figcaption className="lp-figure-tag">Asset pending: {name}</figcaption>
-      <p>{alt}</p>
-      <p className="lp-figure-note">
-        Capture from sample data only. Never include a real database, a pairing code, a LAN address,
-        or keystore material. See <code>docs/LANDING_PAGE_PLAN.md</code>.
-      </p>
-    </figure>
+    <div className="lp-walk-mockup">
+      <div className="lp-mockup-header">
+        <span className="lp-mockup-title">
+          <ClipboardPaste size={13} className="lp-mockup-icon" aria-hidden="true" />
+          Raw text paste ingestion
+        </span>
+        <span className="lp-mockup-badge">Auto-categorized</span>
+      </div>
+      <div className="lp-mockup-code">
+        <div className="lp-mockup-line"><span className="lp-mockup-prefix">cert:</span> AWS Solutions Architect Associate</div>
+        <div className="lp-mockup-line"><span className="lp-mockup-prefix">build:</span> Local-first P2P differential sync</div>
+        <div className="lp-mockup-line"><span className="lp-mockup-prefix">buy:</span> 27&quot; 4K IPS secondary monitor</div>
+        <div className="lp-mockup-line"><span className="lp-mockup-prefix">goal:</span> Half marathon under 1h 45m</div>
+        <div className="lp-mockup-line"><span className="lp-mockup-prefix">venture:</span> Client delivery sprint milestone</div>
+      </div>
+      <div className="lp-mockup-footer">
+        <span className="lp-mockup-hint">5 lines parsed into structured cards in 0.2s · Raw text preserved</span>
+      </div>
+    </div>
+  );
+}
+
+function StepTwoVisual() {
+  const domainsSample = [
+    { title: "Certifications", count: "3 active", sample: "AWS Solutions Architect", progress: 65 },
+    { title: "Build Ideas", count: "5 active", sample: "Local-first P2P differential sync", progress: 80 },
+    { title: "Ventures", count: "2 active", sample: "Client delivery sprint milestone", progress: 40 },
+    { title: "Goals", count: "4 active", sample: "Half marathon under 1h 45m", progress: 90 },
+    { title: "Acquisitions", count: "6 saved", sample: "27\" 4K IPS monitor", progress: 20 },
+  ];
+
+  return (
+    <div className="lp-walk-mockup">
+      <div className="lp-mockup-header">
+        <span className="lp-mockup-title">
+          <HardDrive size={13} className="lp-mockup-icon" aria-hidden="true" />
+          Pre-modeled life domains (Zero setup required)
+        </span>
+        <span className="lp-mockup-badge">5 Domains</span>
+      </div>
+      <div className="lp-mockup-domain-grid">
+        {domainsSample.map((d) => (
+          <div className="lp-mockup-domain-card" key={d.title}>
+            <div className="lp-mockup-domain-top">
+              <span className="lp-mockup-domain-name">{d.title}</span>
+              <span className="lp-mockup-domain-count">{d.count}</span>
+            </div>
+            <div className="lp-mockup-domain-item">{d.sample}</div>
+            <div className="lp-mockup-bar">
+              <div className="lp-mockup-bar-fill" style={{ width: `${d.progress}%` }} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function StepThreeVisual() {
+  const hotItems = [
+    { title: "AWS Solutions Architect exam slot", tag: "Needs attention", why: "Next milestone due in 3 days", tone: "warning" },
+    { title: "Local-first P2P differential sync", tag: "In progress", why: "Active loop from yesterday", tone: "accent" },
+    { title: "Client delivery sprint milestone", tag: "Continue track", why: "Blunt re-entry · 2 weeks since update", tone: "neutral" },
+  ];
+
+  return (
+    <div className="lp-walk-mockup">
+      <div className="lp-mockup-header">
+        <span className="lp-mockup-title">
+          <Flame size={13} className="lp-mockup-icon" aria-hidden="true" />
+          What&apos;s Hot · Attention shortlist (Capped at 3 items)
+        </span>
+        <span className="lp-mockup-badge">Zero Shame</span>
+      </div>
+      <div className="lp-mockup-hot-list">
+        {hotItems.map((item) => (
+          <div className="lp-mockup-hot-item" key={item.title}>
+            <div className="lp-mockup-hot-row">
+              <span className="lp-mockup-hot-title">{item.title}</span>
+              <span className={`lp-mockup-hot-tag lp-mockup-hot-tag--${item.tone}`}>{item.tag}</span>
+            </div>
+            <span className="lp-mockup-hot-why">{item.why}</span>
+          </div>
+        ))}
+      </div>
+      <div className="lp-mockup-footer">
+        <span className="lp-mockup-hint">No red badges. No broken streaks. Re-entering after time away presents facts neutrally.</span>
+      </div>
+    </div>
+  );
+}
+
+function StepFourVisual() {
+  return (
+    <div className="lp-walk-mockup">
+      <div className="lp-mockup-header">
+        <span className="lp-mockup-title">
+          <ArrowLeftRight size={13} className="lp-mockup-icon" aria-hidden="true" />
+          Direct device-to-device LAN & USB differential merge
+        </span>
+        <span className="lp-mockup-badge">Offline P2P</span>
+      </div>
+      <div className="lp-mockup-sync-body">
+        <div className="lp-mockup-device">
+          <span className="lp-mockup-dev-name">Desktop (PC)</span>
+          <span className="lp-mockup-dev-ip">192.168.1.14</span>
+          <span className="lp-mockup-dev-status">Source DB · WAL checked</span>
+        </div>
+        <div className="lp-mockup-sync-arrow">
+          <ArrowLeftRight size={18} className="lp-sync-pulse" aria-hidden="true" />
+          <span className="lp-mockup-pin">PIN: 8 4 9 2 0 1</span>
+          <span className="lp-mockup-transfer">Non-destructive merge</span>
+        </div>
+        <div className="lp-mockup-device">
+          <span className="lp-mockup-dev-name">Mobile (Android)</span>
+          <span className="lp-mockup-dev-ip">192.168.1.28</span>
+          <span className="lp-mockup-dev-status">Merged 2 edits · 0 cloud</span>
+        </div>
+      </div>
+      <div className="lp-mockup-footer">
+        <span className="lp-mockup-hint">Runs over local Wi-Fi or wired USB (`adb reverse`). Zero bytes touch the internet.</span>
+      </div>
+    </div>
   );
 }
 
@@ -301,7 +412,39 @@ export default function LandingPage() {
           </p>
         </Section>
 
-        {/* 3. Product walkthrough */}
+        {/* 3. Comparison Matrix */}
+        <Section
+          id="compare"
+          title="How The Mainframe compares"
+          lede="The Mainframe sits in the calm, defensible sweet spot between flat grocery checklists and complex database builders."
+        >
+          <div className="lp-table-wrap">
+            <table className="lp-table">
+              <thead>
+                <tr>
+                  <th scope="col">Feature / Trait</th>
+                  <th scope="col">Standard To-Do (Todoist, TickTick)</th>
+                  <th scope="col">Database Builders (Notion, Anytype)</th>
+                  <th scope="col" className="lp-th-highlight">The Mainframe</th>
+                </tr>
+              </thead>
+              <tbody>
+                {comparisonRows.map((row) => (
+                  <tr key={row.trait}>
+                    <td>{row.trait}</td>
+                    <td>{row.todoApps}</td>
+                    <td>{row.notion}</td>
+                    <td className="lp-td-highlight">
+                      <strong>{row.mainframe}</strong>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </Section>
+
+        {/* 4. Product walkthrough */}
         <Section
           id="walkthrough"
           title="Paste, structure, decide, continue"
@@ -314,7 +457,10 @@ export default function LandingPage() {
                 <div className="lp-step-body">
                   <h3>{step.title}</h3>
                   <p>{step.body}</p>
-                  <ScreenshotSlot name={step.asset} alt={step.alt} />
+                  {step.step === "01" && <StepOneVisual />}
+                  {step.step === "02" && <StepTwoVisual />}
+                  {step.step === "03" && <StepThreeVisual />}
+                  {step.step === "04" && <StepFourVisual />}
                 </div>
               </article>
             ))}

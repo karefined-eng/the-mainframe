@@ -40,10 +40,50 @@ export const pageMeta = {
 
 export const navLinks = [
   { href: "#why", label: "Why" },
+  { href: "#compare", label: "Comparison" },
   { href: "#walkthrough", label: "How it works" },
   { href: "#features", label: "Features" },
   { href: "#platforms", label: "Platforms" },
   { href: "#trust", label: "Limitations" },
+];
+
+export const comparisonRows = [
+  {
+    trait: "Data Storage",
+    todoApps: "Proprietary Cloud",
+    notion: "Proprietary Cloud / Hybrid",
+    mainframe: "100% Local SQLite (Offline)",
+  },
+  {
+    trait: "Pricing Model",
+    todoApps: "Monthly Subscription ($4–$10/mo)",
+    notion: "Free tier with paid barriers",
+    mainframe: "100% Free & Open Source (FOSS)",
+  },
+  {
+    trait: "Setup Time",
+    todoApps: "Instant (flat checklists)",
+    notion: "Hours of relational schema design",
+    mainframe: "Instant (5 pre-modeled domains)",
+  },
+  {
+    trait: "Overdue Handling",
+    todoApps: "Punitive red badges & broken streaks",
+    notion: "Manual formula / user-built",
+    mainframe: "Neuro-UX: Neutral re-entry (Zero shame)",
+  },
+  {
+    trait: "Cross-Device Sync",
+    todoApps: "Centralized cloud server",
+    notion: "Cloud server sync",
+    mainframe: "Direct LAN / USB P2P Differential Merge",
+  },
+  {
+    trait: "Scope of Life",
+    todoApps: "Flat chores & simple checklists",
+    notion: "Requires relational database modeling",
+    mainframe: "Courses, Goals, Ideas, Ventures, Purchases",
+  },
 ];
 
 export const audience = [

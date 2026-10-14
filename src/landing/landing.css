@@ -629,35 +629,268 @@
   }
 }
 
-.lp-figure {
-  margin: 18px 0 0;
-  border-top: 1px dashed var(--lp-border);
-  padding-top: 14px;
+/* ── Walkthrough Mockups ────────────────────────────────── */
+
+.lp-walk-mockup {
+  margin-top: 18px;
+  background: var(--lp-surface);
+  border: 1px solid var(--lp-border);
+  border-radius: 8px;
+  overflow: hidden;
+  max-width: 680px;
 }
 
-.lp-figure-tag {
+.lp-mockup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 13px;
+  background: var(--lp-surface-alt);
+  border-bottom: 1px solid var(--lp-border);
+}
+
+.lp-mockup-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
   font-size: 12px;
   font-weight: 600;
   color: var(--lp-text);
-  margin: 0 0 6px;
 }
 
-.lp-figure p {
-  font-size: 13px;
-  line-height: 1.62;
-  color: var(--lp-muted);
-  margin: 0;
-  max-width: 74ch;
+.lp-mockup-icon {
+  color: var(--lp-accent);
 }
 
-.lp-figure-note {
-  margin-top: 8px;
+.lp-mockup-badge {
+  font-size: 11px;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 4px;
+  background: color-mix(in srgb, var(--lp-accent) 14%, transparent);
+  color: var(--lp-accent);
 }
 
-.lp-figure code {
-  font-family: "JetBrains Mono", ui-monospace, monospace;
+.lp-mockup-code {
+  padding: 12px 14px;
+  font-family: "JetBrains Mono", monospace;
   font-size: 12px;
+  line-height: 1.8;
   color: var(--lp-text);
+  background: var(--lp-bg);
+}
+
+.lp-mockup-line {
+  display: flex;
+  gap: 8px;
+}
+
+.lp-mockup-prefix {
+  color: var(--lp-accent);
+  font-weight: 600;
+  user-select: none;
+}
+
+.lp-mockup-footer {
+  padding: 8px 13px;
+  background: var(--lp-surface-alt);
+  border-top: 1px solid var(--lp-border);
+}
+
+.lp-mockup-hint {
+  font-size: 11px;
+  color: var(--lp-muted);
+}
+
+.lp-mockup-domain-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+  padding: 12px;
+  background: var(--lp-bg);
+}
+
+.lp-mockup-domain-card {
+  background: var(--lp-surface);
+  border: 1px solid var(--lp-border);
+  border-radius: 6px;
+  padding: 9px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.lp-mockup-domain-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.lp-mockup-domain-name {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--lp-text);
+}
+
+.lp-mockup-domain-count {
+  font-size: 10.5px;
+  color: var(--lp-muted);
+}
+
+.lp-mockup-domain-item {
+  font-size: 11px;
+  color: var(--lp-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.lp-mockup-bar {
+  height: 2px;
+  background: var(--lp-border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.lp-mockup-bar-fill {
+  height: 100%;
+  background: var(--lp-accent);
+  border-radius: 2px;
+}
+
+.lp-mockup-hot-list {
+  padding: 8px 12px;
+  background: var(--lp-bg);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.lp-mockup-hot-item {
+  background: var(--lp-surface);
+  border: 1px solid var(--lp-border);
+  border-radius: 6px;
+  padding: 8px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.lp-mockup-hot-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.lp-mockup-hot-title {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--lp-text);
+}
+
+.lp-mockup-hot-tag {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+.lp-mockup-hot-tag--warning {
+  background: color-mix(in srgb, var(--lp-warning) 15%, transparent);
+  color: var(--lp-warning);
+}
+
+.lp-mockup-hot-tag--accent {
+  background: color-mix(in srgb, var(--lp-accent) 15%, transparent);
+  color: var(--lp-accent);
+}
+
+.lp-mockup-hot-tag--neutral {
+  background: color-mix(in srgb, var(--lp-muted) 15%, transparent);
+  color: var(--lp-muted);
+}
+
+.lp-mockup-hot-why {
+  font-size: 10.5px;
+  color: var(--lp-muted);
+}
+
+.lp-mockup-sync-body {
+  padding: 16px 12px;
+  background: var(--lp-bg);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 10px;
+}
+
+.lp-mockup-device {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  text-align: center;
+}
+
+.lp-mockup-dev-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--lp-text);
+}
+
+.lp-mockup-dev-ip {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 10.5px;
+  color: var(--lp-muted);
+}
+
+.lp-mockup-dev-status {
+  font-size: 10px;
+  color: #3ddc84;
+}
+
+.lp-mockup-sync-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.lp-sync-pulse {
+  color: var(--lp-accent);
+}
+
+.lp-mockup-pin {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 2px 6px;
+  background: var(--lp-surface);
+  border: 1px solid var(--lp-border);
+  border-radius: 4px;
+  color: var(--lp-accent);
+}
+
+.lp-mockup-transfer {
+  font-size: 10px;
+  color: var(--lp-muted);
+}
+
+/* ── Comparison Table ────────────────────────────────────── */
+
+.lp-th-highlight {
+  color: var(--lp-accent) !important;
+  font-weight: 700 !important;
+}
+
+.lp-td-highlight {
+  background: color-mix(in srgb, var(--lp-accent) 6%, transparent);
+}
+
+.lp-td-highlight strong {
+  color: var(--lp-text);
+  font-weight: 600;
 }
 
 /* ── Pillars ────────────────────────────────────────────── */
