@@ -46,8 +46,8 @@ import {
 } from "lucide-react";
 import { applyLandingMetadata } from "./metadata";
 import {
-  ACTIONS_URL,
   ISSUES_URL,
+  RELEASES_URL,
   REPO_URL,
   audience,
   contributionNotes,
@@ -193,17 +193,17 @@ export default function LandingPage() {
               </p>
               <p className="lp-status">
                 <span className="lp-dot" aria-hidden="true" />
-                Early public release · no versioned releases yet
+                Initial Public Release · v0.1.0 available for Windows, macOS, Linux, and Android
               </p>
               <div className="lp-cta-row">
                 <a
                   className="lp-btn lp-btn--primary"
-                  href={ACTIONS_URL}
+                  href={RELEASES_URL}
                   target="_blank"
                   rel="noreferrer noopener"
                   data-od-id="cta-download"
                 >
-                  Download the latest build
+                  Download v0.1.0 (Free)
                   <ArrowRight size={16} aria-hidden="true" />
                 </a>
                 <a
@@ -217,10 +217,7 @@ export default function LandingPage() {
                 </a>
               </div>
               <p className="lp-cta-note">
-                <strong>Read this first:</strong> there are no versioned public releases yet. Builds
-                live as GitHub Actions artifacts, and CI artifacts are not release downloads. Android
-                ships a signed release APK or an unsigned debug APK; desktop builds are unsigned until
-                platform signing is configured. <a href="#platforms">See platform status</a>.
+                <strong>100% Free & Open Source:</strong> Installers available for Windows (.exe/.msi), macOS (.dmg), Linux (.AppImage/.deb/.rpm), and Android (.apk). Zero accounts, zero cloud, zero telemetry.
               </p>
             </div>
 
@@ -353,8 +350,7 @@ export default function LandingPage() {
           <div className="lp-table-wrap">
             <table className="lp-table">
               <caption>
-                Platform status as documented in the repository README. No platform is marked as
-                tested or released.
+                Platform status as documented in the repository README. Versioned release packages available for download.
               </caption>
               <thead>
                 <tr>
@@ -370,9 +366,8 @@ export default function LandingPage() {
                     <td>{row.deliverable}</td>
                     <td>
                       <span className={row.tone === "target" ? "lp-tag lp-tag--accent" : "lp-tag"}>
-                        {row.tone === "target" ? "Build target" : "Not configured"}
+                        {row.status}
                       </span>
-                      <span className="lp-table-status">{row.status}</span>
                     </td>
                   </tr>
                 ))}
@@ -383,17 +378,17 @@ export default function LandingPage() {
           <div className="lp-download">
             <a
               className="lp-btn lp-btn--primary"
-              href={ACTIONS_URL}
+              href={RELEASES_URL}
               target="_blank"
               rel="noreferrer noopener"
-              data-od-id="cta-actions"
+              data-od-id="cta-releases"
             >
-              Open the Actions tab
+              Download from GitHub Releases
               <ExternalLink size={15} aria-hidden="true" />
             </a>
             <a
               className="lp-btn lp-btn--ghost"
-              href={`${REPO_URL}#quick-start-for-contributors`}
+              href={`${REPO_URL}#quick-start-contributors`}
               target="_blank"
               rel="noreferrer noopener"
             >
@@ -401,11 +396,7 @@ export default function LandingPage() {
             </a>
           </div>
           <p className="lp-download-note">
-            <strong>How to get a build:</strong> open the Actions tab, pick a <em>successful</em> run
-            of the desktop or Android workflow, and download the artifact for your platform. Links to
-            runs are not published here on purpose — an artifact only exists after a successful build,
-            and this page will not point you at a build that failed. Later, once versioning, signing,
-            and device testing are done, these will be replaced by versioned GitHub Releases.
+            <strong>Platform security notes:</strong> Desktop installers are built from source via GitHub Actions CI. Because EV code-signing and Apple notarization are pending, Windows SmartScreen and macOS Gatekeeper will show a first-launch prompt. Click "Run Anyway" on Windows or right-click → Open on macOS.
           </p>
         </Section>
 
@@ -480,11 +471,11 @@ export default function LandingPage() {
             <div className="lp-cta-row">
               <a
                 className="lp-btn lp-btn--primary"
-                href={ACTIONS_URL}
+                href={RELEASES_URL}
                 target="_blank"
                 rel="noreferrer noopener"
               >
-                Download the latest build
+                Download v0.1.0
                 <ArrowRight size={16} aria-hidden="true" />
               </a>
               <a

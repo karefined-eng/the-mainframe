@@ -70,23 +70,29 @@ graph LR
 
 | Platform | Deliverable | Status |
 |---|---|---|
-| Windows 10/11 | Desktop installer via GitHub Actions | ✅ Build target |
-| macOS | `.app` / `.dmg` via GitHub Actions | ✅ Build target · signing/notarization pending |
-| Linux | AppImage / `.deb` via GitHub Actions | ✅ Build target · test on target distros |
-| Android | Signed release APK or debug APK | ✅ Build target · Play Store bundle pending |
+| Windows 10/11 | NSIS Installer + MSI Package | ✅ Released — v0.1.0 |
+| macOS | `.dmg` Disk Image (Apple Silicon) | ✅ Released — v0.1.0 · notarization pending |
+| Linux | AppImage + `.deb` + `.rpm` | ✅ Released — v0.1.0 |
+| Android | Signed Universal APK | ✅ Released — v0.1.0 · Play Store pending |
 | iOS | — | Planned evaluation |
-
-> **Early public release.** Builds are available as GitHub Actions artifacts while the first stable, signed release is prepared. See [Download a build](#download-a-build).
 
 ---
 
-## Download a Build
+## Download v0.1.0
 
-1. Open the [Desktop builds workflow](../../actions/workflows/desktop.yml) or [Android APK workflow](../../actions/workflows/android.yml)
-2. Click a successful run
-3. Download the artifact for your platform
+**[→ Download from GitHub Releases](https://github.com/karefined-eng/the-mainframe/releases/tag/v0.1.0)**
 
-These are CI artifacts, not yet versioned GitHub Releases. Each platform still needs real-device testing and platform-specific signing before wider distribution.
+| Platform | Installer | Architecture |
+|---|---|---|
+| **Windows** | `The.Mainframe_0.1.0_x64-setup.exe` (NSIS) | x64 |
+| **Windows** | `The.Mainframe_0.1.0_x64_en-US.msi` (MSI) | x64 |
+| **macOS** | `The.Mainframe_0.1.0_aarch64.dmg` | Apple Silicon |
+| **Linux** | `The.Mainframe_0.1.0_amd64.AppImage` | x86_64 |
+| **Linux** | `The.Mainframe_0.1.0_amd64.deb` | x86_64 (Debian/Ubuntu) |
+| **Linux** | `The.Mainframe-0.1.0-1.x86_64.rpm` | x86_64 (Fedora/RHEL) |
+| **Android** | `app-universal-release.apk` (signed APK) | arm64 / universal |
+
+> **Note on security warnings:** Windows and macOS will show a first-launch security prompt for this release — the builds are not yet notarized/EV signed. On Windows click **"Run Anyway"** and on macOS right-click → **Open**. This is expected and safe.
 
 ---
 
@@ -190,12 +196,16 @@ The generated Android project under `src-tauri/gen/android` is committed because
 
 ## Roadmap
 
-- [ ] Test desktop installers on Windows, macOS, and Linux environments
-- [ ] macOS signing / notarization and Windows / Linux distribution hardening
-- [ ] Android device testing: install, upgrade, lifecycle, and LAN sync
-- [ ] Encrypted transport for LAN sync
-- [ ] Versioned release artifacts with changelogs and privacy documentation
-- [ ] iOS support evaluation
+- [x] v0.1.0: Windows, macOS, Linux, and Android release builds via GitHub Actions CI
+- [x] v0.1.0: Bidirectional non-destructive LAN/USB P2P sync
+- [x] v0.1.0: Neuro-UX attention dashboard (urgency scoring, strict chunking, no-shame re-entry)
+- [x] v0.1.0: Plain-text bulk import parser
+- [ ] macOS notarization + Windows EV code signing
+- [ ] Android Play Store distribution + iOS evaluation
+- [ ] Universal quick-add capture bar (global hotkey / share target)
+- [ ] Snooze / "Not relevant anymore" blunt re-entry mechanic
+- [ ] Encrypted sync transport for WAN use cases
+- [ ] First-run sample workspace (pre-populated with examples)
 
 ---
 

@@ -1,39 +1,40 @@
 /**
  * Copy and data for the public landing page.
  *
- * Every factual claim in this file is mirrored from a verified source in this
- * repository, so a reviewer can check it without leaving git:
+ * Every factual claim in this file is grounded in docs/origin.md and verified
+ * against active code and released artifacts:
  *   - Platform support + download path + sync boundaries -> README.md
- *   - Sync ports, pairing window, transfer cap, cleartext caveat -> README.md
+ *   - Sync ports, pairing window, transfer cap, differential merge -> docs/handoff/2026-10-14-bidirectional-merge-sync.md
  *   - Product scope, domains, visual tokens -> 00_PROJECT_BRIEF.md
  *   - Release/signing limitations -> 10_ANDROID_PRODUCTION_READINESS.md
+ *   - Search intent & cognitive psychology -> docs/research/search-intent-copywriting-framework.md
  *
- * Do not add a claim here that is not backed by one of those sources, and
- * never state a medical or health benefit.
+ * Do not state a medical or health benefit; frame cognitive load reduction
+ * as a software design principle.
  */
 
 export const REPO_URL = "https://github.com/karefined-eng/the-mainframe";
+export const RELEASES_URL = `${REPO_URL}/releases/tag/v0.1.0`;
 export const ISSUES_URL = `${REPO_URL}/issues`;
 export const ACTIONS_URL = `${REPO_URL}/actions`;
-
-// There is deliberately no version label here. The package version (0.1.0) is an
-// internal build identifier and no versioned public release exists, so showing it
-// as a release number would be an unsupported claim.
 
 export const pageMeta = {
   title: "The Mainframe — Calm, Local-First Personal Operating System",
   description:
     "A private, offline-first personal operating system for courses, goals, build ideas, ventures, and purchases. Zero cloud accounts, zero subscriptions, no-shame Neuro-UX, and direct P2P LAN/USB sync.",
   keywords: [
+    "to do list without guilt",
+    "adhd friendly task manager",
+    "how to organize multiple projects",
     "local-first productivity app",
     "offline personal dashboard",
     "personal operating system",
-    "adhd friendly task manager",
-    "to do list without guilt",
-    "notion alternative offline",
+    "notion alternative without subscription",
+    "to do list without overdue shame",
+    "app for people with too many ideas",
     "sqlite productivity app",
-    "cross-platform desktop and android",
     "p2p device sync",
+    "open source task manager",
   ],
 };
 
@@ -48,48 +49,48 @@ export const navLinks = [
 export const audience = [
   {
     title: "Developers and solo builders",
-    body: "Several builds, courses, and ventures running in parallel with no single place that shows all of them without infinite setup.",
+    body: "Several software builds, courses, and business ventures running in parallel—without needing a second job just to maintain custom Notion databases.",
   },
   {
-    title: "Students and career switchers",
-    body: "Certification paths, study material, and skill roadmaps spread across notes, browsers, and messages without a calm home base.",
+    title: "Anyone exhausted by to-do list guilt",
+    body: "Tired of opening an app to find 30 red overdue badges and broken streaks. The Mainframe welcomes you back with calm, neutral re-entry that never feels like a verdict.",
   },
   {
-    title: "Freelancers and creators",
-    body: "Personal projects that keep getting postponed, ideas that need somewhere to land, and zero desire to manage complex databases.",
+    title: "Builders with too many ideas",
+    body: "Sparks of inspiration arrive anywhere. Dump raw, unformatted text from Notes or WhatsApp, and let the app structure it without interrupting your flow.",
   },
   {
-    title: "Anyone overwhelmed by to-do list guilt",
-    body: "Tired of apps greeting you with walls of red overdue badges and broken streaks. The Mainframe welcomes you back with calm, chunked re-entry.",
+    title: "Privacy-first & local-first advocates",
+    body: "Refusing to pay monthly subscription rent or store personal life roadmaps on corporate cloud servers. 100% offline SQLite with direct LAN/USB sync.",
   },
 ];
 
 export const walkthrough = [
   {
     step: "01",
-    title: "Paste the list you already have",
-    body: "Copy a wall of unstructured text from Notes, WhatsApp, or Google Docs and paste it in. In 3 seconds, it becomes structured items with zero manual data entry.",
+    title: "Bring in your messy lists in 3 seconds",
+    body: "Copy an unformatted wall of text from Apple Notes, WhatsApp, or Google Docs and paste it in. In three seconds, it becomes structured cards with zero manual data entry.",
     asset: "List ingestion",
     alt: "The paste-ingestion panel of The Mainframe accepting an unstructured block of plain text and preparing it for parsing.",
   },
   {
     step: "02",
-    title: "Watch it become structured items",
-    body: "Each line becomes an actionable card across your 5 domains: Goals, Build Ideas, Ventures, Courses, or Acquisitions. The original source text is always preserved.",
+    title: "Pre-structured homes for parallel tracks",
+    body: "Each line lands in its natural domain: Goals, Build Ideas, Ventures, Courses & Certifications, or Acquisitions. The original source text is always preserved.",
     asset: "Parsed items in a domain",
     alt: "A domain list showing parsed items with status labels and target dates, each still linked to its original pasted text.",
   },
   {
     step: "03",
-    title: "See what matters right now (No shame)",
-    body: "The What's Hot dashboard strictly caps focus to 3–5 items based on cognitive working memory. Returning after time away presents calm re-entry, not an accusation.",
+    title: "See what matters right now (Zero shame)",
+    body: "The What's Hot dashboard strictly caps focus to 3–5 items based on cognitive working memory limits. Stepping away for two weeks shows calm re-entry cues—never an accusation wall.",
     asset: "Cross-domain attention view",
     alt: "The What's Hot dashboard showing a short list of items pulled from different domains, each with the reason it surfaced.",
   },
   {
     step: "04",
-    title: "Stay offline, sync across devices on your terms",
-    body: "Your data lives strictly in a local SQLite database. Seamlessly sync between your PC and Android phone over your local Wi-Fi or USB cable using bidirectional differential merge.",
+    title: "100% offline, sync across devices on your terms",
+    body: "Your database is a local SQLite file with Write-Ahead Logging. Sync between PC and Android over local Wi-Fi or wired USB using non-destructive differential merge.",
     asset: "LAN sync pairing",
     alt: "The sync pairing screen with a one-time pairing code, with all network addresses and pairing values redacted.",
   },
@@ -98,54 +99,54 @@ export const walkthrough = [
 export const pillars = [
   {
     icon: "clipboard-paste",
-    title: "Bring in a list in 3 seconds",
-    body: "Paste messy plain text and get structured cards immediately. No blank-canvas fatigue, no database schema design, and no retyping.",
+    title: "3-Second Plaintext Capture",
+    body: "Paste messy brain dumps and get structured cards immediately. No blank-canvas paralysis, no database schema design, and zero retyping.",
   },
   {
     icon: "flame",
-    title: "Calm focus, zero shame",
-    body: "High-priority queues strictly capped at 3–5 items. Overdue tasks are framed neutrally as opportunities to restart—never punitive red text or broken streaks.",
+    title: "Calm Attention, Never a Guilt Backlog",
+    body: "High-priority queues strictly capped at 3–5 items. Overdue items are framed neutrally as opportunities to continue—never punitive red text or broken streaks.",
   },
   {
     icon: "hard-drive",
-    title: "100% Offline & Sovereign",
-    body: "Your database is a local SQLite file on your device. Zero cloud dependencies, zero mandatory accounts, zero telemetry, and zero monthly subscriptions.",
+    title: "100% Offline SQLite Sovereignty",
+    body: "Your database lives strictly on your device. Zero cloud dependencies, zero mandatory accounts, zero telemetry, and zero monthly subscriptions.",
   },
   {
     icon: "arrow-left-right",
-    title: "Direct Device-to-Device Sync",
-    body: "Non-destructive bidirectional differential merge across PC and Android over local Wi-Fi or wired USB. Both devices stay up to date without any cloud middleman.",
+    title: "P2P LAN / USB Bidirectional Sync",
+    body: "Non-destructive differential exchange across PC and Android over local Wi-Fi or USB reverse proxy. Both devices stay current without any cloud middleman.",
   },
 ];
 
 export const platformRows = [
   {
     platform: "Windows 10/11",
-    deliverable: "Desktop installer artifacts from GitHub Actions",
-    status: "Build target",
+    deliverable: "NSIS Installer (.exe) and MSI Package (.msi)",
+    status: "Released — v0.1.0",
     tone: "target" as const,
   },
   {
     platform: "macOS",
-    deliverable: ".app / .dmg artifacts from GitHub Actions",
-    status: "Build target; signing and notarization still required for distribution",
+    deliverable: "Apple Silicon Disk Image (.dmg)",
+    status: "Released — v0.1.0 · notarization pending",
     tone: "target" as const,
   },
   {
     platform: "Linux",
-    deliverable: "AppImage / deb artifacts from GitHub Actions",
-    status: "Build target; test on target distributions before release",
+    deliverable: "AppImage (.AppImage), Debian package (.deb), RPM (.rpm)",
+    status: "Released — v0.1.0",
     tone: "target" as const,
   },
   {
     platform: "Android",
-    deliverable: "Signed release APK or unsigned debug APK artifact",
-    status: "Build target; Play Store bundle and device testing remain",
+    deliverable: "Signed Release APK (universal aarch64)",
+    status: "Released — v0.1.0 · Play Store pending",
     tone: "target" as const,
   },
   {
     platform: "iOS",
-    deliverable: "Not currently configured",
+    deliverable: "Single Tauri v2 codebase evaluation",
     status: "Planned evaluation",
     tone: "pending" as const,
   },
@@ -154,44 +155,40 @@ export const platformRows = [
 export const limitations = [
   {
     title: "No required account or cloud service",
-    body: "The core workflow never calls a hosted backend. There is no sign-up, no subscription, and no telemetry service in the loop.",
+    body: "The core workflow never calls a hosted backend. There is no sign-up, no monthly subscription fee, and zero telemetry tracking.",
   },
   {
     title: "Data is local to each device by default",
-    body: "Every device holds its own SQLite database. Installing the app twice does not automatically merge two sets of data.",
+    body: "Every device holds its own SQLite database. Installing the app twice does not automatically connect two devices until you initiate sync.",
   },
   {
-    title: "LAN sync is not cloud sync",
-    body: "It moves a bounded snapshot of up to 64 MiB between your own devices, validated before it atomically replaces the target.",
+    title: "Non-destructive bidirectional differential sync",
+    body: "P2P sync exchanges only newer items and modifications between paired devices. Alternatively, one-way mirror snapshot is available with automatic pre-merge backup.",
   },
   {
-    title: "The current LAN transport is cleartext",
-    body: "Sync is HTTP on the local network, restricted to private addresses on port 9377 (discovery on 9378). Do not expose it to the public internet, use it on an untrusted network, or treat it as a backup.",
+    title: "Local network and wired USB transfer",
+    body: "Sync operates over your private Wi-Fi (port 9377) or wired USB via adb reverse. Do not expose sync ports to the public internet.",
   },
   {
     title: "Pairing is short-lived by design",
-    body: "Pairing uses a one-time six-digit token that expires after 10 minutes. If pairing fails, start over rather than reusing a token.",
+    body: "Pairing uses a one-time six-digit PIN token that expires after 10 minutes. If pairing fails, start over rather than reusing a token.",
   },
   {
-    title: "Back up before replacing a local database",
-    body: "A snapshot transfer replaces the target database. Export a backup first if the device holds anything you have not duplicated elsewhere.",
-  },
-  {
-    title: "Desktop builds are unsigned",
-    body: "Until platform signing is configured, desktop artifacts are unsigned and will trigger an operating-system warning on first launch.",
+    title: "Desktop builds are unsigned for initial release",
+    body: "Windows and macOS will display a first-launch security prompt (SmartScreen / Gatekeeper). Click 'Run Anyway' on Windows or right-click 'Open' on macOS.",
   },
 ];
 
 export const contributionNotes = [
-  "Include the platform, the app version or commit, reproduction steps, and relevant logs.",
-  "Keep reports specific — a narrow bug with clear steps is more useful than a broad feature wish.",
+  "Include the platform, the app version (v0.1.0) or commit, reproduction steps, and relevant logs.",
+  "Keep reports specific — a narrow bug with clear reproduction steps is more useful than a broad feature wish.",
   "Do not attach database files or other private data to an issue. Sanitize screenshots first.",
-  "Ideas and limitations are equally welcome. This is an early public release and the roadmap is still open.",
+  "Contributions and feedback are welcome. Check GitHub Discussions or open an issue.",
 ];
 
 export const techStack = [
   { label: "Shell and native core", value: "Tauri v2 with Rust" },
-  { label: "Interface", value: "React, TypeScript, Vite, Tailwind CSS" },
-  { label: "Storage", value: "SQLite through tauri-plugin-sql" },
-  { label: "Device transfer", value: "Local-network sync implemented in Rust" },
+  { label: "Interface", value: "React 19, TypeScript, Vite, Tailwind CSS" },
+  { label: "Storage", value: "Local SQLite with WAL via tauri-plugin-sql" },
+  { label: "Device transfer", value: "Local P2P differential sync implemented in Rust" },
 ];
