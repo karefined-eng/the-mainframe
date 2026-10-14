@@ -3,7 +3,7 @@
 **Document:** `docs/research/04_COMPETITOR_LANDING_PAGE_TEARDOWNS.md`  
 **Author:** Antigravity AI & Founder  
 **Date:** October 2026  
-**Context:** Comprehensive teardown of 11 industry-defining competitor and benchmark sites in developer tools, local-first computing, calm productivity, and task management, integrated with the [Impeccable Frontend Design Framework](https://www.yeou.dev/articles/mastering-impeccable-ai-frontend-architecture/).
+**Context:** Comprehensive teardown of 12 industry-defining competitor and benchmark sites in developer tools, local-first computing, calm productivity, and task management, integrated with the [Impeccable Frontend Design Framework](https://www.yeou.dev/articles/mastering-impeccable-ai-frontend-architecture/).
 
 ---
 
@@ -12,10 +12,10 @@
 The modern productivity and developer-tool landscape is split into three design eras:
 
 1. **The 2018 SaaS Era (Todoist, Notion):** Light backgrounds, generic cards, subscription pricing, cloud accounts, engagement gamification (streaks, badges, karma).
-2. **The 2022 Dark-Mode Speed Era (Linear, Superhuman, Raycast):** Jet-black backdrops, sub-50ms latency claims, keyboard shortcuts, subtle radial glows, hardware-edge borders.
+2. **The 2022 Dark-Mode Speed Era (Linear, Superhuman, Raycast, Cursor):** Jet-black backdrops, sub-50ms latency claims, keyboard shortcuts, subtle radial glows, hardware-edge borders.
 3. **The 2026 Sovereign & Calm Era (Obsidian, Anytype, Zed, LocalSend, The Mainframe):** Local-first storage, privacy by physics, zero cloud tracking, native Rust/Tauri runtimes, and reduced cognitive load.
 
-Below is an exhaustive, feature-by-feature teardown of **11 direct competitors and architectural benchmarks**.
+Below is an exhaustive, feature-by-feature teardown of **12 direct competitors and architectural benchmarks**.
 
 ---
 
@@ -231,6 +231,30 @@ Below is an exhaustive, feature-by-feature teardown of **11 direct competitors a
 
 ### Mainframe Takeaways
 - **What to Attack & Reframe:** The Mainframe eliminates the blank canvas by providing **5 pre-modeled life domains out of the box** (Courses, Build Ideas, Ventures, Goals, Acquisitions). Zero schema design required.
+
+---
+
+## 12. Cursor (`cursor.com`)
+*The Tactical AI Command Center for Ambitious Builders*
+
+### Core Positioning & Tagline
+- **Headline:** *"AI Coding Agent for Building Ambitious Software"*
+- **Subhead:** *"Built to make you extraordinarily productive, agents turn ideas into code. Accelerate development by handing off tasks to Cursor, while you focus on making decisions."*
+
+### Hero Architecture & Visual Craft
+- **Atmospheric Depth:** Deep black backdrops with high-contrast monospace code tokens, subtle hairline dividers, and subdued blue accent states.
+- **Terminal Install Affordance:** Prominent 1-click terminal snippet (`curl https://cursor.com/install -fsS | bash`) paired with a direct GUI download CTA, catering directly to command-line-first developers.
+- **Show-Don't-Tell Demonstrations:** Direct interactive representations of agent execution, multi-file diff previews, and parallel task execution rather than abstract marketing illustrations.
+- **Zero Fluff / Zero Emojis:** Strictly serious, high-density, professional aesthetic designed for builders who are allergic to corporate SaaS fluff.
+
+### Mainframe Shared DNA & Key Takeaways
+- **What We Share in Common:**
+  1. **Tactile Terminal Installation:** Both sites feature a dedicated, 1-click copy terminal installation box (`git clone ...` vs `curl ... | bash`) alongside one-click native desktop downloads.
+  2. **Live In-Situ Previews:** Both reject static PNG marketing mockups in favor of live tactile simulations (The Mainframe's interactive Hero Ingestion Playground vs Cursor's agent diff execution cards).
+  3. **Precision Dark Aesthetics:** Both employ low-glare surfaces (`#0E0E10`, `#141518`), hairline chamfers, and strictly zero-emoji minimalist iconography (`lucide-react`).
+  4. **Builder Respect & Latency Elimination:** Both products speak to founders and engineers who prioritize high-velocity flow states and zero artificial friction.
+- **How The Mainframe Differentiates:**
+  - Where Cursor orchestrates autonomous coding agents for software execution, The Mainframe orchestrates the builder's entire life trajectory across 5 pre-modeled domains (Certifications, Build Ideas, Ventures, Goals, Acquisitions) with 100% offline sovereign SQLite storage and zero cloud lock-in.
 
 ---
 
