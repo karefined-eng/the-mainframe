@@ -75,3 +75,20 @@ Through systematic refactoring of [src/landing/landing.css](file:///c:/Users/asa
    node --experimental-strip-types --test tests/*.test.ts
    # 5 pass, 0 fail (777ms)
    ```
+4. **Live Production Vercel Deployment Verification:**
+   ```powershell
+   npx impeccable detect https://the-mainframe-app.vercel.app/
+   # Exited with code 0 (0 anti-patterns found across all typography, padding, card hierarchy, and contrast checks)
+   ```
+
+---
+
+## 5. Deployment Status
+
+- **Commits:**
+  - `0cfc64f`: `fix(landing): resolve 53 live-browser audit anti-patterns across typography, padding, card hierarchy, and line lengths`
+  - `e6c4966`: `style(landing): remove hero spotlight glow, elevate tag paddings to 4px, and fix trust badge title-casing`
+- **Branch:** `main` (synchronized with `origin/main`)
+- **Live URL:** [https://the-mainframe-app.vercel.app/](https://the-mainframe-app.vercel.app/)
+- **Result:** 0 anti-patterns on live production deployment.
+
