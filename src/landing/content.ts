@@ -207,7 +207,7 @@ export const limitations: TrustItem[] = [
   {
     id: "zero-cloud",
     category: "Architecture",
-    badge: "ZERO-CLOUD ARCHITECTURE",
+    badge: "Zero-Cloud Architecture",
     title: "No required account or cloud service",
     body: "The core workflow never calls a hosted backend. There is no sign-up, no monthly subscription fee, and zero telemetry tracking.",
     tone: "guarantee",
@@ -217,7 +217,7 @@ export const limitations: TrustItem[] = [
   {
     id: "local-storage",
     category: "Storage",
-    badge: "LOCAL SQLITE STORAGE",
+    badge: "Local SQLite Storage",
     title: "Data is local to each device by default",
     body: "Every device holds its own SQLite database. Installing the app twice does not automatically connect two devices until you initiate sync.",
     tone: "guarantee",
@@ -227,7 +227,7 @@ export const limitations: TrustItem[] = [
   {
     id: "bidirectional-sync",
     category: "Data Integrity",
-    badge: "DIFFERENTIAL MERGE",
+    badge: "Differential Merge",
     title: "Non-destructive bidirectional differential sync",
     body: "P2P sync exchanges only newer items and modifications between paired devices. Alternatively, one-way mirror snapshot is available with automatic pre-merge backup.",
     tone: "guarantee",
@@ -237,7 +237,7 @@ export const limitations: TrustItem[] = [
   {
     id: "local-transport",
     category: "Transport",
-    badge: "PRIVATE SUBNET & USB",
+    badge: "Private Subnet & USB",
     title: "Local network and wired USB transfer",
     body: "Sync operates over your private Wi-Fi (port 9377) or wired USB via adb reverse. Do not expose sync ports to the public internet.",
     tone: "guarantee",
@@ -247,7 +247,7 @@ export const limitations: TrustItem[] = [
   {
     id: "pairing-token",
     category: "Authentication",
-    badge: "10-MINUTE PIN TOKEN",
+    badge: "10-Minute PIN Token",
     title: "Pairing is short-lived by design",
     body: "Pairing uses a one-time six-digit PIN token that expires after 10 minutes. If pairing fails, start over rather than reusing a token.",
     tone: "guarantee",
@@ -257,7 +257,7 @@ export const limitations: TrustItem[] = [
   {
     id: "unsigned-builds",
     category: "Packaging",
-    badge: "RELEASE ADVISORY",
+    badge: "Release Advisory",
     title: "Desktop builds are unsigned for initial release",
     body: "Windows and macOS will display a first-launch security prompt (SmartScreen / Gatekeeper). Click 'Run Anyway' on Windows or right-click 'Open' on macOS.",
     tone: "advisory",
