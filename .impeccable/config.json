@@ -1,0 +1,14 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "createdAt": "2026-10-14T16:44:33.439Z",
+        "reason": "Brand font locked in design system"
+      }
+    ]
+  }
+}

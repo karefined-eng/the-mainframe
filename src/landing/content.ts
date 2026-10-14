@@ -226,6 +226,105 @@ export const contributionNotes = [
   "Contributions and feedback are welcome. Check GitHub Discussions or open an issue.",
 ];
 
+export const playgroundPresets = [
+  {
+    id: "developer",
+    title: "Developer Tracks",
+    description: "Multi-track parallel projects parsed into distinct domains",
+    rawText: [
+      "cert: AWS Solutions Architect - book exam block",
+      "build: Local-first P2P differential sync engine",
+      'buy: 27" 4K IPS secondary monitor for dual workspace',
+      "goal: Run half marathon under 1h 45m",
+      "venture: Client Q4 delivery sprint milestone",
+    ].join("\n"),
+    items: [
+      { title: "AWS Solutions Architect", domain: "Certifications", tag: "Needs attention", note: "Milestone due in 3 days", tone: "warning" as const },
+      { title: "Local-first P2P differential sync engine", domain: "Build Ideas", tag: "In progress", note: "Active loop from yesterday", tone: "accent" as const },
+      { title: '27" 4K IPS secondary monitor', domain: "Acquisitions", tag: "Watching", note: "Price tracker active", tone: "neutral" as const },
+      { title: "Run half marathon under 1h 45m", domain: "Goals", tag: "Tracked", note: "4 weeks remaining", tone: "neutral" as const },
+      { title: "Client Q4 delivery sprint milestone", domain: "Ventures", tag: "Continue", note: "Blunt re-entry · 0 guilt", tone: "neutral" as const },
+    ],
+  },
+  {
+    id: "adhd",
+    title: "ADHD Brain Dump",
+    description: "Messy unstructured stream parsed with working memory limits",
+    rawText: [
+      "fix broken ssh keys on staging server",
+      "research mechanical keyboard switches",
+      "finish typescript 5.8 migration",
+      "call dentist about Tuesday appointment",
+      "pay quarterly hosting invoice",
+    ].join("\n"),
+    items: [
+      { title: "Fix broken SSH keys on staging server", domain: "Build Ideas", tag: "In progress", note: "Surfaced to focus queue", tone: "accent" as const },
+      { title: "Finish TypeScript 5.8 migration", domain: "Build Ideas", tag: "Next up", note: "Working memory slot 2", tone: "warning" as const },
+      { title: "Pay quarterly hosting invoice", domain: "Ventures", tag: "Due soon", note: "Preserved from paste", tone: "neutral" as const },
+      { title: "Call dentist about Tuesday appointment", domain: "Goals", tag: "Queued", note: "Capped to prevent overload", tone: "neutral" as const },
+      { title: "Research mechanical keyboard switches", domain: "Acquisitions", tag: "Saved", note: "Zero cognitive debt", tone: "neutral" as const },
+    ],
+  },
+  {
+    id: "learning",
+    title: "Career & Learning",
+    description: "Deep skill acquisition alongside prototype builds",
+    rawText: [
+      "cert: CKA Kubernetes Administrator exam",
+      "build: Rust CLI for database backups",
+      "goal: Publish 6 technical deep-dives",
+      "buy: Ergo chair lumbar support",
+      "venture: Launch developer tools newsletter",
+    ].join("\n"),
+    items: [
+      { title: "CKA Kubernetes Administrator exam", domain: "Certifications", tag: "Focus item", note: "Target: Nov 15", tone: "warning" as const },
+      { title: "Rust CLI for database backups", domain: "Build Ideas", tag: "Active build", note: "Zero external deps", tone: "accent" as const },
+      { title: "Publish 6 technical deep-dives", domain: "Goals", tag: "Progressing", note: "2 of 6 published", tone: "neutral" as const },
+      { title: "Launch developer tools newsletter", domain: "Ventures", tag: "Ideation", note: "Audience validated", tone: "neutral" as const },
+      { title: "Ergo chair lumbar support", domain: "Acquisitions", tag: "Research", note: "Budget allocated", tone: "neutral" as const },
+    ],
+  },
+];
+
+export const releaseAssets = [
+  {
+    platform: "Windows",
+    badge: "Windows 10 / 11 (x64)",
+    filename: "The-Mainframe_0.1.0_x64-setup.exe",
+    format: "NSIS Installer (.exe)",
+    url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/The-Mainframe_0.1.0_x64-setup.exe",
+    secondary: {
+      format: "MSI (.msi)",
+      url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/The-Mainframe_0.1.0_x64_en-US.msi",
+    },
+  },
+  {
+    platform: "macOS",
+    badge: "Apple Silicon (aarch64)",
+    filename: "The-Mainframe_0.1.0_aarch64.dmg",
+    format: "Disk Image (.dmg)",
+    url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/The-Mainframe_0.1.0_aarch64.dmg",
+  },
+  {
+    platform: "Linux",
+    badge: "x86_64 / amd64",
+    filename: "the-mainframe_0.1.0_amd64.AppImage",
+    format: "AppImage (.AppImage)",
+    url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/the-mainframe_0.1.0_amd64.AppImage",
+    secondary: {
+      format: "Debian (.deb)",
+      url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/the-mainframe_0.1.0_amd64.deb",
+    },
+  },
+  {
+    platform: "Android",
+    badge: "Universal APK",
+    filename: "app-universal-release.apk",
+    format: "Signed Release APK (.apk)",
+    url: "https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/app-universal-release.apk",
+  },
+];
+
 export const techStack = [
   { label: "Shell and native core", value: "Tauri v2 with Rust" },
   { label: "Interface", value: "React 19, TypeScript, Vite, Tailwind CSS" },

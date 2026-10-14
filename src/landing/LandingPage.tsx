@@ -37,14 +37,15 @@ import {
   ArrowRight,
   Check,
   ClipboardPaste,
+  Download,
   ExternalLink,
   Flame,
   HardDrive,
   Info,
-  Lock,
   MessagesSquare,
 } from "lucide-react";
 import { applyLandingMetadata } from "./metadata";
+import Playground from "./Playground";
 import {
   ISSUES_URL,
   RELEASES_URL,
@@ -56,6 +57,7 @@ import {
   navLinks,
   pillars,
   platformRows,
+  releaseAssets,
   techStack,
   walkthrough,
 } from "./content";
@@ -80,26 +82,6 @@ function BrandMark({ size = 20 }: { size?: number }) {
     </svg>
   );
 }
-
-const rawPasteSample = [
-  "cert: AWS SAA - book exam slot",
-  "build: LAN snapshot diff viewer",
-  'buy: 27" 4K monitor',
-  "goal: run 10k under 50 min",
-  "write: post on offline-first storage",
-].join("\n");
-
-const parsedSample = [
-  { title: "AWS SAA", domain: "Certifications", meta: "Mar 14", accent: true },
-  { title: "LAN snapshot diff viewer", domain: "Build Ideas", meta: "no date", accent: false },
-  { title: '27" 4K monitor', domain: "Acquisitions", meta: "watching", accent: false },
-  { title: "Run 10k under 50 min", domain: "Goals", meta: "Jun 02", accent: false },
-];
-
-const hotSample = [
-  { title: "AWS SAA study block", why: "3 sessions behind schedule" },
-  { title: "Client deliverable draft", why: "Recurring weekly item is due" },
-];
 
 function Section({
   id,
@@ -332,60 +314,8 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="lp-panel" data-od-id="hero-panel">
-              <div className="lp-panel-bar">
-                <span className="lp-tick" />
-                <span className="lp-tick" />
-                <span className="lp-tick lp-tick--accent" />
-                <span className="lp-panel-title">mainframe · local</span>
-                <span className="lp-panel-live">
-                  <Lock size={12} aria-hidden="true" />
-                  offline
-                </span>
-              </div>
-              <div className="lp-panel-body" aria-hidden="true">
-                <div className="lp-step-block">
-                  <p className="lp-panel-label">
-                    <span className="lp-panel-num lp-mono">01</span>
-                    Pasted text
-                  </p>
-                  <pre className="lp-raw">{rawPasteSample}</pre>
-                </div>
-                <div className="lp-step-block">
-                  <p className="lp-panel-label">
-                    <span className="lp-panel-num lp-mono">02</span>
-                    Structured items
-                  </p>
-                  <div className="lp-rows">
-                    {parsedSample.map((row) => (
-                      <div className="lp-row" key={row.title}>
-                        <span className={row.accent ? "lp-tick lp-tick--accent" : "lp-tick"} />
-                        <span className="lp-row-title">{row.title}</span>
-                        <span className="lp-row-meta">
-                          {row.domain} · {row.meta}
-                        </span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-                <div className="lp-step-block">
-                  <p className="lp-panel-label">
-                    <span className="lp-panel-num lp-mono">03</span>
-                    What&apos;s hot
-                  </p>
-                  <ul className="lp-hot">
-                    {hotSample.map((item) => (
-                      <li key={item.title}>
-                        <strong>{item.title}</strong>
-                        <span>{item.why}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-              <p className="lp-panel-disclosure">
-                Illustrative sample data, not a recorded session.
-              </p>
+            <div data-od-id="hero-playground-wrapper">
+              <Playground />
             </div>
           </div>
         </section>
@@ -442,6 +372,88 @@ export default function LandingPage() {
               </tbody>
             </table>
           </div>
+
+          <div className="lp-neuro-compare" data-od-id="neuro-ux-comparison">
+            <div className="lp-neuro-box lp-neuro-box--bad">
+              <div className="lp-neuro-box-header">
+                <span className="lp-neuro-box-title">Traditional Task Apps (Todoist, TickTick)</span>
+                <span className="lp-neuro-badge lp-neuro-badge--bad">Wall of Shame</span>
+              </div>
+              <div className="lp-neuro-items">
+                <div className="lp-neuro-row lp-neuro-row--shame">
+                  <div className="lp-neuro-row-left">
+                    <AlertTriangle size={13} className="lp-play-card-icon" aria-hidden="true" />
+                    <span>Client delivery sprint milestone</span>
+                  </div>
+                  <span className="lp-neuro-shame-tag">14 days overdue</span>
+                </div>
+                <div className="lp-neuro-row lp-neuro-row--shame">
+                  <div className="lp-neuro-row-left">
+                    <AlertTriangle size={13} className="lp-play-card-icon" aria-hidden="true" />
+                    <span>AWS Solutions Architect study block</span>
+                  </div>
+                  <span className="lp-neuro-shame-tag">8 days overdue</span>
+                </div>
+                <div className="lp-neuro-row lp-neuro-row--shame">
+                  <div className="lp-neuro-row-left">
+                    <AlertTriangle size={13} className="lp-play-card-icon" aria-hidden="true" />
+                    <span>Review 27&quot; 4K monitor deals</span>
+                  </div>
+                  <span className="lp-neuro-shame-tag">3 days overdue</span>
+                </div>
+                <div className="lp-neuro-row lp-neuro-row--shame">
+                  <div className="lp-neuro-row-left">
+                    <AlertTriangle size={13} className="lp-play-card-icon" aria-hidden="true" />
+                    <span>Run 10k sub-50 training schedule</span>
+                  </div>
+                  <span className="lp-neuro-shame-tag">Streak broken</span>
+                </div>
+              </div>
+              <div className="lp-neuro-box-footer">
+                47 overdue items accumulated. Flashing red badges and broken streaks trigger avoidance loops and mental paralysis.
+              </div>
+            </div>
+
+            <div className="lp-neuro-box lp-neuro-box--good">
+              <div className="lp-neuro-box-header">
+                <span className="lp-neuro-box-title">The Mainframe (Cognitive Shield)</span>
+                <span className="lp-neuro-badge lp-neuro-badge--good">Blunt Re-entry</span>
+              </div>
+              <div className="lp-neuro-items">
+                <div className="lp-neuro-row">
+                  <div className="lp-neuro-row-left">
+                    <span className="lp-tick lp-tick--accent" />
+                    <span>AWS Solutions Architect exam</span>
+                  </div>
+                  <span className="lp-neuro-calm-tag">Needs attention · 3d</span>
+                </div>
+                <div className="lp-neuro-row">
+                  <div className="lp-neuro-row-left">
+                    <span className="lp-tick lp-tick--accent" />
+                    <span>Local-first P2P differential sync</span>
+                  </div>
+                  <span className="lp-neuro-calm-tag">In progress · Active loop</span>
+                </div>
+                <div className="lp-neuro-row">
+                  <div className="lp-neuro-row-left">
+                    <span className="lp-tick" />
+                    <span>Client delivery sprint milestone</span>
+                  </div>
+                  <span className="lp-neuro-calm-tag">2 weeks since update</span>
+                </div>
+                <div className="lp-neuro-row">
+                  <div className="lp-neuro-row-left">
+                    <span className="lp-tick" />
+                    <span>Remaining parallel tracks safely filed</span>
+                  </div>
+                  <span className="lp-neuro-calm-tag">Working memory capped</span>
+                </div>
+              </div>
+              <div className="lp-neuro-box-footer">
+                Attention capped strictly at 3–5 items based on cognitive working memory limits. Returning after time away presents calm, neutral facts with zero guilt.
+              </div>
+            </div>
+          </div>
         </Section>
 
         {/* 4. Product walkthrough */}
@@ -491,9 +503,50 @@ export default function LandingPage() {
         <Section
           id="platforms"
           title="What you can actually run today"
-          lede="One Tauri v2 codebase, built by GitHub Actions for four platforms. Everything below is a build target, not a tested release."
+          lede="One Tauri v2 codebase, built by GitHub Actions for four platforms. Versioned v0.1.0 release binaries available directly below."
         >
-          <div className="lp-table-wrap">
+          <div className="lp-platform-hub" data-od-id="platform-download-hub">
+            {releaseAssets.map((asset) => (
+              <div className="lp-platform-card" key={asset.platform}>
+                <div className="lp-platform-header">
+                  <span className="lp-platform-name">{asset.platform}</span>
+                  <span className="lp-platform-badge">{asset.badge}</span>
+                </div>
+                <p className="lp-platform-detail lp-mono">{asset.filename}</p>
+                <div className="lp-platform-cta">
+                  <a
+                    className="lp-platform-btn"
+                    href={asset.url}
+                    target="_blank"
+                    rel="noreferrer noopener"
+                  >
+                    <Download size={14} aria-hidden="true" />
+                    Download {asset.format.split(" ")[0]}
+                  </a>
+                  {asset.secondary && (
+                    <a
+                      className="lp-platform-sec"
+                      href={asset.secondary.url}
+                      target="_blank"
+                      rel="noreferrer noopener"
+                    >
+                      Also available as {asset.secondary.format}
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="lp-terminal-box">
+            <div>
+              <span className="lp-terminal-prefix">$</span>
+              <span className="lp-terminal-command">git clone https://github.com/karefined-eng/the-mainframe.git</span>
+            </div>
+            <span className="lp-terminal-hint">Build from source · Tauri v2 + Rust</span>
+          </div>
+
+          <div className="lp-table-wrap" style={{ marginTop: "32px" }}>
             <table className="lp-table">
               <caption>
                 Platform status as documented in the repository README. Versioned release packages available for download.
