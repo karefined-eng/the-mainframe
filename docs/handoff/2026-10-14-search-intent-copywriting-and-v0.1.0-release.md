@@ -109,3 +109,20 @@ The following verified search phrases were integrated across repository copy, me
 - `npx vite build`: Exited with code 0 (`built in 1m 9s`, all 1629 modules bundled into `dist/`).
 - `node --experimental-strip-types --test tests/*.test.ts`: 5 of 5 tests passed (urgency algorithm, calendar periods, shortlist capping).
 - GitHub Release `v0.1.0` verified with 7 multi-platform binary assets attached.
+
+---
+
+## 7. Public Website Overhaul & Web Browser Routing Fix
+
+1. **Web Browser Routing Auto-Detection (`src/landing/route.ts`):**
+   - Fixed an architectural bug where visiting `/` on a standard web browser (outside Tauri) triggered SQLite load errors. Standard browser visits to `/` now automatically render the public presentation landing page, while the native Tauri shell defaults to the in-app dashboard.
+2. **Comparison Matrix Section Added:**
+   - Embedded the high-converting Todoist/TickTick vs Notion/Anytype vs The Mainframe comparison table into the website at `#compare`.
+3. **Placeholder Replacement with Rich Interactive UI Mockups:**
+   - Replaced raw text "Asset pending: ..." placeholders with authentic dark-mode UI mockup components:
+     - Step 01: Raw text paste ingestion terminal with auto-category prefix tags.
+     - Step 02: 5-domain card grid with progress bars and item counts.
+     - Step 03: "What's Hot" cognitive attention shortlist capped at 3 items with neutral status badges.
+     - Step 04: P2P LAN/USB differential sync transfer card with PIN and WAL check.
+4. **Social Sharing Metadata:**
+   - Pointed OpenGraph and Twitter card previews to `public/landing/social-preview.jpg` for rich previews across Discord, Twitter, Slack, and Reddit.
