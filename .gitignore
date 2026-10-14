@@ -23,8 +23,14 @@ dist-ssr
 *.sln
 *.sw?
 
-# Import Directory
+# Import Directory & Private Local Data
 imports/
+*_import.json
+import.json
+recovered_mainframe_items.json
+audio_converted_transcription_*.txt
+*transcript*.txt
+organize_imports.bat
 
 dist-installers/
 .zcode/
