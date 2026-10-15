@@ -277,17 +277,17 @@ footer.colophon p { margin: 0.2rem 0; }
     <h2 id="verdict-heading" class="sr-only" style="position:absolute;left:-9999px">Result</h2>
     <div class="hero">
       <div class="verdict">
-        <span class="score">96</span>
+        <span class="score">88</span>
         <span class="outof">out of 100</span>
         <span class="tier" data-tier="excellent">Excellent</span>
       </div>
       
-      <div class="meter" data-tier="excellent" aria-hidden="true"><span style="width: 96%"></span></div>
+      <div class="meter" data-tier="excellent" aria-hidden="true"><span style="width: 88%"></span></div>
       
       <p class="verdict-meaning">AI engines can lift answers from this page with almost no rewriting.</p>
       <div class="fineprint">
         
-        <p class="caveat">Computed on 21 of 23 signals. Not measured: Content without JavaScript, Language versions - the score is taken over the rest.</p>
+        <p class="caveat">Computed on 23 of 27 signals. Not measured: Community discussion, Video presence, Content without JavaScript, Language versions - the score is taken over the rest.</p>
         <p class="caveat">This measures how readable and attributable these pages are to a machine: what a crawler can fetch, quote and attribute. It is not a measure of how often the site is cited today. A well-known site with sparse metadata will score below its reputation, and the categories below show where the difference sits.</p>
       </div>
     </div>
@@ -298,7 +298,7 @@ footer.colophon p { margin: 0.2rem 0; }
 
     
     <h2>Summary</h2>
-    <p class="summary">the-mainframe-app.vercel.app scores 96/100 (Excellent) over 1 page. Its strongest area is content (100) and its weakest is citability (89). The largest single gain is “Claims arrive without numbers, dates or sources”, worth up to 2.7 points on the overall score.</p>
+    <p class="summary">the-mainframe-app.vercel.app scores 88/100 (Excellent) over 1 page. Its strongest area is content (100) and its weakest is brand (55). The largest single gain is “The brand has no encyclopedic entity to resolve to”, worth up to 5.45 points on the overall score.</p>
     
 
     
@@ -320,7 +320,9 @@ footer.colophon p { margin: 0.2rem 0; }
       
       <li><span class="pill high">high</span> <strong>Claims arrive without numbers, dates or sources</strong> <span class="muted">affects 1 page</span></li>
       
-      <li><span class="pill low">low</span> <strong>The site is hard to discover in bulk</strong> <span class="muted">affects 1 page</span></li>
+      <li><span class="pill medium">medium</span> <strong>The brand has no encyclopedic entity to resolve to</strong> <span class="muted">affects 1 page</span></li>
+      
+      <li><span class="pill low">low</span> <strong>The site&#39;s sameAs links no Wikipedia or Wikidata entry</strong> <span class="muted">affects 1 page</span></li>
       
     </ul>
     
@@ -348,8 +350,48 @@ footer.colophon p { margin: 0.2rem 0; }
       
     </div>
     
+    <div class="fix medium">
+      <h3>2. The brand has no encyclopedic entity to resolve to</h3>
+      <p class="tags">
+        <span class="tag">medium</span>
+        <span class="chip">high effort</span>
+        <span class="chip">1 page</span>
+        <span class="chip gain">up to +5.45 overall</span>
+      </p>
+      <p>A Wikipedia article and a Wikidata item are how an engine turns a name into an entity it can reason about. Neither can be created to order, and writing your own is against Wikipedia&#39;s conflict-of-interest guidance. What you can do is earn the independent coverage those pages require, and make sure the facts an editor would need are easy to find on your own site.</p>
+      
+      <div class="evidence">
+        <p>20 of 35 on every page measured (1): one shared template decides it, so one change fixes it everywhere.</p>
+        
+      </div>
+      
+      
+      <p class="pages"><span class="path">The Mainframe</span></p>
+      
+    </div>
+    
     <div class="fix low">
-      <h3>2. The site is hard to discover in bulk</h3>
+      <h3>3. The site&#39;s sameAs links no Wikipedia or Wikidata entry</h3>
+      <p class="tags">
+        <span class="tag">low</span>
+        <span class="chip">low effort</span>
+        <span class="chip">1 page</span>
+        <span class="chip gain">up to +3.64 overall</span>
+      </p>
+      <p>The Organization `sameAs` already lists 5 profiles; the half this category is missing is a Wikipedia article or Wikidata item to link to. Neither can be created to order: they follow independent coverage. When one exists, add it to `sameAs`.</p>
+      
+      <div class="evidence">
+        <p>10 of 20 on every page measured (1): one shared template decides it, so one change fixes it everywhere.</p>
+        
+      </div>
+      
+      
+      <p class="pages"><span class="path">The Mainframe</span></p>
+      
+    </div>
+    
+    <div class="fix low">
+      <h3>4. The site is hard to discover in bulk</h3>
       <p class="tags">
         <span class="tag">low</span>
         <span class="chip">low effort</span>
@@ -377,8 +419,10 @@ footer.colophon p { margin: 0.2rem 0; }
        reading the site is in the first group whatever it costs.</p>
     
     <div class="plan-group">
-      <h3>This week <span class="gain">low effort &middot; up to +0.7 overall</span></h3>
+      <h3>This week <span class="gain">low effort &middot; up to +4.3 overall</span></h3>
       <ol class="plan">
+        
+        <li><span>The site&#39;s sameAs links no Wikipedia or Wikidata entry</span> <span class="gain">+3.64</span></li>
         
         <li><span>The site is hard to discover in bulk</span> <span class="gain">+0.71</span></li>
         
@@ -390,6 +434,15 @@ footer.colophon p { margin: 0.2rem 0; }
       <ol class="plan">
         
         <li><span>Claims arrive without numbers, dates or sources</span> <span class="gain">+2.7</span></li>
+        
+      </ol>
+    </div>
+    
+    <div class="plan-group">
+      <h3>This quarter <span class="gain">high effort &middot; up to +5.5 overall</span></h3>
+      <ol class="plan">
+        
+        <li><span>The brand has no encyclopedic entity to resolve to</span> <span class="gain">+5.45</span></li>
         
       </ol>
     </div>
@@ -410,7 +463,7 @@ footer.colophon p { margin: 0.2rem 0; }
           <td class="num label" data-label="Score"><span class="val">100/100</span><span class="bar" data-tier="excellent" aria-hidden="true"><span style="width: 100%"></span></span></td>
           <td class="label" data-label="Rating"><span class="tier-word" data-tier="excellent">excellent</span></td>
           <td class="num label" data-label="Weight">20</td>
-          <td class="num label" data-label="Adds">25.0</td>
+          <td class="num label" data-label="Adds">20.0</td>
           <td class="label" data-label="Measures">Whether the writing says who stands behind it, when it was last checked, and enough to answer on its own.</td>
         </tr>
       
@@ -419,7 +472,7 @@ footer.colophon p { margin: 0.2rem 0; }
           <td class="num label" data-label="Score"><span class="val">100/100</span><span class="bar" data-tier="excellent" aria-hidden="true"><span style="width: 100%"></span></span></td>
           <td class="label" data-label="Rating"><span class="tier-word" data-tier="excellent">excellent</span></td>
           <td class="num label" data-label="Weight">10</td>
-          <td class="num label" data-label="Adds">12.5</td>
+          <td class="num label" data-label="Adds">10.0</td>
           <td class="label" data-label="Measures">Whether the page describes itself in a form nobody has to interpret.</td>
         </tr>
       
@@ -428,7 +481,7 @@ footer.colophon p { margin: 0.2rem 0; }
           <td class="num label" data-label="Score"><span class="val">100/100</span><span class="bar" data-tier="excellent" aria-hidden="true"><span style="width: 100%"></span></span></td>
           <td class="label" data-label="Rating"><span class="tier-word" data-tier="excellent">excellent</span></td>
           <td class="num label" data-label="Weight">15</td>
-          <td class="num label" data-label="Adds">18.8</td>
+          <td class="num label" data-label="Adds">15.0</td>
           <td class="label" data-label="Measures">Whether a crawler can reach, read and index the page at all.</td>
         </tr>
       
@@ -437,7 +490,7 @@ footer.colophon p { margin: 0.2rem 0; }
           <td class="num label" data-label="Score"><span class="val">93/100</span><span class="bar" data-tier="excellent" aria-hidden="true"><span style="width: 93%"></span></span></td>
           <td class="label" data-label="Rating"><span class="tier-word" data-tier="excellent">excellent</span></td>
           <td class="num label" data-label="Weight">10</td>
-          <td class="num label" data-label="Adds">11.6</td>
+          <td class="num label" data-label="Adds">9.3</td>
           <td class="label" data-label="Measures">Whether the site publishes what engines read around its pages: llms.txt, feeds, social cards and language versions.</td>
         </tr>
       
@@ -446,8 +499,17 @@ footer.colophon p { margin: 0.2rem 0; }
           <td class="num label" data-label="Score"><span class="val">89/100</span><span class="bar" data-tier="excellent" aria-hidden="true"><span style="width: 89%"></span></span></td>
           <td class="label" data-label="Rating"><span class="tier-word" data-tier="excellent">excellent</span></td>
           <td class="num label" data-label="Weight">25</td>
-          <td class="num label" data-label="Adds">27.8</td>
+          <td class="num label" data-label="Adds">22.2</td>
           <td class="label" data-label="Measures">Whether a passage can be lifted from the page and used as an answer.</td>
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Category">brand</td>
+          <td class="num label" data-label="Score"><span class="val">55/100</span><span class="bar" data-tier="fair" aria-hidden="true"><span style="width: 55%"></span></span></td>
+          <td class="label" data-label="Rating"><span class="tier-word" data-tier="fair">fair</span></td>
+          <td class="num label" data-label="Weight">20</td>
+          <td class="num label" data-label="Adds">11.0</td>
+          <td class="label" data-label="Measures">Whether the name resolves to an entity an engine can look up.</td>
         </tr>
       
       </tbody>
@@ -455,17 +517,15 @@ footer.colophon p { margin: 0.2rem 0; }
       <tfoot>
         <tr>
           <td class="label" data-label="Category">Overall</td>
-          <td class="num label" data-label="Score">96/100</td>
+          <td class="num label" data-label="Score">88/100</td>
           <td class="label" data-label="Rating"><span class="tier-word" data-tier="excellent">Excellent</span></td>
-          <td class="num label" data-label="Weight">80</td>
-          <td class="num label" data-label="Adds">96</td>
+          <td class="num label" data-label="Weight">100</td>
+          <td class="num label" data-label="Adds">88</td>
           <td class="label" data-label="Measures">Each category's score times its weight, over the total weight.</td>
         </tr>
       </tfoot>
       
     </table>
-    
-    <p class="caveat">brand (weight 20) was not part of this run, so the overall score is taken over the categories that were.</p>
     
   </section>
   
@@ -835,6 +895,41 @@ footer.colophon p { margin: 0.2rem 0; }
       </tbody>
     </table>
     
+    <h3 class="detail">brand <span class="chip">55/100</span></h3>
+    <table class="signals">
+      <tbody>
+      
+        <tr>
+          <td class="label" data-label="Measure">Encyclopedic entry</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">20 of 35</span><span class="bar" aria-hidden="true"><span style="width: 57%"></span></span></td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Community discussion</td>
+          
+          <td class="label status" data-label="Score">Not measured: Reddit returned 403</td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Video presence</td>
+          
+          <td class="label status" data-label="Score">Not measured: no API key: set GEO_YOUTUBE_API_KEY to enable this check</td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Profile links</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">10 of 20</span><span class="bar" aria-hidden="true"><span style="width: 50%"></span></span></td>
+          
+        </tr>
+      
+      </tbody>
+    </table>
+    
   </section>
   
 
@@ -856,6 +951,35 @@ footer.colophon p { margin: 0.2rem 0; }
       </div>
       
       <p class="pages"><span class="path">/</span></p>
+    </div>
+    
+    
+    <h3 class="group">brand</h3>
+    
+    <div class="fix medium">
+      <h3>The brand has no encyclopedic entity to resolve to</h3>
+      <p class="tags"><span class="tag">medium</span> <span class="chip">high effort</span> <span class="chip">1 page</span> <span class="chip gain">up to +5.45 overall</span></p>
+      <p>A Wikipedia article and a Wikidata item are how an engine turns a name into an entity it can reason about. Neither can be created to order, and writing your own is against Wikipedia&#39;s conflict-of-interest guidance. What you can do is earn the independent coverage those pages require, and make sure the facts an editor would need are easy to find on your own site.</p>
+      
+      <div class="evidence">
+        <p>20 of 35 on every page measured (1): one shared template decides it, so one change fixes it everywhere.</p>
+        
+      </div>
+      
+      <p class="pages"><span class="path">The Mainframe</span></p>
+    </div>
+    
+    <div class="fix low">
+      <h3>The site&#39;s sameAs links no Wikipedia or Wikidata entry</h3>
+      <p class="tags"><span class="tag">low</span> <span class="chip">low effort</span> <span class="chip">1 page</span> <span class="chip gain">up to +3.64 overall</span></p>
+      <p>The Organization `sameAs` already lists 5 profiles; the half this category is missing is a Wikipedia article or Wikidata item to link to. Neither can be created to order: they follow independent coverage. When one exists, add it to `sameAs`.</p>
+      
+      <div class="evidence">
+        <p>10 of 20 on every page measured (1): one shared template decides it, so one change fixes it everywhere.</p>
+        
+      </div>
+      
+      <p class="pages"><span class="path">The Mainframe</span></p>
     </div>
     
     
@@ -916,6 +1040,9 @@ footer.colophon p { margin: 0.2rem 0; }
 
     <h3>Categories and their weights</h3>
     <dl>
+      
+      <dt>brand — weight 20</dt>
+      <dd>Whether the name resolves to an entity an engine can look up.</dd>
       
       <dt>citability — weight 25</dt>
       <dd>Whether a passage can be lifted from the page and used as an answer.</dd>

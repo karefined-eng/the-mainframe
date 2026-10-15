@@ -1,0 +1,1020 @@
+{
+  "schema_version": 1,
+  "command": "audit",
+  "ok": true,
+  "cli_version": "1.2.1",
+  "scoring_version": "4.0",
+  "data_version": "2026.09",
+  "normalizer_version": 3,
+  "run_id": "01M4Z7H8MYGQ0JZ3TSKS3C58XW",
+  "observed_at": "2026-10-15T07:31:06Z",
+  "evidence": {
+    "stamp": "CURRENT",
+    "content_hash": "e4050002ad69a791b81886099410eb6d730b81b13999faa12419f5623b9213ee",
+    "normalizer_version": 3,
+    "pages_ok": 1,
+    "pages_failed": []
+  },
+  "completeness": {
+    "computed": 23,
+    "total": 27,
+    "missing": [
+      "brand.community",
+      "brand.video",
+      "citability.render_parity",
+      "platform.hreflang"
+    ],
+    "categories": {
+      "computed": [
+        "brand",
+        "citability",
+        "content",
+        "platform",
+        "schema",
+        "technical"
+      ],
+      "declared": [
+        "brand",
+        "citability",
+        "content",
+        "platform",
+        "schema",
+        "technical"
+      ],
+      "missing": [],
+      "weights_used": {
+        "brand": 20,
+        "citability": 25,
+        "content": 20,
+        "platform": 10,
+        "schema": 10,
+        "technical": 15
+      }
+    }
+  },
+  "scores": {
+    "composite": 88,
+    "tier": "excellent",
+    "tier_meaning": "AI engines can lift answers from this page with almost no rewriting.",
+    "categories": {
+      "citability": 89,
+      "technical": 100,
+      "schema": 100,
+      "content": 100,
+      "platform": 93,
+      "brand": 55
+    }
+  },
+  "signals": [
+    {
+      "id": "citability.self_containment",
+      "class": "heuristic",
+      "value": 25.0,
+      "max": 25,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 25.0,
+        "min": 25.0,
+        "max": 25.0,
+        "worst_page": "https://the-mainframe-app.vercel.app/",
+        "candidate_blocks": 18,
+        "self_contained": 18,
+        "ratio": 1.0,
+        "floor_ratio": 0.3,
+        "good_ratio": 0.85
+      }
+    },
+    {
+      "id": "citability.answer_first",
+      "class": "heuristic",
+      "value": 20.0,
+      "max": 20,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 20.0,
+        "min": 20.0,
+        "max": 20.0,
+        "worst_page": "https://the-mainframe-app.vercel.app/",
+        "sections": 18,
+        "answer_first": 18,
+        "ratio": 1.0,
+        "max_lead_words": 45
+      }
+    },
+    {
+      "id": "citability.structure",
+      "class": "deterministic",
+      "value": 15.0,
+      "max": 15,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 15.0,
+        "min": 15.0,
+        "max": 15.0,
+        "worst_page": "https://the-mainframe-app.vercel.app/",
+        "h1": 1,
+        "h2": 7,
+        "headings": 20,
+        "skipped_levels": 0,
+        "sections": 8,
+        "oversized_sections": 0,
+        "max_section_words": 400,
+        "breakdown": {
+          "single_h1": 4.0,
+          "enough_h2": 4.0,
+          "no_skipped_levels": 3.0,
+          "section_length": 4.0
+        }
+      }
+    },
+    {
+      "id": "citability.evidence_density",
+      "class": "heuristic",
+      "value": 5.26,
+      "max": 15,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 5.26,
+        "min": 5.26,
+        "max": 5.26,
+        "worst_page": "https://the-mainframe-app.vercel.app/",
+        "prose_blocks": 19,
+        "blocks_with_facts": 3,
+        "ratio": 0.158,
+        "external_domains": 1,
+        "breakdown": {
+          "facts": 3.6,
+          "outbound_citations": 1.67
+        },
+        "worst_example": "Traditional productivity systems collapse every ambition into a single overwhelming to-do queue where urgent errands eclipse long-term mastery. The Mainframe solves this through domain separation. By segmenting your brain dump into five dedicated, parallel tracks—Certifications,…"
+      }
+    },
+    {
+      "id": "citability.extractability",
+      "class": "deterministic",
+      "value": 15.0,
+      "max": 15,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 15.0,
+        "min": 15.0,
+        "max": 15.0,
+        "worst_page": "https://the-mainframe-app.vercel.app/",
+        "content_chars": 6753,
+        "body_chars": 7059,
+        "content_ratio": 0.957,
+        "content_root": "main",
+        "lists": 0,
+        "tables": 1,
+        "js_required_notice": false,
+        "framework_root_chars": 7059,
+        "empty_framework_root": false,
+        "js_gated": false,
+        "min_content_chars": 1200
+      }
+    },
+    {
+      "id": "citability.attribution",
+      "class": "deterministic",
+      "value": null,
+      "max": 10,
+      "page": null,
+      "detail": {
+        "reason": "not applicable: articles only"
+      },
+      "skipped_reason": "not applicable: articles only"
+    },
+    {
+      "id": "citability.render_parity",
+      "class": "heuristic",
+      "value": null,
+      "max": 10,
+      "page": null,
+      "detail": {
+        "reason": "browser extra not installed"
+      },
+      "skipped_reason": "browser extra not installed"
+    },
+    {
+      "id": "technical.crawler_access",
+      "class": "deterministic",
+      "value": 25.0,
+      "max": 25,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 25.0,
+        "min": 25.0,
+        "max": 25.0,
+        "worst_page": "https://the-mainframe-app.vercel.app/",
+        "critical_total": 9,
+        "critical_allowed": 9,
+        "blocked_critical": [],
+        "blocked_training_only": [],
+        "robots_status": 200
+      }
+    },
+    {
+      "id": "technical.indexability",
+      "class": "deterministic",
+      "value": 20.0,
+      "max": 20,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 20.0,
+        "min": 20.0,
+        "max": 20.0,
+        "worst_page": "https://the-mainframe-app.vercel.app/",
+        "noindex": false,
+        "nofollow": false,
+        "meta_robots": null,
+        "x_robots_tag": null,
+        "canonical": "https://the-mainframe-app.vercel.app/"
+      }
+    },
+    {
+      "id": "technical.metadata",
+      "class": "deterministic",
+      "value": 20.0,
+      "max": 20,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 20.0,
+        "min": 20.0,
+        "max": 20.0,
+        "worst_page": "https://the-mainframe-app.vercel.app/",
+        "title_chars": 59,
+        "description_chars": 151,
+        "lang": "en",
+        "h1_count": 1,
+        "images": 0,
+        "images_with_alt": 0,
+        "breakdown": {
+          "title": 5.0,
+          "description": 5.0,
+          "lang": 3.0,
+          "single_h1": 4.0,
+          "image_alt": 3.0
+        },
+        "limits": {
+          "title_chars": [
+            15,
+            65
+          ],
+          "description_chars": [
+            70,
+            160
+          ]
+        }
+      }
+    },
+    {
+      "id": "technical.status_health",
+      "class": "deterministic",
+      "value": 15.0,
+      "max": 15,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 15.0,
+        "min": 15.0,
+        "max": 15.0,
+        "worst_page": "https://the-mainframe-app.vercel.app/",
+        "status": 200,
+        "redirect_hops": 0,
+        "penalty_per_hop": 2
+      }
+    },
+    {
+      "id": "technical.transport_security",
+      "class": "deterministic",
+      "value": 10.0,
+      "max": 10,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 10.0,
+        "min": 10.0,
+        "max": 10.0,
+        "worst_page": "https://the-mainframe-app.vercel.app/",
+        "https": true,
+        "hsts": true,
+        "breakdown": {
+          "https": 7,
+          "hsts": 3
+        }
+      }
+    },
+    {
+      "id": "technical.url_structure",
+      "class": "heuristic",
+      "value": 10.0,
+      "max": 10,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 10.0,
+        "min": 10.0,
+        "max": 10.0,
+        "worst_page": "https://the-mainframe-app.vercel.app/",
+        "path": "/",
+        "depth": 0,
+        "checks": {
+          "depth_within_limit": true,
+          "length_within_limit": true,
+          "lowercase": true,
+          "no_underscores": true,
+          "no_session_id": true
+        },
+        "limits": {
+          "depth": 4,
+          "length": 100
+        }
+      }
+    },
+    {
+      "id": "schema.presence",
+      "class": "deterministic",
+      "value": 30.0,
+      "max": 30,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 30.0,
+        "min": 30.0,
+        "max": 30.0,
+        "worst_page": "https://the-mainframe-app.vercel.app/",
+        "blocks": 5,
+        "blocks_attempted": 5,
+        "unparseable_blocks": 0,
+        "types": [
+          "Answer",
+          "BreadcrumbList",
+          "FAQPage",
+          "ListItem",
+          "Offer",
+          "Organization",
+          "Person",
+          "Question",
+          "SearchAction",
+          "SoftwareApplication",
+          "WebSite"
+        ]
+      }
+    },
+    {
+      "id": "schema.validity",
+      "class": "deterministic",
+      "value": 25.0,
+      "max": 25,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 25.0,
+        "min": 25.0,
+        "max": 25.0,
+        "worst_page": "https://the-mainframe-app.vercel.app/",
+        "checked": 6,
+        "missing_required": [],
+        "parse_errors": []
+      }
+    },
+    {
+      "id": "schema.organization",
+      "class": "deterministic",
+      "value": 20.0,
+      "max": 20,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 20.0,
+        "min": 20.0,
+        "max": 20.0,
+        "worst_page": "https://the-mainframe-app.vercel.app/",
+        "types": [
+          "Organization",
+          "Person"
+        ],
+        "present": [
+          "description",
+          "logo",
+          "name",
+          "sameAs",
+          "url"
+        ],
+        "missing": [],
+        "same_as_count": 5
+      }
+    },
+    {
+      "id": "schema.article",
+      "class": "deterministic",
+      "value": null,
+      "max": 15,
+      "page": null,
+      "detail": {
+        "reason": "not applicable: articles only"
+      },
+      "skipped_reason": "not applicable: articles only"
+    },
+    {
+      "id": "schema.breadth",
+      "class": "heuristic",
+      "value": 10.0,
+      "max": 10,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 10.0,
+        "min": 10.0,
+        "max": 10.0,
+        "worst_page": "https://the-mainframe-app.vercel.app/",
+        "answer_types_found": [
+          "BreadcrumbList",
+          "FAQPage",
+          "SoftwareApplication"
+        ],
+        "answer_types_known": [
+          "BreadcrumbList",
+          "Event",
+          "FAQPage",
+          "HowTo",
+          "LocalBusiness",
+          "Product",
+          "QAPage",
+          "Recipe",
+          "SoftwareApplication",
+          "VideoObject"
+        ],
+        "full_marks_at": 2
+      }
+    },
+    {
+      "id": "content.depth",
+      "class": "heuristic",
+      "value": 25.0,
+      "max": 25,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 25.0,
+        "min": 25.0,
+        "max": 25.0,
+        "worst_page": "https://the-mainframe-app.vercel.app/",
+        "content_chars": 6753,
+        "sections": 8,
+        "lists": 0,
+        "tables": 1,
+        "thin": false,
+        "min_chars": 900,
+        "breakdown": {
+          "volume": 15.0,
+          "structure": 6.0,
+          "media": 4.0
+        }
+      }
+    },
+    {
+      "id": "content.expertise",
+      "class": "deterministic",
+      "value": null,
+      "max": 25,
+      "page": null,
+      "detail": {
+        "reason": "not applicable: articles only"
+      },
+      "skipped_reason": "not applicable: articles only"
+    },
+    {
+      "id": "content.freshness",
+      "class": "deterministic",
+      "value": 25.0,
+      "max": 25,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 25.0,
+        "min": 25.0,
+        "max": 25.0,
+        "worst_page": "https://the-mainframe-app.vercel.app/",
+        "age_days": 0,
+        "modified": "2026-10-15T00:00:00Z",
+        "published": null,
+        "dates_found": [
+          "article:modified_time"
+        ],
+        "fresh_days": 180,
+        "stale_days": 730,
+        "breakdown": {
+          "recency": 17.0,
+          "has_modified_date": 8.0
+        }
+      }
+    },
+    {
+      "id": "content.readability",
+      "class": "heuristic",
+      "value": 25.0,
+      "max": 25,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 25.0,
+        "min": 25.0,
+        "max": 25.0,
+        "worst_page": "https://the-mainframe-app.vercel.app/",
+        "sentences": 42,
+        "mean_words": 18.3,
+        "longest": 37,
+        "long_sentences": 1,
+        "long_share": 0.024,
+        "thresholds": {
+          "good_mean_words": 20,
+          "long_sentence_words": 35
+        }
+      }
+    },
+    {
+      "id": "platform.llms_txt",
+      "class": "deterministic",
+      "value": 35.0,
+      "max": 35,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 35.0,
+        "min": 35.0,
+        "max": 35.0,
+        "worst_page": "https://the-mainframe-app.vercel.app/",
+        "present": true,
+        "valid": true,
+        "note": null
+      }
+    },
+    {
+      "id": "platform.social_cards",
+      "class": "deterministic",
+      "value": 30.0,
+      "max": 30,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 30.0,
+        "min": 30.0,
+        "max": 30.0,
+        "worst_page": "https://the-mainframe-app.vercel.app/",
+        "open_graph_present": [
+          "og:title",
+          "og:description",
+          "og:image"
+        ],
+        "open_graph_missing": [],
+        "twitter_present": [
+          "twitter:card",
+          "twitter:title",
+          "twitter:description",
+          "twitter:image"
+        ],
+        "breakdown": {
+          "open_graph": 24.0,
+          "twitter": 6.0
+        }
+      }
+    },
+    {
+      "id": "platform.feeds",
+      "class": "deterministic",
+      "value": 14.0,
+      "max": 20,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 14.0,
+        "min": 14.0,
+        "max": 14.0,
+        "worst_page": "https://the-mainframe-app.vercel.app/",
+        "sitemaps_in_robots": 1,
+        "feed_link": false,
+        "breakdown": {
+          "sitemap": 14.0,
+          "feed": 0.0
+        }
+      }
+    },
+    {
+      "id": "platform.hreflang",
+      "class": "deterministic",
+      "value": null,
+      "max": 15,
+      "page": null,
+      "detail": {
+        "reason": "only one language was seen on this site, so hreflang does not apply"
+      },
+      "skipped_reason": "only one language was seen on this site, so hreflang does not apply"
+    },
+    {
+      "id": "brand.encyclopedic",
+      "class": "live",
+      "value": 20.0,
+      "max": 35,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 20.0,
+        "min": 20.0,
+        "max": 20.0,
+        "worst_page": null,
+        "wikipedia_results": 5,
+        "wikidata_results": 0,
+        "breakdown": {
+          "wikipedia": 20,
+          "wikidata": 15
+        }
+      }
+    },
+    {
+      "id": "brand.community",
+      "class": "live",
+      "value": null,
+      "max": 25,
+      "page": null,
+      "detail": {
+        "reason": "Reddit returned 403"
+      },
+      "skipped_reason": "Reddit returned 403"
+    },
+    {
+      "id": "brand.video",
+      "class": "live",
+      "value": null,
+      "max": 20,
+      "page": null,
+      "detail": {
+        "reason": "no API key: set GEO_YOUTUBE_API_KEY to enable this check"
+      },
+      "skipped_reason": "no API key: set GEO_YOUTUBE_API_KEY to enable this check"
+    },
+    {
+      "id": "brand.consistency",
+      "class": "heuristic",
+      "value": 10.0,
+      "max": 20,
+      "page": null,
+      "detail": {
+        "pages_measured": 1,
+        "pages_total": 1,
+        "mean": 10.0,
+        "min": 10.0,
+        "max": 10.0,
+        "worst_page": null,
+        "same_as_count": 5,
+        "linked_hosts": [
+          "github.com",
+          "linkedin.com",
+          "x.com",
+          "youtube.com"
+        ],
+        "links_to_encyclopedic": [],
+        "breakdown": {
+          "any_same_as": 10,
+          "encyclopedic_same_as": 10
+        }
+      }
+    },
+    {
+      "id": "content.advisory.experience",
+      "class": "advisory",
+      "value": null,
+      "max": 0,
+      "page": null,
+      "detail": {
+        "question": "Does the page show first-hand experience of the thing it describes?",
+        "rubric": [
+          "Names specific situations, tools, versions or constraints the author met.",
+          "Reports what happened, including what did not work.",
+          "Could not have been written by summarising other pages on the topic."
+        ],
+        "answered_by": "model",
+        "enters_score": false
+      },
+      "skipped_reason": "advisory: answered by the model, never scored"
+    },
+    {
+      "id": "content.advisory.helpfulness",
+      "class": "advisory",
+      "value": null,
+      "max": 0,
+      "page": null,
+      "detail": {
+        "question": "Would a reader with this question leave satisfied, or keep searching?",
+        "rubric": [
+          "Answers the question the title asks, rather than the adjacent easier one.",
+          "States limits and cases where the advice does not apply.",
+          "Does not require reading another page to be actionable."
+        ],
+        "answered_by": "model",
+        "enters_score": false
+      },
+      "skipped_reason": "advisory: answered by the model, never scored"
+    }
+  ],
+  "findings": [
+    {
+      "id": "citability.evidence_density",
+      "severity": "high",
+      "effort": "medium",
+      "priority": 1,
+      "points_lost": 9.74,
+      "impact": 2.7,
+      "page_level": false,
+      "pages": [
+        "https://the-mainframe-app.vercel.app/"
+      ],
+      "title": "Claims arrive without numbers, dates or sources",
+      "remediation": "Add the specific figure, date, version or measurement to each claim, and link the primary source. Passages carrying a checkable fact are the ones engines quote.",
+      "excerpt": "Traditional productivity systems collapse every ambition into a single overwhelming to-do queue where urgent errands eclipse long-term mastery. The Mainframe solves this through domain separation. By segmenting your brain dump into five dedicated, parallel tracks—Certifications,…"
+    },
+    {
+      "id": "brand.encyclopedic",
+      "severity": "medium",
+      "effort": "high",
+      "priority": 2,
+      "points_lost": 15.0,
+      "impact": 5.45,
+      "page_level": false,
+      "pages": [
+        "The Mainframe"
+      ],
+      "title": "The brand has no encyclopedic entity to resolve to",
+      "remediation": "A Wikipedia article and a Wikidata item are how an engine turns a name into an entity it can reason about. Neither can be created to order, and writing your own is against Wikipedia's conflict-of-interest guidance. What you can do is earn the independent coverage those pages require, and make sure the facts an editor would need are easy to find on your own site.",
+      "excerpt": null
+    },
+    {
+      "id": "brand.consistency",
+      "severity": "low",
+      "effort": "low",
+      "priority": 3,
+      "points_lost": 10.0,
+      "impact": 3.64,
+      "page_level": false,
+      "pages": [
+        "The Mainframe"
+      ],
+      "title": "The site's sameAs links no Wikipedia or Wikidata entry",
+      "remediation": "The Organization `sameAs` already lists 5 profiles; the half this category is missing is a Wikipedia article or Wikidata item to link to. Neither can be created to order: they follow independent coverage. When one exists, add it to `sameAs`.",
+      "excerpt": null
+    },
+    {
+      "id": "platform.feeds",
+      "severity": "low",
+      "effort": "low",
+      "priority": 4,
+      "points_lost": 6.0,
+      "impact": 0.71,
+      "page_level": false,
+      "pages": [
+        "https://the-mainframe-app.vercel.app/"
+      ],
+      "title": "The site is hard to discover in bulk",
+      "remediation": "Advertise a sitemap in robots.txt and, if the site publishes regularly, link an RSS or Atom feed from the head. Both are how a crawler finds pages nothing links to yet.",
+      "excerpt": null
+    }
+  ],
+  "error": null,
+  "crawl": {
+    "start_url": "https://the-mainframe-app.vercel.app/",
+    "site": "the-mainframe-app.vercel.app",
+    "pages_crawled": 1,
+    "pages_ok": 1,
+    "discovered": 0,
+    "seeded_from_sitemap": 0,
+    "disallowed_by_robots": [],
+    "stopped_because": "exhausted",
+    "elapsed_ms": 3463,
+    "limits": {
+      "max_pages": 50,
+      "requests_per_second": 1.0,
+      "concurrency": 5,
+      "timeout": 30.0,
+      "robots_respected": true,
+      "sitemap_used": true
+    },
+    "robots": {
+      "source_url": "https://the-mainframe-app.vercel.app/robots.txt",
+      "status": 200,
+      "unavailable": false,
+      "unreachable": false,
+      "sitemaps": [
+        "https://the-mainframe-app.vercel.app/sitemap.xml"
+      ],
+      "self_allowed": true,
+      "access": [
+        {
+          "agent": "GPTBot",
+          "allowed": true,
+          "crawl_delay": null
+        },
+        {
+          "agent": "OAI-SearchBot",
+          "allowed": true,
+          "crawl_delay": null
+        },
+        {
+          "agent": "ChatGPT-User",
+          "allowed": true,
+          "crawl_delay": null
+        },
+        {
+          "agent": "PerplexityBot",
+          "allowed": true,
+          "crawl_delay": null
+        },
+        {
+          "agent": "Perplexity-User",
+          "allowed": true,
+          "crawl_delay": null
+        },
+        {
+          "agent": "ClaudeBot",
+          "allowed": true,
+          "crawl_delay": null
+        },
+        {
+          "agent": "Claude-SearchBot",
+          "allowed": true,
+          "crawl_delay": null
+        },
+        {
+          "agent": "Claude-User",
+          "allowed": true,
+          "crawl_delay": null
+        },
+        {
+          "agent": "Google-Extended",
+          "allowed": true,
+          "crawl_delay": null
+        },
+        {
+          "agent": "Googlebot",
+          "allowed": true,
+          "crawl_delay": null
+        },
+        {
+          "agent": "Bingbot",
+          "allowed": true,
+          "crawl_delay": null
+        },
+        {
+          "agent": "Applebot",
+          "allowed": true,
+          "crawl_delay": null
+        },
+        {
+          "agent": "Applebot-Extended",
+          "allowed": true,
+          "crawl_delay": null
+        },
+        {
+          "agent": "meta-externalagent",
+          "allowed": true,
+          "crawl_delay": null
+        },
+        {
+          "agent": "Amazonbot",
+          "allowed": true,
+          "crawl_delay": null
+        },
+        {
+          "agent": "CCBot",
+          "allowed": true,
+          "crawl_delay": null
+        }
+      ]
+    },
+    "pages": [
+      {
+        "url": "https://the-mainframe-app.vercel.app/",
+        "status": 200,
+        "blocks": 64,
+        "content_chars": 6753,
+        "content_root": "main",
+        "content_hash": "cf4ac0c12e483aa60b25bb727200b3119756a4e853fc1abd6bd679cfd56eff03",
+        "headings": 20,
+        "jsonld_types": [
+          "BreadcrumbList",
+          "FAQPage",
+          "Organization",
+          "SoftwareApplication",
+          "WebSite"
+        ],
+        "scorable": true
+      }
+    ],
+    "record": "~/.geo/projects/the-mainframe-app-vercel-app/audits.jsonl"
+  },
+  "scan": {
+    "brand": "The Mainframe",
+    "site": "https://the-mainframe-app.vercel.app/",
+    "platforms": [
+      {
+        "platform": "wikipedia",
+        "label": "Wikipedia",
+        "checked": true,
+        "status": 200,
+        "results": 5,
+        "examples": [
+          "Mainframe computer",
+          "Mainframe Studios",
+          "Mainframe (disambiguation)",
+          "Insane in the Mainframe",
+          "Vision (Marvel Comics)"
+        ],
+        "docs": "https://www.mediawiki.org/wiki/API:Search",
+        "observed_at": "2026-10-15T07:31:00Z"
+      },
+      {
+        "platform": "wikidata",
+        "label": "Wikidata",
+        "checked": true,
+        "status": 200,
+        "results": 0,
+        "examples": [],
+        "docs": "https://www.wikidata.org/w/api.php?action=help&modules=wbsearchentities",
+        "observed_at": "2026-10-15T07:31:02Z"
+      },
+      {
+        "platform": "reddit",
+        "label": "Reddit",
+        "checked": false,
+        "status": 403,
+        "reason": "Reddit returned 403",
+        "docs": "https://www.reddit.com/dev/api/",
+        "observed_at": "2026-10-15T07:31:04Z"
+      },
+      {
+        "platform": "youtube",
+        "label": "YouTube",
+        "checked": false,
+        "reason": "no API key: set GEO_YOUTUBE_API_KEY to enable this check",
+        "docs": "https://developers.google.com/youtube/v3/docs/search/list",
+        "observed_at": "2026-10-15T07:31:05Z"
+      }
+    ],
+    "platforms_checked": 2,
+    "platforms_total": 4,
+    "total_results": 5,
+    "manual_checks": [
+      {
+        "label": "LinkedIn",
+        "why": "no public search API; scraping it breaks their terms",
+        "how": "Search LinkedIn for the brand and note whether a company page exists and is complete."
+      },
+      {
+        "label": "X",
+        "why": "search requires a paid API tier",
+        "how": "Search for the brand name and note whether people outside the company discuss it."
+      },
+      {
+        "label": "G2 and Capterra",
+        "why": "no free API",
+        "how": "Check whether a profile exists and how many reviews it carries; these pages are frequently cited in comparison answers."
+      }
+    ],
+    "same_as": [
+      "https://github.com/karefined-eng/the-mainframe",
+      "https://github.com/karefined-eng",
+      "https://x.com/karefined",
+      "https://www.youtube.com/@karefined",
+      "https://www.linkedin.com/company/the-mainframe"
+    ]
+  }
+}
