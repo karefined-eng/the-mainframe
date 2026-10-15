@@ -14,36 +14,326 @@
     <title>The Mainframe — Calm, Local-First Personal Operating System</title>
     <meta
       name="description"
-      content="A private, offline-first personal operating system for courses, goals, build ideas, ventures, and purchases. Zero cloud accounts, zero subscriptions, no-shame Neuro-UX, and direct P2P LAN/USB sync. A to-do list that welcomes you back instead of punishing you."
+      content="Private, local-first personal operating system for courses, goals, and ventures. 100% offline SQLite, zero-shame Neuro-UX, and direct P2P LAN/USB sync."
     />
     <meta
       name="keywords"
       content="to do list without guilt, adhd friendly task manager, how to organize multiple projects, notion alternative without subscription, offline personal dashboard, local-first productivity app, personal operating system, to do list without overdue shame, app for people with too many ideas, sqlite productivity app, p2p device sync, open source task manager"
     />
+    <meta name="author" content="Karefined" />
     <meta name="theme-color" content="#0E0E10" />
-    <link rel="canonical" href="/welcome" />
+    <meta name="referrer" content="strict-origin-when-cross-origin" />
+    <link rel="canonical" href="https://the-mainframe-app.vercel.app/" />
+    <link rel="alternate" type="text/plain" href="https://the-mainframe-app.vercel.app/llms.txt" title="LLM context" />
+    <link rel="sitemap" type="application/xml" href="https://the-mainframe-app.vercel.app/sitemap.xml" />
 
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="The Mainframe" />
     <meta property="og:title" content="The Mainframe — Calm, Local-First Personal Operating System" />
     <meta
       property="og:description"
-      content="A private, offline-first personal operating system for courses, goals, build ideas, ventures, and purchases. Zero cloud accounts, zero subscriptions, no-shame Neuro-UX, and direct P2P LAN/USB sync."
+      content="Private, local-first personal operating system for courses, goals, and ventures. 100% offline SQLite, zero-shame Neuro-UX, and direct P2P LAN/USB sync."
     />
-    <meta property="og:url" content="/welcome" />
-    <meta property="og:image" content="/landing/social-preview.jpg" />
+    <meta property="og:url" content="https://the-mainframe-app.vercel.app/" />
+    <meta property="og:image" content="https://the-mainframe-app.vercel.app/landing/social-preview.jpg" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="The Mainframe — Calm, Local-First Personal Operating System" />
     <meta
       name="twitter:description"
-      content="A private, offline-first personal operating system for courses, goals, build ideas, ventures, and purchases. Zero cloud, zero subscriptions, no-shame Neuro-UX."
+      content="Private, local-first personal operating system for courses, goals, and ventures. 100% offline SQLite, zero-shame Neuro-UX, and direct P2P LAN/USB sync."
     />
-    <meta name="twitter:image" content="/landing/social-preview.jpg" />
+    <meta name="twitter:image" content="https://the-mainframe-app.vercel.app/landing/social-preview.jpg" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://the-mainframe-app.vercel.app/#organization",
+          "name": "The Mainframe",
+          "url": "https://the-mainframe-app.vercel.app/",
+          "logo": "https://the-mainframe-app.vercel.app/the-mainframe.svg",
+          "sameAs": [
+            "https://github.com/karefined-eng/the-mainframe",
+            "https://github.com/karefined-eng",
+            "https://x.com/karefined",
+            "https://www.youtube.com/@karefined",
+            "https://www.linkedin.com/company/the-mainframe"
+          ],
+          "founder": {
+            "@type": "Person",
+            "name": "Karefined",
+            "url": "https://github.com/karefined-eng"
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://the-mainframe-app.vercel.app/#website",
+          "url": "https://the-mainframe-app.vercel.app/",
+          "name": "The Mainframe",
+          "description": "Private, local-first personal operating system for courses, goals, and ventures.",
+          "publisher": {
+            "@id": "https://the-mainframe-app.vercel.app/#organization"
+          },
+          "potentialAction": {
+            "@type": "SearchAction",
+            "target": "https://the-mainframe-app.vercel.app/?q={search_term_string}",
+            "query-input": "required name=search_term_string"
+          }
+        },
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://the-mainframe-app.vercel.app/#software",
+          "name": "The Mainframe",
+          "applicationCategory": "ProductivityApplication",
+          "operatingSystem": "Windows, macOS, Linux, Android",
+          "description": "Private, local-first personal operating system for courses, goals, and ventures. 100% offline SQLite, zero-shame Neuro-UX, and direct P2P LAN/USB sync.",
+          "url": "https://the-mainframe-app.vercel.app/",
+          "image": "https://the-mainframe-app.vercel.app/landing/social-preview.jpg",
+          "datePublished": "2026-10-14",
+          "dateModified": "2026-10-14",
+          "offers": {
+            "@type": "Offer",
+            "price": "0",
+            "priceCurrency": "USD"
+          },
+          "author": {
+            "@id": "https://the-mainframe-app.vercel.app/#organization"
+          }
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://the-mainframe-app.vercel.app/#breadcrumbs",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://the-mainframe-app.vercel.app/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Features",
+              "item": "https://the-mainframe-app.vercel.app/#features"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": "Comparison",
+              "item": "https://the-mainframe-app.vercel.app/#compare"
+            },
+            {
+              "@type": "ListItem",
+              "position": 4,
+              "name": "Download",
+              "item": "https://the-mainframe-app.vercel.app/#platforms"
+            }
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://the-mainframe-app.vercel.app/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is The Mainframe?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The Mainframe is an open-source, local-first personal management desktop and mobile app built with Tauri v2 (Rust) and React. It organizes scattered projects, courses, ideas, purchases, and goals across 5 distinct domains with 100% offline SQLite storage."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How does The Mainframe protect user data and privacy?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The Mainframe requires no user account, no cloud servers, and runs zero telemetry. All data is kept 100% local on your device's SQLite database, syncing directly device-to-device over encrypted local Wi-Fi or wired USB."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Why is The Mainframe ADHD-friendly with zero-shame Neuro-UX?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "The Mainframe replaces guilt-inducing overdue red badges and broken streak mechanics with neutral blunt re-entry. Working memory queues are strictly capped at 3 to 5 items to prevent decision paralysis."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How does device synchronization work without a cloud server?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Synchronization is direct peer-to-peer over local network Wi-Fi or wired USB with ADB reverse tunneling using a short-lived 6-digit PIN. Data never leaves your physical local network."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
   </head>
 
   <body>
-    <div id="root"></div>
+    <!--
+      Pre-rendered semantic HTML container: AI search crawlers (GPTBot, ClaudeBot,
+      PerplexityBot, Google-Extended) that do not execute JavaScript immediately receive
+      extractable heading hierarchy, answer-first blocks, internal links, and comparison data.
+      React mounts and replaces this container when JavaScript executes in a browser.
+    -->
+    <div id="root">
+      <header>
+        <a href="#hero">The Mainframe</a>
+        <nav aria-label="Main navigation">
+          <a href="#why">Why</a>
+          <a href="#compare">Comparison</a>
+          <a href="#walkthrough">How it works</a>
+          <a href="#features">Features</a>
+          <a href="#platforms">Platforms</a>
+          <a href="#faq">FAQ</a>
+          <a href="#trust">Limitations</a>
+        </nav>
+      </header>
+
+      <main>
+        <section id="hero">
+          <h1>Your calm command center for everything you're learning, building, pursuing, and acquiring.</h1>
+          <p>
+            The Mainframe is a private, local-first life management app for scattered projects, goals, courses, ideas, and purchases. Work offline, keep your data on your devices, and bring order to the lists already spread across your life.
+          </p>
+          <div>
+            <a href="#platforms">Download v0.1.0 (Free)</a>
+            <a href="https://github.com/karefined-eng/the-mainframe" target="_blank" rel="noreferrer noopener">View the source on GitHub</a>
+          </div>
+        </section>
+
+        <section id="why">
+          <h2>Built for people whose work does not fit in one list</h2>
+          <p>
+            Traditional productivity systems collapse every ambition into a single overwhelming to-do queue where urgent errands eclipse long-term mastery. The Mainframe solves this through domain separation. By segmenting your brain dump into five dedicated, parallel tracks—Certifications, Acquisitions, Goals, Build Ideas, and Ventures—you eliminate the cognitive drag of sorting through hundreds of conflicting tasks. Each domain operates with its own cadence and metadata, so researching a hardware monitor never competes with finishing an AWS certification or launching a side business. Built specifically for engineers, creative generalists, and neurodivergent builders with ADHD, it eliminates the dopamine crash of overdue alerts and preserves mental energy for deep, uninterrupted work.
+          </p>
+          <h3>Developers and solo builders</h3>
+          <p>Separate client work from weekend hacking without cluttering your developer setup.</p>
+          <h3>Anyone exhausted by to-do list guilt</h3>
+          <p>Return after two weeks away without flashing red badges, broken streaks, or punitive backlog shame.</p>
+          <h3>Builders with too many ideas</h3>
+          <p>Capture sparks in seconds without forcing them into a rigid task list before they are ready.</p>
+          <h3>Privacy-first &amp; local-first advocates</h3>
+          <p>Your thoughts belong to you, stored in a plain SQLite file on your drive, never in a proprietary cloud vendor's silo.</p>
+        </section>
+
+        <section id="compare">
+          <h2>How The Mainframe compares to Notion, Todoist, and Obsidian</h2>
+          <p>
+            Most productivity tools force a painful trade-off: either surrender your personal data to subscription cloud silos that lock features behind monthly fees, or spend weeks writing custom markdown plugins and YAML scripts just to organize basic projects. The Mainframe offers a third way: an out-of-the-box personal operating system backed by local SQLite. Unlike cloud task managers, it functions entirely without an internet connection or login screen. Unlike complex wiki databases, it requires zero setup or formula maintenance. You get instant desktop and mobile performance, zero recurring subscription fees, and private peer-to-peer sync that transfers data directly over your local home network or wired USB cable without touching an intermediary cloud server.
+          </p>
+          <table>
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Traditional To-Do Apps</th>
+                <th>Notion &amp; Cloud Workspaces</th>
+                <th>The Mainframe</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Data Storage</td>
+                <td>Proprietary Cloud</td>
+                <td>Proprietary Cloud / Hybrid</td>
+                <td>100% Local SQLite (Offline)</td>
+              </tr>
+              <tr>
+                <td>Pricing Model</td>
+                <td>Monthly Subscription ($4–$10/mo)</td>
+                <td>Free tier with paid barriers</td>
+                <td>Free and Open Source (MIT)</td>
+              </tr>
+              <tr>
+                <td>Offline Capability</td>
+                <td>Limited or Read-Only Cached</td>
+                <td>Poor / Requires Connectivity</td>
+                <td>Native Offline by Default</td>
+              </tr>
+              <tr>
+                <td>Re-Entry Experience</td>
+                <td>Punitive red overdue badges &amp; alerts</td>
+                <td>Massive uncategorized backlogs</td>
+                <td>Calm blunt re-entry (Zero shame)</td>
+              </tr>
+              <tr>
+                <td>Device Sync</td>
+                <td>Cloud Account &amp; Server Sync</td>
+                <td>Centralized Cloud Sync</td>
+                <td>Encrypted P2P LAN &amp; Wired USB</td>
+              </tr>
+            </tbody>
+          </table>
+        </section>
+
+        <section id="walkthrough">
+          <h2>Paste, structure, decide, continue</h2>
+          <p>
+            Importing your scattered thoughts takes less than three seconds. Simply paste unformatted text, copied clipboard snippets, or bulleted lists directly into the rapid ingestion drawer. The Mainframe algorithmically organizes and routes every item into its proper home: courses to your learning track, gear to acquisitions, product ideas to build ideas, and deliverables to ventures. Once ingested, the calm triage dashboard highlights only your three to five most critical priorities using cognitive working memory thresholds. You make immediate decisions without navigating dense menu hierarchies, clear your mental RAM, and get straight to executing your highest-leverage work.
+          </p>
+        </section>
+
+        <section id="features">
+          <h2>Four things The Mainframe does, and nothing else</h2>
+          <p>
+            Rather than attempting to be an all-in-one spreadsheet, document editor, and calendar bloated with hundreds of unused widgets, The Mainframe focuses obsessively on four core capabilities executed with extreme craft. It captures messy text in seconds, calms cognitive load using zero-shame neuro-UX psychology, ensures permanent offline sovereignty via open SQLite, and provides reliable peer-to-peer differential sync across desktop and mobile devices.
+          </p>
+          <h3>3-Second Plaintext Capture</h3>
+          <p>Paste raw text dumps straight from your clipboard. The system automatically categorizes items across domains without manual tag creation.</p>
+          <h3>Calm Attention, Never a Guilt Backlog</h3>
+          <p>Working memory queues are strictly constrained to 3–5 items based on cognitive psychology, eliminating decision paralysis and avoidance anxiety.</p>
+          <h3>100% Offline SQLite Sovereignty</h3>
+          <p>Your database is a standard local SQLite file on your disk. You own your raw data forever with zero telemetry, accounts, or telemetry.</p>
+          <h3>P2P LAN / USB Bidirectional Sync</h3>
+          <p>Transfer updates directly between your computer and phone over your local Wi-Fi network or wired USB reverse tunnel using a 6-digit PIN.</p>
+        </section>
+
+        <section id="platforms">
+          <h2>What you can actually run today</h2>
+          <p>
+            The Mainframe is built on Tauri v2 and Rust, delivering native sub-second launch times and ultra-low memory usage on Windows, macOS, Linux, and Android.
+          </p>
+        </section>
+
+        <section id="faq">
+          <h2>Frequently asked questions about The Mainframe</h2>
+          <h3>What is The Mainframe?</h3>
+          <p>The Mainframe is an open-source, local-first personal management desktop and mobile app built with Tauri v2 (Rust) and React. It organizes scattered projects, courses, ideas, purchases, and goals across 5 distinct domains with 100% offline SQLite storage.</p>
+          <h3>How does The Mainframe protect user data and privacy?</h3>
+          <p>The Mainframe requires no user account, no cloud servers, and runs zero telemetry. All data is kept 100% local on your device's SQLite database, syncing directly device-to-device over encrypted local Wi-Fi or wired USB.</p>
+          <h3>Why is The Mainframe ADHD-friendly with zero-shame Neuro-UX?</h3>
+          <p>The Mainframe replaces guilt-inducing overdue red badges and broken streak mechanics with neutral blunt re-entry. Working memory queues are strictly capped at 3 to 5 items to prevent decision paralysis.</p>
+          <h3>How does device synchronization work without a cloud server?</h3>
+          <p>Synchronization is direct peer-to-peer over local network Wi-Fi or wired USB with ADB reverse tunneling using a short-lived 6-digit PIN. Data never leaves your physical local network.</p>
+        </section>
+
+        <section id="trust">
+          <h2>The parts most landing pages leave out</h2>
+          <p>
+            We believe in radical transparency. The Mainframe is an early public release. Desktop builds are currently unsigned while we establish our code-signing foundation. Data stays local to your device, and synchronization requires both devices to be present on the same local network or connected via USB cable.
+          </p>
+        </section>
+      </main>
+
+      <footer>
+        <p>The Mainframe · Built by <a href="https://github.com/karefined-eng" target="_blank" rel="noreferrer noopener">Karefined</a>. Local-first personal operating system · 100% offline SQLite.</p>
+        <nav aria-label="Footer links">
+          <a href="https://github.com/karefined-eng/the-mainframe" target="_blank" rel="noreferrer noopener">About</a>
+          <a href="#trust">Privacy Policy</a>
+          <a href="https://github.com/karefined-eng/the-mainframe/blob/main/LICENSE" target="_blank" rel="noreferrer noopener">Terms &amp; License</a>
+          <a href="https://github.com/karefined-eng/the-mainframe/issues" target="_blank" rel="noreferrer noopener">Contact &amp; Support</a>
+          <a href="#trust">Limitations</a>
+          <a href="#hero">Back to top</a>
+        </nav>
+      </footer>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

@@ -1,0 +1,70 @@
+# The Mainframe — Comprehensive AI Knowledge Base (llms-full.txt)
+
+> The Mainframe is a private, local-first personal operating system for courses, goals, build ideas, ventures, and acquisitions. Built with Tauri v2 (Rust) and React + TypeScript + Tailwind CSS, it offers 100% offline SQLite sovereignty, zero cloud accounts, zero telemetry, no-shame Neuro-UX, and direct peer-to-peer LAN / USB sync.
+
+---
+
+## 1. Executive Summary & Core Definitions
+
+### What is The Mainframe?
+The Mainframe is an open-source, local-first personal management application built for desktop (Windows, macOS, Linux) and mobile (Android). Unlike traditional to-do lists that treat all tasks as a single flat urgent backlog, The Mainframe separates parallel tracks of a person's life into five dedicated domains: Certifications & Learning, Acquisitions & Hardware, Life Goals, Build Ideas, and Ventures. All data is stored in a local SQLite database that never touches a cloud server or external API. It was created specifically for independent builders, developers, and people with ADHD who experience overwhelm from overdue task notifications and fragmented notes across multiple apps.
+
+### How does The Mainframe protect user privacy and data ownership?
+The Mainframe provides complete offline sovereignty. There are no user accounts, no login screens, no tracking pixels, and no remote databases. Your data lives in an SQLite file directly in your device's local application storage directory. When you choose to synchronize data between devices, transfer occurs strictly peer-to-peer over your local Wi-Fi network or wired USB cable using an ephemeral 6-digit PIN and mutual authorization. No data is ever routed through third-party servers, cloud relays, or centralized infrastructure.
+
+---
+
+## 2. The 5 Core Life Domains
+
+The Mainframe structures life into five distinct tracks to prevent cognitive spillover:
+
+1. **Certifications & Learning (`courses`):** Tracks structured curriculum, coursework, study modules, credentials, and progress without artificial deadlines.
+2. **Acquisitions & Hardware (`acquisitions`):** Manages researched equipment, tools, books, and hardware purchases alongside budget constraints and priority ratings.
+3. **Life Goals (`goals`):** High-level aspirations, habits, physical achievements, and milestone timelines grounded in personal intent.
+4. **Build Ideas (`build_ideas`):** Product concepts, software architecture drafts, and technical prototypes with dedicated problem statements and execution plans.
+5. **Ventures (`ventures`):** Commercial endeavors, client contracts, and business entities with status tracking and deliverables.
+
+---
+
+## 3. Neuro-UX & Cognitive Architecture
+
+### What is Neuro-UX and how does it prevent to-do list guilt?
+Traditional task managers rely on punitive feedback loops: overdue counters turn flashing red, broken streak counts trigger guilt, and missed tasks pile into insurmountable backlogs. The Mainframe replaces this with "blunt re-entry" Neuro-UX. When you open the application after days or weeks away, it presents a calm, neutral snapshot of your highest-priority items without alarming overdue banners or guilt-inducing shame counters. High-priority focus queues ("What's Hot") are algorithmically constrained to 3–5 items based on Miller's Law of working memory limits, preventing decision paralysis.
+
+### How does 3-Second Plaintext Capture work?
+The Mainframe features rapid plaintext intake that allows users to paste raw thoughts, lists, or notes into a unified capture drawer. The system automatically structures and routes incoming plaintext lines into their corresponding domains without requiring tedious manual tag selection, multi-step dropdowns, or complex database views.
+
+---
+
+## 4. Technical Architecture & Synchronization
+
+### What is the underlying tech stack?
+- **Backend:** Rust 1.80+, Tauri v2 desktop & mobile application framework.
+- **Frontend:** React 19, TypeScript 5.6, Tailwind CSS 3.4, Lucide React icons.
+- **Database:** Local SQLite managed via `tauri-plugin-sql` and embedded backend connection pools.
+- **Sync Engine:** Built-in lightweight HTTP snapshot server (`tiny_http`) and HTTP client (`ureq`) with SQLite WAL checkpointing (`PRAGMA wal_checkpoint(TRUNCATE)`).
+
+### How does Peer-to-Peer LAN and USB Sync work?
+To sync between a PC and an Android phone (or two computers), both devices connect over the same local network or via a wired USB cable with ADB port forwarding (`adb reverse tcp:9377 tcp:9377`). One device broadcasts a short-lived 6-digit PIN over port 9377. The receiving device scans a QR code or inputs the IP and PIN. The sync engine validates that the connection originates from an RFC 1918 private network subnet, exchanges cryptographic checksums, and performs non-destructive differential merging without cloud mediation.
+
+---
+
+## 5. Frequently Asked Questions (FAQ)
+
+### Is The Mainframe free and open source?
+Yes. The Mainframe is licensed under the permissive MIT License. You can inspect every line of source code, compile it locally, or contribute improvements on GitHub at https://github.com/karefined-eng/the-mainframe.
+
+### Does The Mainframe require an internet connection?
+No. The Mainframe functions 100% offline. You can create, organize, and prioritize your projects on an airplane, in a remote cabin, or with Wi-Fi completely disabled. Internet connectivity is only needed when checking for optional application updates or pushing code to Git repositories.
+
+### How does The Mainframe compare to Notion, Obsidian, and Todoist?
+Unlike Notion, The Mainframe does not require a monthly subscription, does not store your thoughts on proprietary cloud servers, and starts instantly in sub-second load times. Unlike Obsidian, which requires extensive community plugin configuration to build task databases, The Mainframe ships with five pre-configured life domains out of the box. Unlike Todoist, The Mainframe never uses punitive overdue notifications or gamified dopamine streaks.
+
+---
+
+## 6. Official Resources & Contact
+- **Website:** https://the-mainframe-app.vercel.app/
+- **GitHub Repository:** https://github.com/karefined-eng/the-mainframe
+- **Releases & Binary Downloads:** https://github.com/karefined-eng/the-mainframe/releases
+- **Bug Tracker & Feature Requests:** https://github.com/karefined-eng/the-mainframe/issues
+- **Lead Maintainer / Author:** Karefined (https://github.com/karefined-eng)

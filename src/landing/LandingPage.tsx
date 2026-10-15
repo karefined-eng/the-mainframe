@@ -935,16 +935,24 @@ export default function LandingPage() {
       <footer className="lp-footer" data-od-id="footer">
         <div className="lp-wrap lp-footer-inner">
           <p>
-            The Mainframe · early public release. Local-first, no required account, no telemetry
-            service.
+            The Mainframe · Built by{" "}
+            <a href="https://github.com/karefined-eng" target="_blank" rel="noreferrer noopener">
+              Karefined
+            </a>
+            . Local-first, no required account, zero telemetry.
           </p>
           <nav aria-label="Footer links">
             <a href={REPO_URL} target="_blank" rel="noreferrer noopener">
-              GitHub
+              About
+              <span className="sr-only"> (opens in new tab)</span>
+            </a>
+            <a href="#trust">Privacy Policy</a>
+            <a href={`${REPO_URL}/blob/main/LICENSE`} target="_blank" rel="noreferrer noopener">
+              Terms & License
               <span className="sr-only"> (opens in new tab)</span>
             </a>
             <a href={ISSUES_URL} target="_blank" rel="noreferrer noopener">
-              Issues
+              Contact & Support
               <span className="sr-only"> (opens in new tab)</span>
             </a>
             <a href="#trust">Limitations</a>

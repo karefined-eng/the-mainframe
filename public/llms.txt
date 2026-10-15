@@ -1,0 +1,36 @@
+# The Mainframe
+
+> A private, local-first personal operating system for courses, goals, build ideas, ventures, and purchases. Zero cloud accounts, zero subscriptions, no-shame Neuro-UX, and direct P2P LAN/USB sync.
+
+The Mainframe is an open-source, offline-first personal management desktop and mobile application built with Tauri v2 (Rust) and React + TypeScript. It is designed specifically for people with ADHD or working memory overwhelm who juggle multiple parallel life tracks without falling into to-do list guilt.
+
+## Knowledge Base Files
+- [Full Knowledge Base](https://the-mainframe-app.vercel.app/llms-full.txt): Comprehensive deep-dive covering architecture, sync protocols, schema, Neuro-UX, and full FAQ.
+
+## Key Principles & Defensible Moat
+
+1. **Local-First SQLite Sovereignty:** 100% of data is stored in a local SQLite database on your device. Zero telemetry, zero cloud accounts, zero hidden tracking.
+2. **P2P LAN / Wired USB Sync:** Non-destructive bidirectional sync over local Wi-Fi or wired USB (ADB reverse tunnel) with 6-digit PIN authentication. No intermediate cloud servers.
+3. **Neuro-UX & Zero-Shame Architecture:** Working memory queues strictly capped at 3–5 items ("What's Hot"). No broken streak counters, red overdue alerts, or punitive re-entry anxiety. Neutral "blunt re-entry" welcomes you back after weeks away.
+4. **5 Structured Life Domains:** Pre-structured parallel tracks for:
+   - Certifications & Learning (`courses`)
+   - Acquisitions & Hardware (`acquisitions`)
+   - Life Goals (`goals`)
+   - Build Ideas (`build_ideas`)
+   - Ventures (`ventures`)
+5. **Instant Plaintext Capture:** 3-second rapid clipboard/text ingestion that auto-classifies items into dedicated domains.
+
+## Technology Stack
+
+- **Backend:** Rust, Tauri v2, SQLite (`tauri-plugin-sql`), local HTTP differential sync server (`tiny_http`, `ureq`).
+- **Frontend:** React 19, TypeScript, Tailwind CSS, Lucide icons.
+- **Platforms:** Windows, macOS, Linux, Android.
+
+## Official Resources & Verification
+
+- **Website:** https://the-mainframe-app.vercel.app/
+- **Source Code:** https://github.com/karefined-eng/the-mainframe
+- **Releases & Binaries:** https://github.com/karefined-eng/the-mainframe/releases
+- **Issues & Support:** https://github.com/karefined-eng/the-mainframe/issues
+- **License:** MIT
+- **Author:** Karefined

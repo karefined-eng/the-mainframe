@@ -9,7 +9,7 @@
 
 import { pageMeta } from "./content";
 
-const SITE_ORIGIN = ""; // e.g. "https://mainframe.example" once a stable URL exists.
+const SITE_ORIGIN = "https://the-mainframe-app.vercel.app";
 
 function upsertMeta(attribute: "name" | "property", key: string, value: string, created: HTMLElement[]) {
   let tag = document.head.querySelector<HTMLMetaElement>(`meta[${attribute}="${key}"]`);
@@ -49,15 +49,15 @@ export function applyLandingMetadata(): () => void {
   upsertMeta("property", "og:site_name", "The Mainframe", created);
   upsertMeta("property", "og:title", pageMeta.title, created);
   upsertMeta("property", "og:description", pageMeta.description, created);
-  upsertMeta("property", "og:url", `${SITE_ORIGIN}/welcome`, created);
-  upsertMeta("property", "og:image", `${SITE_ORIGIN}/landing/social-preview.svg`, created);
+  upsertMeta("property", "og:url", `${SITE_ORIGIN}/`, created);
+  upsertMeta("property", "og:image", `${SITE_ORIGIN}/landing/social-preview.jpg`, created);
 
   upsertMeta("name", "twitter:card", "summary_large_image", created);
   upsertMeta("name", "twitter:title", pageMeta.title, created);
   upsertMeta("name", "twitter:description", pageMeta.description, created);
-  upsertMeta("name", "twitter:image", `${SITE_ORIGIN}/landing/social-preview.svg`, created);
+  upsertMeta("name", "twitter:image", `${SITE_ORIGIN}/landing/social-preview.jpg`, created);
 
-  upsertLink("canonical", `${SITE_ORIGIN}/welcome`, created);
+  upsertLink("canonical", `${SITE_ORIGIN}/`, created);
 
   // No version meta tag: the package version is an internal build identifier, not
   // a shipped release, so advertising it here would be an unsupported claim.

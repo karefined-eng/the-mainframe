@@ -21,7 +21,7 @@ export const ACTIONS_URL = `${REPO_URL}/actions`;
 export const pageMeta = {
   title: "The Mainframe — Calm, Local-First Personal Operating System",
   description:
-    "A private, offline-first personal operating system for courses, goals, build ideas, ventures, and purchases. Zero cloud accounts, zero subscriptions, no-shame Neuro-UX, and direct P2P LAN/USB sync.",
+    "Private, local-first personal operating system for courses, goals, and ventures. 100% offline SQLite, zero-shame Neuro-UX, and direct P2P LAN/USB sync.",
   keywords: [
     "to do list without guilt",
     "adhd friendly task manager",
