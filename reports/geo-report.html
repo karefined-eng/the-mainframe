@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>GEO audit — the-mainframe-app.vercel.app — 2026-10-15</title>
+<style>/* One reading column, read top to bottom and printed: cards stack, they never
+   tile. Every size is in rem against a 16px root so a reader's zoom works, and
+   colour always rides with a word - a severity, a tier - never instead of one. */
+:root {
+  color-scheme: light;
+  --primary: #1F3A5F;
+  --on-primary: #FFFFFF;
+  --accent: #0E7C66;
+  --ink: #14181F;
+  --muted: #5A6472;
+  --paper: #FFFFFF;
+  --rule: #E4E7EC;
+  --surface: #F6F7F9;
+  --shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 12px 32px -16px rgba(16, 24, 40, 0.18);
+  --critical: #B42318; --critical-bg: #FEF3F2;
+  --high: #B54708;     --high-bg: #FFFAEB;
+  --medium: #3E5C76;   --medium-bg: #EEF2F6;
+  --low: #475467;      --low-bg: #F2F4F7;
+  --good: #067647;     --good-bg: #ECFDF3;
+  --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+* { box-sizing: border-box; }
+html { font-size: 100%; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 1rem/1.6 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  -webkit-text-size-adjust: 100%;
+}
+.wrap { max-width: 50rem; margin: 0 auto; padding: 0 1.5rem 4rem; }
+
+/* --- masthead and the answer ------------------------------------------ */
+header.masthead { background: var(--primary); color: var(--on-primary); padding: 2.25rem 0 4.5rem; }
+header.masthead .wrap { padding-bottom: 0; }
+.brandline { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1.25rem; }
+.brandline img { max-height: 40px; max-width: 200px; width: auto; height: auto; }
+.brandline .who { font-weight: 600; font-size: 0.95rem; opacity: 0.92; }
+header.masthead h1 { margin: 0; font-size: 2rem; line-height: 1.2; font-weight: 700; letter-spacing: -0.02em; }
+header.masthead .meta { opacity: 0.8; font-size: 0.9375rem; margin: 0.5rem 0 0; }
+
+.hero {
+  position: relative; margin: -2.75rem 0 0; padding: 1.75rem 2rem 1.5rem;
+  background: var(--paper); border: 1px solid var(--rule); border-radius: 16px; box-shadow: var(--shadow);
+}
+.verdict { display: flex; align-items: baseline; gap: 0.5rem 0.75rem; flex-wrap: wrap; }
+.verdict .score {
+  font-size: 4.5rem; font-weight: 700; line-height: 0.9; letter-spacing: -0.045em;
+  font-variant-numeric: tabular-nums;
+}
+.verdict .outof { font-size: 1rem; color: var(--muted); margin-right: 0.25rem; }
+.verdict .tier {
+  position: relative; top: -0.15rem; font-size: 0.875rem; font-weight: 700; letter-spacing: 0.01em;
+  padding: 0.3rem 0.8rem; border-radius: 999px;
+  background: var(--surface); color: var(--ink); box-shadow: inset 0 0 0 1px var(--rule);
+}
+.meter { position: relative; height: 0.5rem; margin: 1.25rem 0 1rem; border-radius: 999px; background: var(--rule); overflow: hidden; }
+.meter > span { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
+.verdict-meaning { font-size: 1.125rem; line-height: 1.55; margin: 0 0 1.25rem; color: var(--ink); }
+.fineprint { padding-top: 1rem; border-top: 1px solid var(--rule); }
+.fineprint .caveat { margin: 0.5rem 0 0; }
+.fineprint .caveat:first-child { margin-top: 0; }
+.caveat { color: var(--muted); font-size: 0.875rem; line-height: 1.55; margin: 0 0 1.25rem; }
+
+/* Tier and severity colours: a tint behind a word that already says it. */
+[data-tier="excellent"], [data-tier="good"] { --tone: var(--good); --tone-bg: var(--good-bg); }
+[data-tier="fair"] { --tone: var(--high); --tone-bg: var(--high-bg); }
+[data-tier="weak"] { --tone: #C4320A; --tone-bg: #FFF6ED; }
+[data-tier="poor"] { --tone: var(--critical); --tone-bg: var(--critical-bg); }
+.verdict .tier[data-tier] { background: var(--tone-bg); color: var(--tone); box-shadow: none; }
+.meter[data-tier] > span, .bar[data-tier] > span { background: var(--tone); }
+
+.note {
+  background: var(--surface);
+  background: color-mix(in srgb, var(--accent) 6%, var(--paper)); border-radius: 12px;
+  padding: 0.875rem 1.125rem; margin: 1.25rem 0; box-shadow: inset 3px 0 0 var(--accent);
+}
+.note p { margin: 0; }
+
+/* --- headings and running text ----------------------------------------- */
+h2 { font-size: 1.375rem; line-height: 1.3; font-weight: 700; letter-spacing: -0.015em; margin: 3.25rem 0 1rem; }
+h3 { font-size: 1.0625rem; line-height: 1.4; font-weight: 650; margin: 1.5rem 0 0.4rem; }
+.summary { font-size: 1.125rem; line-height: 1.65; margin: 0; }
+p { margin: 0 0 0.75rem; }
+a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+@media (hover: hover) and (pointer: fine) {
+  a { transition: text-decoration-color 150ms ease; }
+  a:hover { text-decoration-color: transparent; }
+}
+
+ul.ticks, ul.headlines { list-style: none; padding: 0; margin: 0; }
+ul.ticks li { position: relative; padding-left: 2rem; margin: 0.6rem 0; }
+ul.ticks li::before {
+  content: "\2713"; position: absolute; left: 0; top: 0.1rem;
+  width: 1.3rem; height: 1.3rem; border-radius: 50%; display: grid; place-items: center;
+  font-size: 0.75rem; font-weight: 700; color: var(--good); background: var(--good-bg);
+}
+ul.headlines li { display: flex; align-items: baseline; gap: 0.625rem; flex-wrap: wrap; padding: 0.7rem 0; border-top: 1px solid var(--rule); }
+ul.headlines li:last-child { border-bottom: 1px solid var(--rule); }
+.muted { color: var(--muted); }
+
+/* --- pills and chips ---------------------------------------------------- */
+.pill, .fix .tag {
+  display: inline-block; font-size: 0.6875rem; line-height: 1.5; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.06em; padding: 0.1rem 0.5rem; border-radius: 999px;
+  background: var(--sev-bg, var(--surface)); color: var(--sev, var(--muted));
+}
+.critical { --sev: var(--critical); --sev-bg: var(--critical-bg); }
+.high { --sev: var(--high); --sev-bg: var(--high-bg); }
+.medium { --sev: var(--medium); --sev-bg: var(--medium-bg); }
+.low { --sev: var(--low); --sev-bg: var(--low-bg); }
+.chip {
+  display: inline-block; font-size: 0.8125rem; line-height: 1.5; padding: 0.05rem 0.55rem;
+  border-radius: 999px; background: var(--surface); color: var(--muted); font-variant-numeric: tabular-nums;
+}
+.chip.gain { background: var(--paper); color: var(--accent); font-weight: 600;
+  box-shadow: inset 0 0 0 1px var(--rule);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 35%, var(--paper)); }
+
+/* --- fixes ---------------------------------------------------------------- */
+.fix {
+  position: relative; overflow: hidden; margin: 0.875rem 0; padding: 1.125rem 1.375rem 1.125rem 1.625rem;
+  background: var(--paper); border: 1px solid var(--rule); border-radius: 12px; break-inside: avoid;
+}
+.fix::before { content: ""; position: absolute; inset: 0 auto 0 0; width: 4px; background: var(--sev, var(--rule)); }
+.fix h3 { margin: 0 0 0.5rem; }
+.fix .tags { display: flex; flex-wrap: wrap; align-items: center; gap: 0.375rem; margin: 0 0 0.75rem; }
+.fix p { margin: 0 0 0.625rem; }
+.evidence { background: var(--surface); border-radius: 8px; padding: 0.625rem 0.875rem; margin: 0.75rem 0; }
+.evidence p { margin: 0.15rem 0; color: var(--muted); font-size: 0.875rem; }
+.evidence blockquote {
+  margin: 0.5rem 0 0.2rem; padding-left: 0.75rem; border-left: 2px solid var(--rule);
+  font-style: italic; font-size: 0.875rem; color: var(--ink);
+}
+.fix .pages, p.pages { display: flex; flex-wrap: wrap; gap: 0.3rem; margin: 0.75rem 0 0; font-size: 0.8125rem; color: var(--muted); }
+.path {
+  font: 0.75rem/1.6 var(--mono); padding: 0.05rem 0.45rem; border-radius: 6px;
+  background: var(--paper); box-shadow: inset 0 0 0 1px var(--rule); color: var(--ink); overflow-wrap: anywhere;
+}
+.more { align-self: center; padding-left: 0.2rem; }
+h3.group {
+  margin: 2.25rem 0 0.25rem; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--muted);
+}
+
+/* --- the plan --------------------------------------------------------------- */
+.plan-group { border: 1px solid var(--rule); border-radius: 12px; padding: 1rem 1.25rem 0.5rem; margin: 0.875rem 0; break-inside: avoid; }
+.plan-group h3 { margin: 0 0 0.5rem; display: flex; align-items: baseline; gap: 0.625rem; flex-wrap: wrap; }
+.gain { color: var(--muted); font-weight: 500; font-size: 0.875rem; font-variant-numeric: tabular-nums; }
+ol.plan { margin: 0; padding: 0; list-style: none; counter-reset: fix; }
+ol.plan li {
+  counter-increment: fix; display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
+  padding: 0.55rem 0; border-top: 1px solid var(--rule);
+}
+ol.plan li::before { content: counter(fix); min-width: 1.25rem; color: var(--muted); font-variant-numeric: tabular-nums; font-size: 0.875rem; }
+ol.plan li > span:first-of-type { flex: 1; }
+
+/* --- tables ------------------------------------------------------------------ */
+table { width: 100%; border-collapse: collapse; margin: 0.5rem 0 1rem; font-size: 0.9375rem; }
+th, td { text-align: left; padding: 0.65rem 0.625rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+th {
+  font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+  color: var(--muted); border-bottom-color: var(--ink); padding-top: 0.4rem; padding-bottom: 0.5rem;
+}
+td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+tbody tr:last-child td { border-bottom-color: var(--rule); }
+tfoot td { font-weight: 700; border-top: 2px solid var(--ink); border-bottom: 0; }
+/* Bars sit beside the number they draw, never instead of it. */
+.val { display: inline-block; min-width: 3.75rem; }
+.val.wide { min-width: 6.25rem; }
+.bar {
+  display: inline-block; width: 6.5rem; height: 0.4375rem; margin-left: 0.5rem; vertical-align: middle;
+  background: var(--rule); border-radius: 999px; overflow: hidden;
+}
+.bar > span { display: block; height: 100%; border-radius: inherit; background: var(--accent); }
+.tier-word { white-space: nowrap; }
+.tier-word[data-tier]::before {
+  content: ""; display: inline-block; width: 0.5rem; height: 0.5rem; margin-right: 0.45rem;
+  border-radius: 50%; background: var(--tone); vertical-align: 0.05em;
+}
+.access > span {
+  display: inline-block; font-size: 0.75rem; font-weight: 700; padding: 0.1rem 0.55rem; border-radius: 999px;
+  background: var(--good-bg); color: var(--good);
+}
+.access.blocked > span { background: var(--critical-bg); color: var(--critical); }
+.advice-none { color: var(--muted); }
+table.signals td:first-child { width: 55%; }
+td.status { color: var(--muted); font-style: italic; }
+h3.detail { display: flex; align-items: baseline; gap: 0.625rem; text-transform: capitalize; margin-top: 2rem; }
+h3.detail .chip { text-transform: none; }
+
+/* --- advisory, appendix, footer ------------------------------------------------ */
+.advisory { border: 1.5px dashed var(--accent); border-color: color-mix(in srgb, var(--accent) 55%, var(--paper)); border-radius: 16px; padding: 1.25rem 1.5rem; margin: 3rem 0 1.5rem; }
+.advisory h2 { margin-top: 0.25rem; }
+.advisory .label {
+  display: inline-block; font-size: 0.6875rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+  color: var(--accent); padding: 0.1rem 0.5rem; border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--accent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 45%, var(--paper));
+}
+
+.appendix { color: var(--muted); font-size: 0.9375rem; }
+.appendix h2 { color: var(--ink); }
+.appendix h3 { color: var(--ink); }
+.appendix dl { display: grid; grid-template-columns: minmax(8rem, max-content) 1fr; gap: 0.5rem 1.25rem; margin: 0.5rem 0 1rem; }
+.appendix dt { font-weight: 600; color: var(--ink); }
+.appendix dd { margin: 0; }
+
+footer.colophon { margin-top: 3.5rem; padding-top: 1.25rem; border-top: 1px solid var(--rule); color: var(--muted); font-size: 0.8125rem; }
+footer.colophon p { margin: 0.2rem 0; }
+
+.provenance { margin-top: 3.5rem; border-top: 3px double var(--rule); padding-top: 1.25rem; }
+.provenance code, code { font: 0.8125rem var(--mono); overflow-wrap: anywhere; }
+
+/* --- narrow screens: the one breakpoint --------------------------------------------- */
+@media (max-width: 30rem) {
+  .wrap { padding: 0 1rem 3rem; }
+  header.masthead { padding: 1.75rem 0 4rem; }
+  header.masthead h1 { font-size: 1.5rem; }
+  .hero { padding: 1.25rem 1.125rem; border-radius: 14px; }
+  .verdict .score { font-size: 3.5rem; }
+  .fix { padding: 1rem 1rem 1rem 1.25rem; }
+  .appendix dl { grid-template-columns: 1fr; gap: 0.15rem; }
+  .appendix dd { margin-bottom: 0.5rem; }
+  table, thead, tbody, tfoot, th, td, tr { display: block; }
+  thead { position: absolute; left: -9999px; }
+  td { border: 0; padding: 0.15rem 0; }
+  tr { border-bottom: 1px solid var(--rule); padding: 0.65rem 0; }
+  td.label::before { content: attr(data-label) ": "; color: var(--muted); font-style: normal; }
+  table.signals td:first-child { width: auto; }
+}
+
+/* --- print ---------------------------------------------------------------------------- */
+@page { size: A4; margin: 16mm 15mm 18mm; }
+@media print {
+  html { font-size: 10.5pt; }
+  body { background: #fff; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .wrap { max-width: none; padding: 0; }
+  header.masthead { background: #fff; color: var(--ink); border-bottom: 3px solid var(--primary); padding: 0 0 1rem; }
+  header.masthead .meta { opacity: 1; color: var(--muted); }
+  .hero { margin-top: 1.25rem; box-shadow: none; }
+  h2 { break-after: avoid; margin-top: 2.25rem; }
+  h3 { break-after: avoid; }
+  .fix, .plan-group, tr, .note, .advisory, .hero, ul.headlines li { break-inside: avoid; }
+  .provenance { break-before: page; }
+  a { text-decoration: none; }
+  a[href^="http"]::after { content: " (" attr(href) ")"; font-size: 0.8em; color: var(--muted); overflow-wrap: anywhere; }
+}</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="wrap">
+    
+    <h1>GEO audit: the-mainframe-app.vercel.app</h1>
+    <p class="meta">1 page scored &middot; 2026-10-15</p>
+  </div>
+</header>
+
+<div class="wrap">
+
+  
+  <section aria-labelledby="verdict-heading">
+    <h2 id="verdict-heading" class="sr-only" style="position:absolute;left:-9999px">Result</h2>
+    <div class="hero">
+      <div class="verdict">
+        <span class="score">96</span>
+        <span class="outof">out of 100</span>
+        <span class="tier" data-tier="excellent">Excellent</span>
+      </div>
+      
+      <div class="meter" data-tier="excellent" aria-hidden="true"><span style="width: 96%"></span></div>
+      
+      <p class="verdict-meaning">AI engines can lift answers from this page with almost no rewriting.</p>
+      <div class="fineprint">
+        
+        <p class="caveat">Computed on 21 of 23 signals. Not measured: Content without JavaScript, Language versions - the score is taken over the rest.</p>
+        <p class="caveat">This measures how readable and attributable these pages are to a machine: what a crawler can fetch, quote and attribute. It is not a measure of how often the site is cited today. A well-known site with sparse metadata will score below its reputation, and the categories below show where the difference sits.</p>
+      </div>
+    </div>
+
+    
+
+    
+
+    
+    <h2>Summary</h2>
+    <p class="summary">the-mainframe-app.vercel.app scores 96/100 (Excellent) over 1 page. Its strongest area is content (100) and its weakest is citability (89). The largest single gain is “Claims arrive without numbers, dates or sources”, worth up to 2.7 points on the overall score.</p>
+    
+
+    
+    <h2>What is already working</h2>
+    <ul class="ticks">
+      
+      <li>Passages stand on their own, so they can be lifted into an answer intact.</li>
+      
+      <li>Pages carry enough substance to answer a question on their own.</li>
+      
+      <li>robots.txt lets in the crawlers AI answers depend on.</li>
+      
+    </ul>
+    
+
+    
+    <h2>What stands out</h2>
+    <ul class="headlines">
+      
+      <li><span class="pill high">high</span> <strong>Claims arrive without numbers, dates or sources</strong> <span class="muted">affects 1 page</span></li>
+      
+      <li><span class="pill low">low</span> <strong>The site is hard to discover in bulk</strong> <span class="muted">affects 1 page</span></li>
+      
+    </ul>
+    
+
+    
+    <h2>What to do, in order</h2>
+    
+    <div class="fix high">
+      <h3>1. Claims arrive without numbers, dates or sources</h3>
+      <p class="tags">
+        <span class="tag">high</span>
+        <span class="chip">medium effort</span>
+        <span class="chip">1 page</span>
+        <span class="chip gain">up to +2.7 overall</span>
+      </p>
+      <p>Add the specific figure, date, version or measurement to each claim, and link the primary source. Passages carrying a checkable fact are the ones engines quote.</p>
+      
+      <div class="evidence">
+        <p>5.26 of 15 on every page measured (1): one shared template decides it, so one change fixes it everywhere.</p>
+        <blockquote>Traditional productivity systems collapse every ambition into a single overwhelming to-do queue where urgent errands eclipse long-term mastery. The Mainframe solves this through domain separation. By segmenting your brain dump into five dedicated, parallel tracks—Certifications,…</blockquote>
+      </div>
+      
+      
+      <p class="pages"><span class="path">/</span></p>
+      
+    </div>
+    
+    <div class="fix low">
+      <h3>2. The site is hard to discover in bulk</h3>
+      <p class="tags">
+        <span class="tag">low</span>
+        <span class="chip">low effort</span>
+        <span class="chip">1 page</span>
+        <span class="chip gain">up to +0.71 overall</span>
+      </p>
+      <p>Advertise a sitemap in robots.txt and, if the site publishes regularly, link an RSS or Atom feed from the head. Both are how a crawler finds pages nothing links to yet.</p>
+      
+      <div class="evidence">
+        <p>14 of 20 on every page measured (1): one shared template decides it, so one change fixes it everywhere.</p>
+        
+      </div>
+      
+      
+      <p class="pages"><span class="path">/</span></p>
+      
+    </div>
+    
+    
+
+    
+    <h2>The plan</h2>
+    <p class="caveat">Every fix in this report, grouped by what it costs - low, medium and high
+       effort - and kept in the order above within each group. Anything that stops a crawler
+       reading the site is in the first group whatever it costs.</p>
+    
+    <div class="plan-group">
+      <h3>This week <span class="gain">low effort &middot; up to +0.7 overall</span></h3>
+      <ol class="plan">
+        
+        <li><span>The site is hard to discover in bulk</span> <span class="gain">+0.71</span></li>
+        
+      </ol>
+    </div>
+    
+    <div class="plan-group">
+      <h3>This month <span class="gain">medium effort &middot; up to +2.7 overall</span></h3>
+      <ol class="plan">
+        
+        <li><span>Claims arrive without numbers, dates or sources</span> <span class="gain">+2.7</span></li>
+        
+      </ol>
+    </div>
+    
+    
+  </section>
+
+  
+  
+  <section>
+    <h2>Category scores</h2>
+    <table>
+      <thead><tr><th>Category</th><th>Score</th><th>Rating</th><th>Weight</th><th>Adds</th><th>What it measures</th></tr></thead>
+      <tbody>
+      
+        <tr>
+          <td class="label" data-label="Category">content</td>
+          <td class="num label" data-label="Score"><span class="val">100/100</span><span class="bar" data-tier="excellent" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          <td class="label" data-label="Rating"><span class="tier-word" data-tier="excellent">excellent</span></td>
+          <td class="num label" data-label="Weight">20</td>
+          <td class="num label" data-label="Adds">25.0</td>
+          <td class="label" data-label="Measures">Whether the writing says who stands behind it, when it was last checked, and enough to answer on its own.</td>
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Category">schema</td>
+          <td class="num label" data-label="Score"><span class="val">100/100</span><span class="bar" data-tier="excellent" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          <td class="label" data-label="Rating"><span class="tier-word" data-tier="excellent">excellent</span></td>
+          <td class="num label" data-label="Weight">10</td>
+          <td class="num label" data-label="Adds">12.5</td>
+          <td class="label" data-label="Measures">Whether the page describes itself in a form nobody has to interpret.</td>
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Category">technical</td>
+          <td class="num label" data-label="Score"><span class="val">100/100</span><span class="bar" data-tier="excellent" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          <td class="label" data-label="Rating"><span class="tier-word" data-tier="excellent">excellent</span></td>
+          <td class="num label" data-label="Weight">15</td>
+          <td class="num label" data-label="Adds">18.8</td>
+          <td class="label" data-label="Measures">Whether a crawler can reach, read and index the page at all.</td>
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Category">platform</td>
+          <td class="num label" data-label="Score"><span class="val">93/100</span><span class="bar" data-tier="excellent" aria-hidden="true"><span style="width: 93%"></span></span></td>
+          <td class="label" data-label="Rating"><span class="tier-word" data-tier="excellent">excellent</span></td>
+          <td class="num label" data-label="Weight">10</td>
+          <td class="num label" data-label="Adds">11.6</td>
+          <td class="label" data-label="Measures">Whether the site publishes what engines read around its pages: llms.txt, feeds, social cards and language versions.</td>
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Category">citability</td>
+          <td class="num label" data-label="Score"><span class="val">89/100</span><span class="bar" data-tier="excellent" aria-hidden="true"><span style="width: 89%"></span></span></td>
+          <td class="label" data-label="Rating"><span class="tier-word" data-tier="excellent">excellent</span></td>
+          <td class="num label" data-label="Weight">25</td>
+          <td class="num label" data-label="Adds">27.8</td>
+          <td class="label" data-label="Measures">Whether a passage can be lifted from the page and used as an answer.</td>
+        </tr>
+      
+      </tbody>
+      
+      <tfoot>
+        <tr>
+          <td class="label" data-label="Category">Overall</td>
+          <td class="num label" data-label="Score">96/100</td>
+          <td class="label" data-label="Rating"><span class="tier-word" data-tier="excellent">Excellent</span></td>
+          <td class="num label" data-label="Weight">80</td>
+          <td class="num label" data-label="Adds">96</td>
+          <td class="label" data-label="Measures">Each category's score times its weight, over the total weight.</td>
+        </tr>
+      </tfoot>
+      
+    </table>
+    
+    <p class="caveat">brand (weight 20) was not part of this run, so the overall score is taken over the categories that were.</p>
+    
+  </section>
+  
+
+  
+  
+  <section>
+    <h2>AI crawler access</h2>
+    <p>Which AI crawlers robots.txt lets in. Blocking a search or answer crawler keeps the site
+       out of that engine's answers; a training crawler is a separate decision.</p>
+    <table>
+      <thead><tr><th>Crawler</th><th>Operator</th><th>Used for</th><th>Access</th><th>What to do</th></tr></thead>
+      <tbody>
+      
+        <tr>
+          <td class="label" data-label="Crawler">Amazonbot</td>
+          <td class="label" data-label="Operator">Amazon</td>
+          <td class="label" data-label="Used for">search index</td>
+          <td class="label access allowed" data-label="Access"><span>Allowed</span></td>
+          <td class="label advice-none" data-label="What to do">Nothing to do.</td>
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Crawler">Claude-SearchBot</td>
+          <td class="label" data-label="Operator">Anthropic</td>
+          <td class="label" data-label="Used for">search index</td>
+          <td class="label access allowed" data-label="Access"><span>Allowed</span></td>
+          <td class="label advice-none" data-label="What to do">Nothing to do.</td>
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Crawler">Claude-User</td>
+          <td class="label" data-label="Operator">Anthropic</td>
+          <td class="label" data-label="Used for">user-triggered browsing</td>
+          <td class="label access allowed" data-label="Access"><span>Allowed</span></td>
+          <td class="label advice-none" data-label="What to do">Nothing to do.</td>
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Crawler">ClaudeBot</td>
+          <td class="label" data-label="Operator">Anthropic</td>
+          <td class="label" data-label="Used for">model training</td>
+          <td class="label access allowed" data-label="Access"><span>Allowed</span></td>
+          <td class="label advice-none" data-label="What to do">Nothing to do.</td>
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Crawler">Applebot</td>
+          <td class="label" data-label="Operator">Apple</td>
+          <td class="label" data-label="Used for">search index</td>
+          <td class="label access allowed" data-label="Access"><span>Allowed</span></td>
+          <td class="label advice-none" data-label="What to do">Nothing to do.</td>
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Crawler">Applebot-Extended</td>
+          <td class="label" data-label="Operator">Apple</td>
+          <td class="label" data-label="Used for">model training</td>
+          <td class="label access allowed" data-label="Access"><span>Allowed</span></td>
+          <td class="label advice-none" data-label="What to do">Nothing to do.</td>
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Crawler">CCBot</td>
+          <td class="label" data-label="Operator">Common Crawl</td>
+          <td class="label" data-label="Used for">open web corpus</td>
+          <td class="label access allowed" data-label="Access"><span>Allowed</span></td>
+          <td class="label advice-none" data-label="What to do">Nothing to do.</td>
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Crawler">Google-Extended</td>
+          <td class="label" data-label="Operator">Google</td>
+          <td class="label" data-label="Used for">Gemini and Vertex grounding</td>
+          <td class="label access allowed" data-label="Access"><span>Allowed</span></td>
+          <td class="label advice-none" data-label="What to do">Nothing to do.</td>
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Crawler">Googlebot</td>
+          <td class="label" data-label="Operator">Google</td>
+          <td class="label" data-label="Used for">search index</td>
+          <td class="label access allowed" data-label="Access"><span>Allowed</span></td>
+          <td class="label advice-none" data-label="What to do">Nothing to do.</td>
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Crawler">meta-externalagent</td>
+          <td class="label" data-label="Operator">Meta</td>
+          <td class="label" data-label="Used for">model training and indexing</td>
+          <td class="label access allowed" data-label="Access"><span>Allowed</span></td>
+          <td class="label advice-none" data-label="What to do">Nothing to do.</td>
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Crawler">Bingbot</td>
+          <td class="label" data-label="Operator">Microsoft</td>
+          <td class="label" data-label="Used for">search index</td>
+          <td class="label access allowed" data-label="Access"><span>Allowed</span></td>
+          <td class="label advice-none" data-label="What to do">Nothing to do.</td>
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Crawler">ChatGPT-User</td>
+          <td class="label" data-label="Operator">OpenAI</td>
+          <td class="label" data-label="Used for">user-triggered browsing</td>
+          <td class="label access allowed" data-label="Access"><span>Allowed</span></td>
+          <td class="label advice-none" data-label="What to do">Nothing to do.</td>
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Crawler">OAI-SearchBot</td>
+          <td class="label" data-label="Operator">OpenAI</td>
+          <td class="label" data-label="Used for">search index</td>
+          <td class="label access allowed" data-label="Access"><span>Allowed</span></td>
+          <td class="label advice-none" data-label="What to do">Nothing to do.</td>
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Crawler">GPTBot</td>
+          <td class="label" data-label="Operator">OpenAI</td>
+          <td class="label" data-label="Used for">model training</td>
+          <td class="label access allowed" data-label="Access"><span>Allowed</span></td>
+          <td class="label advice-none" data-label="What to do">Nothing to do.</td>
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Crawler">Perplexity-User</td>
+          <td class="label" data-label="Operator">Perplexity</td>
+          <td class="label" data-label="Used for">user-triggered browsing</td>
+          <td class="label access allowed" data-label="Access"><span>Allowed</span></td>
+          <td class="label advice-none" data-label="What to do">Nothing to do.</td>
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Crawler">PerplexityBot</td>
+          <td class="label" data-label="Operator">Perplexity</td>
+          <td class="label" data-label="Used for">search index</td>
+          <td class="label access allowed" data-label="Access"><span>Allowed</span></td>
+          <td class="label advice-none" data-label="What to do">Nothing to do.</td>
+        </tr>
+      
+      </tbody>
+    </table>
+  </section>
+  
+
+  
+  
+  <section>
+    <h2>Category detail</h2>
+    
+    <h3 class="detail">content <span class="chip">100/100</span></h3>
+    <table class="signals">
+      <tbody>
+      
+        <tr>
+          <td class="label" data-label="Measure">Depth</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">25 of 25</span><span class="bar" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Authorship</td>
+          
+          <td class="label status" data-label="Score">Not applicable: articles only</td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Freshness</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">25 of 25</span><span class="bar" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Readability</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">25 of 25</span><span class="bar" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          
+        </tr>
+      
+      </tbody>
+    </table>
+    
+    <h3 class="detail">schema <span class="chip">100/100</span></h3>
+    <table class="signals">
+      <tbody>
+      
+        <tr>
+          <td class="label" data-label="Measure">Structured data present</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">30 of 30</span><span class="bar" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Valid markup</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">25 of 25</span><span class="bar" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Publisher markup</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">20 of 20</span><span class="bar" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Article markup</td>
+          
+          <td class="label status" data-label="Score">Not applicable: articles only</td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Answer markup</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">10 of 10</span><span class="bar" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          
+        </tr>
+      
+      </tbody>
+    </table>
+    
+    <h3 class="detail">technical <span class="chip">100/100</span></h3>
+    <table class="signals">
+      <tbody>
+      
+        <tr>
+          <td class="label" data-label="Measure">AI crawler access</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">25 of 25</span><span class="bar" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Indexability</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">20 of 20</span><span class="bar" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Titles and descriptions</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">20 of 20</span><span class="bar" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Status codes</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">15 of 15</span><span class="bar" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">HTTPS</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">10 of 10</span><span class="bar" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">URL structure</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">10 of 10</span><span class="bar" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          
+        </tr>
+      
+      </tbody>
+    </table>
+    
+    <h3 class="detail">platform <span class="chip">93/100</span></h3>
+    <table class="signals">
+      <tbody>
+      
+        <tr>
+          <td class="label" data-label="Measure">llms.txt file</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">35 of 35</span><span class="bar" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Preview cards</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">30 of 30</span><span class="bar" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Feeds and sitemaps</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">14 of 20</span><span class="bar" aria-hidden="true"><span style="width: 70%"></span></span></td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Language versions</td>
+          
+          <td class="label status" data-label="Score">Not measured: only one language was seen on this site, so hreflang does not apply</td>
+          
+        </tr>
+      
+      </tbody>
+    </table>
+    
+    <h3 class="detail">citability <span class="chip">89/100</span></h3>
+    <table class="signals">
+      <tbody>
+      
+        <tr>
+          <td class="label" data-label="Measure">Self-contained passages</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">25 of 25</span><span class="bar" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Answer-first sections</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">20 of 20</span><span class="bar" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Heading structure</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">15 of 15</span><span class="bar" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Evidence in claims</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">5.26 of 15</span><span class="bar" aria-hidden="true"><span style="width: 35%"></span></span></td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Content in the HTML</td>
+          
+          <td class="num label" data-label="Score"><span class="val wide">15 of 15</span><span class="bar" aria-hidden="true"><span style="width: 100%"></span></span></td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Attribution</td>
+          
+          <td class="label status" data-label="Score">Not applicable: articles only</td>
+          
+        </tr>
+      
+        <tr>
+          <td class="label" data-label="Measure">Content without JavaScript</td>
+          
+          <td class="label status" data-label="Score">Not measured: browser extra not installed</td>
+          
+        </tr>
+      
+      </tbody>
+    </table>
+    
+  </section>
+  
+
+  
+  
+  <section>
+    <h2>Everything found</h2>
+    
+    <h3 class="group">citability</h3>
+    
+    <div class="fix high">
+      <h3>Claims arrive without numbers, dates or sources</h3>
+      <p class="tags"><span class="tag">high</span> <span class="chip">medium effort</span> <span class="chip">1 page</span> <span class="chip gain">up to +2.7 overall</span></p>
+      <p>Add the specific figure, date, version or measurement to each claim, and link the primary source. Passages carrying a checkable fact are the ones engines quote.</p>
+      
+      <div class="evidence">
+        <p>5.26 of 15 on every page measured (1): one shared template decides it, so one change fixes it everywhere.</p>
+        <blockquote>Traditional productivity systems collapse every ambition into a single overwhelming to-do queue where urgent errands eclipse long-term mastery. The Mainframe solves this through domain separation. By segmenting your brain dump into five dedicated, parallel tracks—Certifications,…</blockquote>
+      </div>
+      
+      <p class="pages"><span class="path">/</span></p>
+    </div>
+    
+    
+    <h3 class="group">platform</h3>
+    
+    <div class="fix low">
+      <h3>The site is hard to discover in bulk</h3>
+      <p class="tags"><span class="tag">low</span> <span class="chip">low effort</span> <span class="chip">1 page</span> <span class="chip gain">up to +0.71 overall</span></p>
+      <p>Advertise a sitemap in robots.txt and, if the site publishes regularly, link an RSS or Atom feed from the head. Both are how a crawler finds pages nothing links to yet.</p>
+      
+      <div class="evidence">
+        <p>14 of 20 on every page measured (1): one shared template decides it, so one change fixes it everywhere.</p>
+        
+      </div>
+      
+      <p class="pages"><span class="path">/</span></p>
+    </div>
+    
+    
+  </section>
+  
+
+  
+  
+  <section class="advisory">
+    <span class="label">Advisory — model judgement, not scored</span>
+    <h2>Advisory analysis</h2>
+    <p>Nothing in this section contributes to any score above. It is included because
+       it is useful, and separated because it is judgement rather than measurement.</p>
+    
+    <h3>Does the page show first-hand experience of the thing it describes?</h3>
+    
+    <p>Not assessed. This question is answered by a person or a model reading the
+       page, and no answer was supplied for this report.</p>
+    
+    
+    <p class="pages">Judged against: Names specific situations, tools, versions or constraints the author met. Reports what happened, including what did not work. Could not have been written by summarising other pages on the topic.</p>
+    
+    
+    <h3>Would a reader with this question leave satisfied, or keep searching?</h3>
+    
+    <p>Not assessed. This question is answered by a person or a model reading the
+       page, and no answer was supplied for this report.</p>
+    
+    
+    <p class="pages">Judged against: Answers the question the title asks, rather than the adjacent easier one. States limits and cases where the advice does not apply. Does not require reading another page to be actionable.</p>
+    
+    
+  </section>
+  
+
+  
+  <section class="appendix">
+    <h2>How this was measured</h2>
+    <p>Every number above is computed by a program from a recorded snapshot of the
+       site, not judged by a model. The same snapshot scored again produces the same
+       number.</p>
+
+    <h3>Categories and their weights</h3>
+    <dl>
+      
+      <dt>citability — weight 25</dt>
+      <dd>Whether a passage can be lifted from the page and used as an answer.</dd>
+      
+      <dt>content — weight 20</dt>
+      <dd>Whether the writing says who stands behind it, when it was last checked, and enough to answer on its own.</dd>
+      
+      <dt>platform — weight 10</dt>
+      <dd>Whether the site publishes what engines read around its pages: llms.txt, feeds, social cards and language versions.</dd>
+      
+      <dt>schema — weight 10</dt>
+      <dd>Whether the page describes itself in a form nobody has to interpret.</dd>
+      
+      <dt>technical — weight 15</dt>
+      <dd>Whether a crawler can reach, read and index the page at all.</dd>
+      
+    </dl>
+
+    <h3>Signal classes</h3>
+    <dl>
+      
+      <dt>deterministic</dt><dd>A parsed fact about the page. Two runs over the same bytes agree.</dd>
+      
+      <dt>heuristic</dt><dd>Code with stated weights and thresholds. Arguable, but not arbitrary.</dd>
+      
+      <dt>live</dt><dd>Observed from a third-party service, carrying the time it was observed.</dd>
+      
+      <dt>advisory</dt><dd>Model judgement. Displayed separately and never summed into a score.</dd>
+      
+    </dl>
+
+    <h3>Comparability</h3>
+    <p>A score is comparable with another score from this tool at the same scoring and
+       data version. Numbers from other tools measure different things.</p>
+  </section>
+
+  
+  <section class="appendix">
+    <h2>Pages analysed</h2>
+    <table>
+      <thead><tr><th>Page</th><th>Status</th><th>Findings</th></tr></thead>
+      <tbody>
+      
+        <tr>
+          <td class="label" data-label="Page"><span class="path">/</span></td>
+          <td class="num label" data-label="Status">200</td>
+          <td class="num label" data-label="Findings">2</td>
+        </tr>
+      
+      </tbody>
+    </table>
+  </section>
+  
+
+  <section class="appendix">
+    <h2>Glossary</h2>
+    <dl>
+      <dt>GEO</dt><dd>Generative engine optimization: making pages easy for AI answer engines to find, read, quote and attribute.</dd><dt>AI Overviews</dt><dd>The AI-written answers Google shows above its search results.</dd><dt>Crawler</dt><dd>A program that fetches pages - for a search index, to train a model, or to answer one user&#39;s question.</dd><dt>robots.txt</dt><dd>The file at the root of a site that tells crawlers which parts they may fetch.</dd><dt>llms.txt</dt><dd>A markdown file at the root of a site telling AI systems what the site is and which pages matter.</dd><dt>Structured data</dt><dd>A machine-readable description embedded in a page, usually as JSON-LD, that engines read without interpreting the prose.</dd><dt>sameAs</dt><dd>A structured-data property linking an organization or person to their profiles elsewhere, so engines can tell which entity it is.</dd><dt>E-E-A-T</dt><dd>Experience, expertise, authoritativeness and trust: what search engines look for in who wrote a page and why to believe it.</dd><dt>Server-side rendering</dt><dd>Sending a page&#39;s content in the HTML itself, so a crawler that does not run JavaScript still sees it.</dd>
+    </dl>
+  </section>
+
+  
+
+  <footer class="colophon">
+    <p>Evidence CURRENT &middot; scoring 4.0 &middot;
+       data 2026.09 &middot; normalizer 3</p>
+    
+    <p>Generated with SEOmator GEO Audit Skill 1.2.1.</p>
+    
+  </footer>
+
+</div>
+</body>
+</html>
