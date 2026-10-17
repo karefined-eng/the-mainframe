@@ -1,0 +1,56 @@
+﻿# yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.6.0.schema.json
+
+PackageIdentifier: KaRefined.TheMainframe
+PackageVersion: 0.1.0
+PackageLocale: en-US
+Publisher: KaRefined
+PublisherUrl: https://github.com/karefined-eng
+PublisherSupportUrl: https://github.com/karefined-eng/the-mainframe/issues
+# PrivacyUrl: https://the-mainframe-app.vercel.app/privacy
+Author: karefined-eng
+PackageName: The Mainframe
+PackageUrl: https://the-mainframe-app.vercel.app
+License: MIT
+LicenseUrl: https://github.com/karefined-eng/the-mainframe/blob/main/LICENSE
+Copyright: Copyright (c) 2026 karefined-eng
+CopyrightUrl: https://github.com/karefined-eng/the-mainframe/blob/main/LICENSE
+ShortDescription: A private, local-first life management app for desktop and Android.
+Description: |-
+  The Mainframe is a calm, local-first personal operating system for everything you're
+  learning, building, pursuing, and acquiring. It provides five pre-modeled life domains
+  — Courses, Goals, Build Ideas, Ventures, and Acquisitions — with zero configuration,
+  no-shame re-entry, and 100% offline-first SQLite storage.
+
+  Key features:
+  - 100% offline-first: all data stored locally in SQLite (no cloud account required)
+  - Five pre-modeled life domains: Courses, Goals, Ideas, Ventures, Acquisitions
+  - No-shame Neuro-UX: neutral re-entry design, no punitive overdue badges
+  - Peer-to-peer device sync over LAN Wi-Fi or USB (no central server)
+  - Built with Tauri v2 (Rust + React + TypeScript)
+  - Free and open source (MIT License)
+  - Available for Windows, macOS, Linux, and Android
+Moniker: the-mainframe
+Tags:
+  - productivity
+  - personal
+  - local-first
+  - offline
+  - sqlite
+  - tauri
+  - life-management
+  - goals
+  - notes
+  - courses
+  - open-source
+  - privacy
+ReleaseNotes: |-
+  Initial public release (v0.1.0).
+
+  - Five life domain modules: Courses, Goals, Ideas, Ventures, Acquisitions
+  - 100% offline SQLite storage
+  - No-shame re-entry Neuro-UX design
+  - Peer-to-peer LAN + USB bidirectional sync
+  - Built-in auto-updater (Tauri updater, signed releases)
+ReleaseNotesUrl: https://github.com/karefined-eng/the-mainframe/releases/tag/v0.1.0
+ManifestType: defaultLocale
+ManifestVersion: 1.6.0

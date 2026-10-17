@@ -53,3 +53,6 @@ dist-installers/
 
 # Release artifacts
 release-artifacts/
+
+# Winget submission working clone of microsoft/winget-pkgs (140MB, not project source)
+winget-pkgs/

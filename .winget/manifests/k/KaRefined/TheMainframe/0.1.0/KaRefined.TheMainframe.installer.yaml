@@ -1,0 +1,35 @@
+﻿# yaml-language-server: $schema=https://aka.ms/winget-manifest.installer.1.6.0.schema.json
+
+PackageIdentifier: KaRefined.TheMainframe
+PackageVersion: 0.1.0
+MinimumOSVersion: "10.0.0.0"
+Platform:
+  - Windows.Desktop
+Scope: user
+InstallModes:
+  - interactive
+  - silent
+UpgradeBehavior: install
+Installers:
+  # ── NSIS setup EXE (preferred — smaller, user-scope install, supports /S silent)
+  - Architecture: x64
+    InstallerType: nullsoft
+    InstallerUrl: https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/The.Mainframe_0.1.0_x64-setup.exe
+    InstallerSha256: 150F0852FFD43BB7F60277CCF3DFD6C441F3B12DA818A0BBC507BE856779DCB2
+    InstallerSwitches:
+      Silent: /S
+      SilentWithProgress: /S
+    InstallLocationVariable: INSTDIR
+    ElevationRequirement: elevationProhibited
+  # ── MSI installer (machine-scope fallback / enterprise managed deployment)
+  - Architecture: x64
+    InstallerType: msi
+    InstallerUrl: https://github.com/karefined-eng/the-mainframe/releases/download/v0.1.0/The.Mainframe_0.1.0_x64_en-US.msi
+    InstallerSha256: A737F9E65159E11C1DC44AFEC098C7AFDB728D950E14E9DA8C99E008B717C001
+    InstallerSwitches:
+      Silent: /qn
+      SilentWithProgress: /qb
+    ProductCode: "{com.karefined.the-mainframe}"
+    ElevationRequirement: requiresElevation
+ManifestType: installer
+ManifestVersion: 1.6.0
