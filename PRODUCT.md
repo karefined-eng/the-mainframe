@@ -1,7 +1,7 @@
 # Product Context: The Mainframe
 
 ## 1. What is The Mainframe?
-The Mainframe is a private, local-first personal operating system for solo builders, developers, and people with too many ideas. It unifies courses, goals, build ideas, ventures, and purchases in one private home without the blank-canvas maintenance of Notion or the overdue shame mechanics of Todoist.
+The Mainframe is a private, local-first home for your five parallel life tracks, built for solo builders, developers, and people with too many ideas. Courses, goals, build ideas, ventures, and acquisitions each get a dedicated, pre-modeled home — without the blank-canvas maintenance of Notion or the overdue shame mechanics of Todoist.
 
 ## 2. Core Value Pillars
 1. **Psychological Moat (Zero-Shame Neuro-UX):** Designed to reduce cognitive load and prevent avoidance freeze. The "What's Hot" attention queue is strictly capped at 3–5 items based on working memory limits. Stepping away for weeks produces calm re-entry facts—never red accusations or broken streaks.

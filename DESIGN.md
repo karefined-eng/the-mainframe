@@ -1,7 +1,7 @@
 # Design System & Visual Tokens: The Mainframe
 
 ## 1. Brand Identity & Aesthetic Principles
-The Mainframe is a private, local-first personal operating system built with the "Ponytail" minimalist philosophy: calm, unobtrusive, highly durable, and free of clutter.
+The Mainframe is a private, local-first life-dashboard app built with the "Ponytail" minimalist philosophy: calm, unobtrusive, highly durable, and free of clutter.
 
 - **Mode:** `Persuade` for landing page (`src/landing/`), `Operate` for application dashboard (`src/App.tsx`).
 - **Strict Minimalist Rule:** ZERO emojis in the UI. Exclusively use `lucide-react` SVG icons.

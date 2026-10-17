@@ -547,13 +547,12 @@ export default function LandingPage() {
           <div className="lp-wrap lp-hero-grid">
             <div>
               <h1 className="lp-h1" id="hero-heading">
-                Your calm command center for everything you&apos;re learning, building, pursuing, and
-                acquiring.
+                Your life isn&apos;t a flat list. It&apos;s five parallel tracks.
               </h1>
               <p className="lp-sub">
-                The Mainframe is a private, local-first life management app for scattered projects,
-                goals, courses, ideas, and purchases. Work offline, keep your data on your devices,
-                and bring order to the lists already spread across your life.
+                The Mainframe gives courses, build ideas, ventures, goals, and acquisitions each a
+                calm home in one private, local-first app. Work offline, keep your data on your
+                devices, and stop reshaping generic tools around the life you actually have.
               </p>
               <p className="lp-status">
                 <span className="lp-dot" aria-hidden="true" />
@@ -575,7 +574,7 @@ export default function LandingPage() {
         <Section
           id="why"
           title="Built for people whose work does not fit in one list"
-          lede="Most life management tools are either a generic task list that has to be reshaped around your life, or a workspace so broad that maintaining it becomes the work. The Mainframe starts from the domains a person actually has: studies, builds, acquisitions, long-term goals, and ventures."
+          lede="Your course notes live in one app, your prototype ideas sit in GitHub issues and old chats, and your gear research is scattered across a dozen open tabs. Your ambitions didn't scatter because you're disorganized — they scattered because no tool was built to hold all of them at once. The Mainframe starts from the domains a person actually has: studies, builds, acquisitions, long-term goals, and ventures."
         >
           <div className="lp-ruled lp-aud-grid">
             {audience.map((group) => (
@@ -597,7 +596,7 @@ export default function LandingPage() {
         <Section
           id="compare"
           title="How The Mainframe compares"
-          lede="The Mainframe sits in the calm, defensible sweet spot between flat grocery checklists and complex database builders."
+          lede="The Mainframe sits between flat grocery checklists and complex database builders: real structure from the first launch, and your data stays on your machine."
         >
           <div className="lp-table-wrap">
             <table className="lp-table">

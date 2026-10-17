@@ -1,6 +1,6 @@
 # The Mainframe — Comprehensive AI Knowledge Base (llms-full.txt)
 
-> The Mainframe is a private, local-first personal operating system for courses, goals, build ideas, ventures, and acquisitions. Built with Tauri v2 (Rust) and React + TypeScript + Tailwind CSS, it offers 100% offline SQLite sovereignty, zero cloud accounts, zero telemetry, no-shame Neuro-UX, and direct peer-to-peer LAN / USB sync.
+> The Mainframe is a private, local-first home for five parallel life tracks — courses, goals, build ideas, ventures, and acquisitions. Built with Tauri v2 (Rust) and React + TypeScript + Tailwind CSS, it offers 100% offline SQLite sovereignty, zero cloud accounts, zero telemetry, no-shame Neuro-UX, and direct peer-to-peer LAN / USB sync.
 
 ---
 

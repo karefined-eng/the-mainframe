@@ -5,7 +5,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Tauri v2](https://img.shields.io/badge/Tauri-v2-FFC131?logo=tauri&logoColor=white)](https://v2.tauri.app/)
 
-> **The calm, local-first personal operating system for everything you're learning, building, pursuing, and acquiring.**
+> **Your life isn't a flat list. It's five parallel tracks — each with its own calm, private home.**
 
 A **private, offline-first personal dashboard** for Windows, macOS, Linux, and Android.  
 Zero accounts. Zero cloud lock-in. Zero subscription fees. No-shame Neuro-UX design.
@@ -20,12 +20,15 @@ Zero accounts. Zero cloud lock-in. Zero subscription fees. No-shame Neuro-UX des
 
 ## Why The Mainframe
 
-Most productivity tools fail because of two extremes:
-1. **The To-Do List Shame Spiral:** Apps like Todoist and TickTick punish missed days with rolling overdue dates, red alert badges, and broken streaks—triggering avoidance loops and abandonment.
-2. **The Modular Setup Trap:** Tools like Notion, Obsidian, and Anytype require hours of manual database schema building, turning system maintenance into a distraction from actual execution.
-3. **Scattered Parallel Ambitions:** Ambitious builders don't just have flat "chores." They have **Courses** they are taking, **Build Ideas** they are prototyping, **Ventures** they are operating, **Goals** they are measuring, and **Acquisitions** they are researching.
+Your course notes live in one app. Your prototype ideas sit in GitHub issues and old chats. Your gear research is scattered across a dozen open tabs. Your ambitions didn't scatter because you're disorganized — they scattered because no tool was built to hold all of them at once.
 
-The Mainframe sits in the calm, defensible sweet spot: **pre-modeled life domains, zero configuration, no-shame re-entry, and 100% offline sovereignty.**
+The Mainframe is built on one opinion: **your life isn't a flat list. It's five parallel tracks** — Courses & Certifications, Build Ideas, Ventures, Goals, and Acquisitions — each with its own home, its own cadence, and nothing to configure.
+
+Three moments define the app:
+
+1. **The paste.** Dump a raw brain-dump from Apple Notes, WhatsApp, or your clipboard. Every line becomes a structured card in the right domain in seconds, original text preserved.
+2. **The return.** Come back after three weeks to a calm "continue where you left off." No red badges, no broken streaks, no wall of overdue guilt.
+3. **The exit.** Your data is a single SQLite file on your machine. No account, no cloud lock-in, no subscription — free and open source, forever.
 
 ### How The Mainframe Compares
 

@@ -1,13 +1,13 @@
 # The Mainframe
 
-> A private, local-first personal operating system for courses, goals, build ideas, ventures, and purchases. Zero cloud accounts, zero subscriptions, no-shame Neuro-UX, and direct P2P LAN/USB sync.
+> A private, local-first home for five parallel life tracks — courses, goals, build ideas, ventures, and acquisitions. Zero cloud accounts, zero subscriptions, no-shame Neuro-UX, and direct P2P LAN/USB sync.
 
 The Mainframe is an open-source, offline-first personal management desktop and mobile application built with Tauri v2 (Rust) and React + TypeScript. It is designed specifically for people with ADHD or working memory overwhelm who juggle multiple parallel life tracks without falling into to-do list guilt.
 
 ## Knowledge Base Files
 - [Full Knowledge Base](https://the-mainframe-app.vercel.app/llms-full.txt): Comprehensive deep-dive covering architecture, sync protocols, schema, Neuro-UX, and full FAQ.
 
-## Key Principles & Defensible Moat
+## Key Principles & Design Invariants
 
 1. **Local-First SQLite Sovereignty:** 100% of data is stored in a local SQLite database on your device. Zero telemetry, zero cloud accounts, zero hidden tracking.
 2. **P2P LAN / Wired USB Sync:** Non-destructive bidirectional sync over local Wi-Fi or wired USB (ADB reverse tunnel) with 6-digit PIN authentication. No intermediate cloud servers.
