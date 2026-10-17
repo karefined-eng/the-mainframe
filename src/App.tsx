@@ -9,12 +9,13 @@ import Settings from "./components/Settings";
 import BackupExport from "./components/BackupExport";
 import SyncPanel from "./components/SyncPanel";
 import ToastContainer from "./components/Toast";
-import { Award, Wrench, ShoppingCart, Target, Rocket, Feather, Zap, Compass, BookOpen, X, ClipboardPaste, Menu } from "lucide-react";
+import { Award, Wrench, ShoppingCart, Target, Rocket, Feather, Zap, Compass, BookOpen, X, ClipboardPaste, Menu, Mic } from "lucide-react";
 import { runUrgencyCheck } from "./engine/urgency";
 import { buildDashboardModel, type HotItem, type ReentrySummary } from "./engine/dashboardModel";
 import CalendarView from "./components/CalendarView";
 import FocusDraftingMode from "./components/FocusDraftingMode";
 import NotificationEngine from "./components/NotificationEngine";
+import VoiceCaptureModal from "./components/VoiceCaptureModal";
 
 export const domains = [
   { key: "certifications", label: "Certifications", icon: Award },
@@ -89,6 +90,7 @@ function App() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showIngest, setShowIngest] = useState(false);
+  const [showVoiceCapture, setShowVoiceCapture] = useState(false);
   const [draftingItem, setDraftingItem] = useState<{item: BaseItem, domain: DomainKey} | null>(null);
   const [spotlight, setSpotlight] = useState<{ domain: DomainKey; itemId: number } | null>(null);
   const [startupError, setStartupError] = useState<string | null>(null);
@@ -175,27 +177,37 @@ function App() {
               {viewTitle()}
             </h1>
           </div>
-          {activeDomain && (
-            <div className="flex gap-2.5 overflow-x-auto pb-1 sm:pb-0">
-              {(["daily", "weekly", "monthly"] as Period[]).map((p) => (
-                <button
-                  key={p}
-                  aria-pressed={period === p}
-                  onClick={() => {
-                    setPeriod(p);
-                    setSpotlight(null);
-                  }}
-                  className={`rounded-full border px-4 py-2.5 text-sm font-medium capitalize transition-all cursor-pointer ${
-                    period === p
-                      ? "bg-accent text-bg border-accent"
-                      : "bg-surface-alt border-border text-text hover:border-accent/50"
-                  }`}
-                >
-                  {p}
-                </button>
-              ))}
-            </div>
-          )}
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setShowVoiceCapture(true)}
+              className="flex items-center gap-1.5 rounded-xl border border-accent/40 bg-accent/10 px-3.5 py-2 text-sm font-medium text-accent hover:bg-accent/20 transition-all cursor-pointer shadow-sm"
+              title="Voice Rant & Quick Capture (One-Tap)"
+            >
+              <Mic className="w-4 h-4 text-accent" />
+              <span className="hidden sm:inline">Rant / Speak</span>
+            </button>
+            {activeDomain && (
+              <div className="flex gap-2.5 overflow-x-auto pb-1 sm:pb-0">
+                {(["daily", "weekly", "monthly"] as Period[]).map((p) => (
+                  <button
+                    key={p}
+                    aria-pressed={period === p}
+                    onClick={() => {
+                      setPeriod(p);
+                      setSpotlight(null);
+                    }}
+                    className={`rounded-full border px-4 py-2.5 text-sm font-medium capitalize transition-all cursor-pointer ${
+                      period === p
+                        ? "bg-accent text-bg border-accent"
+                        : "bg-surface-alt border-border text-text hover:border-accent/50"
+                    }`}
+                  >
+                    {p}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
         </header>
 
         {/* Main content area */}
@@ -208,6 +220,12 @@ function App() {
                 className="rounded-xl border border-border bg-surface-alt px-4 py-2.5 text-sm text-text-muted hover:border-accent/50 hover:text-text transition-all cursor-pointer"
               >
                 {showIngest ? <><X className="w-4 h-4 inline-block mr-1" /> Close</> : <><ClipboardPaste className="w-4 h-4 inline-block mr-1" /> Paste Import</>}
+              </button>
+              <button
+                onClick={() => setShowVoiceCapture(true)}
+                className="rounded-xl border border-accent/30 bg-surface-alt px-4 py-2.5 text-sm text-accent hover:bg-accent/10 transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <Mic className="w-4 h-4 text-accent" /> Voice Capture
               </button>
             </div>
 
@@ -285,6 +303,11 @@ function App() {
 
       <NotificationEngine />
       <ToastContainer />
+      <VoiceCaptureModal
+        isOpen={showVoiceCapture}
+        onClose={() => setShowVoiceCapture(false)}
+        onItemsImported={() => refreshCounts()}
+      />
     </div>
   );
 }
