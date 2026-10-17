@@ -10,6 +10,7 @@ const domainImportance: Record<DomainKey, number> = {
   writing: 0,
   skills: 1,
   experiences: 0,
+  journal: 0,
 };
 
 const bandThresholds: Record<string, { dormant: number; gentle: number; active: number; urgent: number }> = {

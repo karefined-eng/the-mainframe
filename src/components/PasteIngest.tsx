@@ -23,6 +23,7 @@ export default function PasteIngest({ domain, onImported }: PasteIngestProps) {
       "writing",
       "skills",
       "experiences",
+      "journal",
     ]);
     if (!validDomains.has(domain)) {
       setResult("Error: invalid domain");

@@ -135,11 +135,13 @@ export default function DomainView({
   return (
       <div className="flex flex-col gap-4">
       {/* Definition Banner */}
-      {(domain === "goals" || domain === "skills" || domain === "experiences") && (
+      {(domain === "goals" || domain === "skills" || domain === "experiences" || domain === "writing" || domain === "journal") && (
         <div className="rounded-xl bg-accent/5 border border-accent/20 p-4 mb-2 text-sm text-text-muted">
-          {domain === "goals" && <p className="m-0"><strong className="text-accent">Goals:</strong> A specific achievement with an endpoint (e.g. "Run a marathon"). It is complete when done.</p>}
-          {domain === "skills" && <p className="m-0"><strong className="text-accent">Skills:</strong> An ongoing capability to master (e.g. "Coding", "Running"). No finish line, just proficiency.</p>}
-          {domain === "experiences" && <p className="m-0"><strong className="text-accent">Experiences:</strong> A one-time life event to enjoy (e.g. "Skydiving"). No ongoing mastery, just do it once.</p>}
+          {domain === "goals" && <p className="m-0"><strong className="text-accent">Goals:</strong> A specific milestone with an endpoint (e.g. "Save $10k", "Sub-20 5k"). Complete when achieved.</p>}
+          {domain === "skills" && <p className="m-0"><strong className="text-accent">Skills:</strong> An ongoing craft or capability to level up (e.g. "Rust", "UI Design"). No finish line, just compounding proficiency.</p>}
+          {domain === "experiences" && <p className="m-0"><strong className="text-accent">Experiences (Bucket List):</strong> Real-world adventures and memories to pursue (e.g. "Skydive from a plane", "Hike Mt. Fuji", "Swim under a waterfall").</p>}
+          {domain === "writing" && <p className="m-0"><strong className="text-accent">Writing:</strong> Formal research papers, essays, articles, and structured thought pieces meant for publishing or deep inquiry.</p>}
+          {domain === "journal" && <p className="m-0"><strong className="text-accent">Journal:</strong> Unfiltered daily reflections, raw emotional check-ins, personal day logs, and introspective musings.</p>}
         </div>
       )}
 

@@ -244,6 +244,27 @@ pub fn run() {
             "#,
             kind: MigrationKind::Up,
         },
+        Migration {
+            version: 8,
+            description: "add_journal_domain",
+            sql: r#"
+                CREATE TABLE IF NOT EXISTS journal (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    title TEXT NOT NULL UNIQUE,
+                    notes TEXT,
+                    status TEXT NOT NULL DEFAULT 'done',
+                    created_at TEXT NOT NULL DEFAULT (datetime('now')),
+                    updated_at TEXT NOT NULL DEFAULT (datetime('now')),
+                    target_date TEXT,
+                    target_time TEXT,
+                    raw_import_text TEXT,
+                    entry_type TEXT DEFAULT 'reflection',
+                    last_notified_at TEXT,
+                    last_notified_score INTEGER
+                );
+            "#,
+            kind: MigrationKind::Up,
+        },
     ];
 
     let mut builder = tauri::Builder::default();

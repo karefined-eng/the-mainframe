@@ -51,11 +51,14 @@ const domainFields: Record<DomainKey, { key: string; label: string; type: string
     { key: "impact", label: "Impact", type: "select" },
     { key: "takeaway", label: "Takeaway", type: "text" },
   ],
+  journal: [
+    { key: "entry_type", label: "Entry Type", type: "select" },
+  ],
 };
 
 
 export default function ItemForm({ domain, item, onSave, onCancel, onEnterDraftingMode }: ItemFormProps) {
-  const isTier1 = ["build_ideas", "writing", "ventures", "goals", "skills", "experiences"].includes(domain);
+  const isTier1 = ["build_ideas", "writing", "ventures", "goals", "skills", "experiences", "journal"].includes(domain);
 
   const [form, setForm] = useState<Record<string, string>>(() => {
     if (item) {
@@ -186,6 +189,17 @@ export default function ItemForm({ domain, item, onSave, onCancel, onEnterDrafti
                 <option value="want">Want</option>
                 <option value="need">Need</option>
               </select>
+            ) : f.key === "entry_type" ? (
+              <select
+                className={inputClass}
+                value={form[f.key] || "reflection"}
+                onChange={(e) => set(f.key, e.target.value)}
+              >
+                <option value="reflection">Reflection</option>
+                <option value="daily">Daily Log</option>
+                <option value="thought">Raw Thought</option>
+                <option value="gratitude">Gratitude</option>
+              </select>
             ) : f.key === "writing_type" ? (
               <select
                 className={inputClass}
@@ -195,7 +209,7 @@ export default function ItemForm({ domain, item, onSave, onCancel, onEnterDrafti
                 <option value="essay">Essay</option>
                 <option value="research">Research</option>
                 <option value="letter">Letter</option>
-                <option value="journal">Journal</option>
+                <option value="article">Article</option>
               </select>
             ) : f.key === "proficiency" ? (
               <select

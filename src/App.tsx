@@ -9,7 +9,7 @@ import Settings from "./components/Settings";
 import BackupExport from "./components/BackupExport";
 import SyncPanel from "./components/SyncPanel";
 import ToastContainer from "./components/Toast";
-import { Award, Wrench, ShoppingCart, Target, Rocket, Feather, Zap, Compass, X, ClipboardPaste, Menu } from "lucide-react";
+import { Award, Wrench, ShoppingCart, Target, Rocket, Feather, Zap, Compass, BookOpen, X, ClipboardPaste, Menu } from "lucide-react";
 import { runUrgencyCheck } from "./engine/urgency";
 import { buildDashboardModel, type HotItem, type ReentrySummary } from "./engine/dashboardModel";
 import CalendarView from "./components/CalendarView";
@@ -25,9 +25,10 @@ export const domains = [
   { key: "writing", label: "Writing", icon: Feather },
   { key: "skills", label: "Skills", icon: Zap },
   { key: "experiences", label: "Experiences", icon: Compass },
+  { key: "journal", label: "Journal", icon: BookOpen },
 ] as const;
 
-export type DomainKey = "certifications" | "build_ideas" | "acquisitions" | "goals" | "ventures" | "writing" | "skills" | "experiences";
+export type DomainKey = "certifications" | "build_ideas" | "acquisitions" | "goals" | "ventures" | "writing" | "skills" | "experiences" | "journal";
 export type DomainInfo = typeof domains[number];
 export type Period = "daily" | "weekly" | "monthly";
 export type Status = "not_started" | "in_progress" | "done" | "paused";
@@ -79,6 +80,7 @@ function App() {
     writing: 0,
     skills: 0,
     experiences: 0,
+    journal: 0,
   });
   const [hotItems, setHotItems] = useState<HotItem[]>([]);
   const [reentry, setReentry] = useState<ReentrySummary | null>(null);
