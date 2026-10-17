@@ -1,7 +1,8 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import { getDb, type BaseItem, type DomainKey } from "../App";
-import { Download, X, Plus, GripVertical, FileText } from "lucide-react";
+import { Download, X, Plus, GripVertical, FileText, FileCode } from "lucide-react";
 import { useSyncContext } from "../context/SyncContext";
+import { exportCardAsText, exportCardAsMarkdown, exportCardAsOriginMd, downloadFile } from "../engine/exportEngine";
 
 interface FocusDraftingModeProps {
   item: BaseItem;
@@ -174,17 +175,19 @@ export default function FocusDraftingMode({ item, domain, onClose }: FocusDrafti
     setDraggedCardId(null);
   };
 
-  const handleExport = () => {
-    const lines = cards.map(c => `## ${c.title}\n\n${c.draft_content || ""}\n`);
-    const blob = new Blob([lines.join("\n\n")], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${item.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_export.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+  const handleExportTxt = () => {
+    const text = exportCardAsText(item, cards);
+    downloadFile(`${item.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.txt`, text, "text/plain");
+  };
+
+  const handleExportMd = () => {
+    const md = exportCardAsMarkdown(item, cards);
+    downloadFile(`${item.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.md`, md, "text/markdown");
+  };
+
+  const handleExportOrigin = () => {
+    const origin = exportCardAsOriginMd(item, cards);
+    downloadFile(`${item.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_origin.md`, origin, "text/markdown");
   };
 
   return (
@@ -208,12 +211,29 @@ export default function FocusDraftingMode({ item, domain, onClose }: FocusDrafti
             {saveError ? "Save Failed" : syncInProgress ? "Sync in progress" : saving ? "Saving..." : "Saved"}
           </span>
         </div>
-        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0 flex-wrap">
+          {domain === "build_ideas" && (
+            <button 
+              onClick={handleExportOrigin}
+              className="rounded-lg border border-accent/40 bg-accent/10 px-3 py-1.5 text-xs text-accent hover:bg-accent/20 transition-all cursor-pointer"
+              title="Export as project origin.md foundation"
+            >
+              <FileCode className="w-4 h-4 inline-block mr-1" /> origin.md
+            </button>
+          )}
           <button 
-            onClick={handleExport}
+            onClick={handleExportMd}
             className="rounded-lg border border-border px-3 py-1.5 text-xs text-text-muted hover:text-text hover:border-accent/50 transition-all cursor-pointer"
+            title="Export standard Markdown file"
           >
-            <Download className="w-4 h-4 inline-block mr-1" /> Export .txt
+            <Download className="w-4 h-4 inline-block mr-1" /> .md
+          </button>
+          <button 
+            onClick={handleExportTxt}
+            className="rounded-lg border border-border px-3 py-1.5 text-xs text-text-muted hover:text-text hover:border-accent/50 transition-all cursor-pointer"
+            title="Export plain text file"
+          >
+            <Download className="w-4 h-4 inline-block mr-1" /> .txt
           </button>
           <button 
             onClick={onClose}

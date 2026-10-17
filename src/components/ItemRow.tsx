@@ -1,5 +1,5 @@
 import type { DomainKey, BaseItem, Status } from "../App";
-import { X } from "lucide-react";
+import { X, Download, FileCode } from "lucide-react";
 import { formatTargetDate, isOverdueDate } from "../utils/dateWindow";
 
 const statusCycle: Status[] = ["not_started", "in_progress", "done", "paused"];
@@ -97,13 +97,55 @@ export default function ItemRow({
       </div>
 
       {/* Actions */}
-      <button
-        onClick={() => onDelete(item.id)}
-        className="shrink-0 rounded-lg p-1.5 text-text-muted/40 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 hover:text-danger transition-all cursor-pointer"
-        title="Delete"
-      >
-        <X className="w-4 h-4 mx-auto" />
-      </button>
+      <div className="flex items-center gap-1 shrink-0 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
+        {domain === "build_ideas" && (
+          <button
+            onClick={async (e) => {
+              e.stopPropagation();
+              const { exportCardAsOriginMd, downloadFile } = await import("../engine/exportEngine");
+              const { getDb } = await import("../App");
+              const db = await getDb();
+              const cards = await db.select<{ title: string; draft_content: string | null }[]>(
+                "SELECT title, draft_content FROM cards WHERE domain = $1 AND row_id = $2 ORDER BY order_index",
+                [domain, item.id]
+              );
+              const md = exportCardAsOriginMd(item, cards);
+              const filename = `${item.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}_origin.md`;
+              downloadFile(filename, md);
+            }}
+            className="rounded-lg p-1.5 text-text-muted hover:text-accent hover:bg-surface transition-all cursor-pointer"
+            title="Export origin.md (Project Seed)"
+          >
+            <FileCode className="w-4 h-4" />
+          </button>
+        )}
+        <button
+          onClick={async (e) => {
+            e.stopPropagation();
+            const { exportCardAsMarkdown, downloadFile } = await import("../engine/exportEngine");
+            const { getDb } = await import("../App");
+            const db = await getDb();
+            const cards = await db.select<{ title: string; draft_content: string | null }[]>(
+              "SELECT title, draft_content FROM cards WHERE domain = $1 AND row_id = $2 ORDER BY order_index",
+              [domain, item.id]
+            );
+            const md = exportCardAsMarkdown(item, cards);
+            const filename = `${item.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.md`;
+            downloadFile(filename, md);
+          }}
+          className="rounded-lg p-1.5 text-text-muted hover:text-text hover:bg-surface transition-all cursor-pointer"
+          title="Export Markdown (.md)"
+        >
+          <Download className="w-4 h-4" />
+        </button>
+        <button
+          onClick={() => onDelete(item.id)}
+          className="rounded-lg p-1.5 text-text-muted/40 hover:text-danger hover:bg-surface transition-all cursor-pointer"
+          title="Delete"
+        >
+          <X className="w-4 h-4 mx-auto" />
+        </button>
+      </div>
     </div>
   );
 }
