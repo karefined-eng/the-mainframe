@@ -1,9 +1,9 @@
 ﻿# yaml-language-server: $schema=https://aka.ms/winget-manifest.defaultLocale.1.6.0.schema.json
 
-PackageIdentifier: KaRefined.TheMainframe
+PackageIdentifier: karefined-eng.the-mainframe
 PackageVersion: 0.1.0
 PackageLocale: en-US
-Publisher: KaRefined
+Publisher: karefined-eng
 PublisherUrl: https://github.com/karefined-eng
 PublisherSupportUrl: https://github.com/karefined-eng/the-mainframe/issues
 # PrivacyUrl: https://the-mainframe-app.vercel.app/privacy
@@ -16,10 +16,9 @@ Copyright: Copyright (c) 2026 karefined-eng
 CopyrightUrl: https://github.com/karefined-eng/the-mainframe/blob/main/LICENSE
 ShortDescription: A private, local-first life management app for desktop and Android.
 Description: |-
-  The Mainframe is a calm, local-first personal operating system for everything you're
-  learning, building, pursuing, and acquiring. It provides five pre-modeled life domains
-  — Courses, Goals, Build Ideas, Ventures, and Acquisitions — with zero configuration,
-  no-shame re-entry, and 100% offline-first SQLite storage.
+  Your life isn't a flat list. The Mainframe is a private, local-first home for your
+  five parallel life tracks — Courses, Goals, Build Ideas, Ventures, and Acquisitions —
+  with zero configuration, no-shame re-entry, and 100% offline-first SQLite storage.
 
   Key features:
   - 100% offline-first: all data stored locally in SQLite (no cloud account required)
