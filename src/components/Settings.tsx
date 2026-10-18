@@ -1,17 +1,35 @@
 import { useEffect, useState } from "react";
 import { getDb, domains } from "../App";
 import { showToast } from "./Toast";
-import { Bell, Database as DbIcon, Info, Sparkles, Download, RefreshCw, CheckCircle2, AlertCircle } from "lucide-react";
+import { Bell, Database as DbIcon, Info, Sparkles, Download, RefreshCw, CheckCircle2, AlertCircle, Cpu, Eye, EyeOff } from "lucide-react";
 import { check } from "@tauri-apps/plugin-updater";
 
 type Density = "minimal" | "balanced" | "intensive";
-const validSettingKeys = new Set(["notification_density", "notifications_enabled"]);
+const validSettingKeys = new Set([
+  "notification_density",
+  "notifications_enabled",
+  "gemini_api_key",
+  "openrouter_api_key",
+  "nvidia_api_key",
+  "groq_api_key",
+]);
 
 export default function Settings() {
   const [density, setDensity] = useState<Density>("balanced");
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
   const [dbStats, setDbStats] = useState<Record<string, number>>({});
   const [saved, setSaved] = useState(false);
+
+  // AI provider keys
+  const [geminiKey, setGeminiKey] = useState("");
+  const [openrouterKey, setOpenrouterKey] = useState("");
+  const [nvidiaKey, setNvidiaKey] = useState("");
+  const [groqKey, setGroqKey] = useState("");
+  const [showGeminiKey, setShowGeminiKey] = useState(false);
+  const [showOpenRouterKey, setShowOpenRouterKey] = useState(false);
+  const [showNvidiaKey, setShowNvidiaKey] = useState(false);
+  const [showGroqKey, setShowGroqKey] = useState(false);
+  const [aiKeySaving, setAiKeySaving] = useState<string | null>(null);
 
   // Auto-updater state
   const [checkingUpdate, setCheckingUpdate] = useState(false);
@@ -80,11 +98,15 @@ export default function Settings() {
         const db = await getDb();
         // Load Settings
         const rows = await db.select<{ key: string, value: string }[]>(
-          `SELECT key, value FROM app_settings WHERE key IN ('notification_density', 'notifications_enabled')`,
+          `SELECT key, value FROM app_settings WHERE key IN ('notification_density', 'notifications_enabled', 'gemini_api_key', 'openrouter_api_key', 'nvidia_api_key', 'groq_api_key')`,
         );
         for (const row of rows) {
           if (row.key === 'notification_density') setDensity(row.value as Density);
           if (row.key === 'notifications_enabled') setNotificationsEnabled(row.value === 'true');
+          if (row.key === 'gemini_api_key') setGeminiKey(row.value);
+          if (row.key === 'openrouter_api_key') setOpenrouterKey(row.value);
+          if (row.key === 'nvidia_api_key') setNvidiaKey(row.value);
+          if (row.key === 'groq_api_key') setGroqKey(row.value);
         }
 
         // Load DB Stats
@@ -99,6 +121,26 @@ export default function Settings() {
       }
     })();
   }, []);
+
+  const saveAIKey = async (key: "gemini_api_key" | "openrouter_api_key" | "nvidia_api_key" | "groq_api_key", value: string) => {
+    setAiKeySaving(key);
+    try {
+      const db = await getDb();
+      if (value.trim()) {
+        await db.execute(
+          `INSERT OR REPLACE INTO app_settings (key, value) VALUES ($1, $2)`,
+          [key, value.trim()]
+        );
+      } else {
+        await db.execute(`DELETE FROM app_settings WHERE key = $1`, [key]);
+      }
+      showToast(value.trim() ? "API key saved" : "API key cleared", "info");
+    } catch {
+      showToast("Failed to save API key", "error");
+    } finally {
+      setAiKeySaving(null);
+    }
+  };
 
   const saveSetting = async (key: string, val: string) => {
     try {
@@ -190,6 +232,188 @@ export default function Settings() {
           >
             Test Notification
           </button>
+        </div>
+      </section>
+
+      {/* AI Voice Parser Section */}
+      <section className="flex flex-col gap-4 rounded-2xl border border-border bg-surface-alt p-6">
+        <div className="flex items-center justify-between">
+          <h4 className="m-0 text-base font-semibold flex items-center gap-2">
+            <Cpu className="w-5 h-5 text-accent" />
+            AI Voice Parser
+          </h4>
+          <div className="flex items-center gap-2">
+            {geminiKey && (
+              <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                Gemini active
+              </span>
+            )}
+            {openrouterKey && (
+              <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-accent/10 text-accent border border-accent/20">
+                OpenRouter
+              </span>
+            )}
+            {nvidiaKey && (
+              <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-green-500/10 text-green-400 border border-green-500/20">
+                NVIDIA
+              </span>
+            )}
+            {groqKey && (
+              <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-orange-500/10 text-orange-400 border border-orange-500/20">
+                Groq Whisper
+              </span>
+            )}
+            {!geminiKey && !openrouterKey && !nvidiaKey && !groqKey && (
+              <span className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-surface text-text-muted border border-border">
+                Local mode
+              </span>
+            )}
+          </div>
+        </div>
+
+        <p className="text-xs text-text-muted m-0">
+          Add a Gemini key for AI-powered transcription and domain parsing (free quota at AI Studio).
+          OpenRouter and NVIDIA are used as automatic fallbacks for parsing.
+        </p>
+
+        {/* Gemini Key — primary */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold uppercase tracking-wider text-text-muted">
+            Gemini API Key <span className="normal-case font-normal">(primary — transcription + parsing)</span>
+          </label>
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <input
+                type={showGeminiKey ? "text" : "password"}
+                value={geminiKey}
+                onChange={(e) => setGeminiKey(e.target.value)}
+                placeholder="AIza..."
+                className="w-full rounded-xl border border-border bg-bg px-3.5 py-2 text-sm text-text placeholder:text-text-muted/40 outline-none focus:border-accent/50 transition-colors pr-9 font-mono"
+              />
+              <button
+                type="button"
+                onClick={() => setShowGeminiKey((v) => !v)}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text transition-colors cursor-pointer"
+              >
+                {showGeminiKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+            <button
+              onClick={() => saveAIKey("gemini_api_key", geminiKey)}
+              disabled={aiKeySaving === "gemini_api_key"}
+              className="rounded-xl border border-border bg-surface px-3.5 py-2 text-xs font-medium text-text hover:border-accent/50 hover:text-accent transition-colors cursor-pointer disabled:opacity-50"
+            >
+              {aiKeySaving === "gemini_api_key" ? "Saving..." : geminiKey ? "Update" : "Save"}
+            </button>
+          </div>
+          <p className="text-[11px] text-text-muted m-0">
+            Free at <span className="text-accent font-mono">aistudio.google.com</span> — generous free quota, no card needed.
+          </p>
+        </div>
+
+        {/* OpenRouter Key — fallback 1 */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold uppercase tracking-wider text-text-muted">
+            OpenRouter API Key <span className="normal-case font-normal">(fallback 1 — parsing)</span>
+          </label>
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <input
+                type={showOpenRouterKey ? "text" : "password"}
+                value={openrouterKey}
+                onChange={(e) => setOpenrouterKey(e.target.value)}
+                placeholder="sk-or-..."
+                className="w-full rounded-xl border border-border bg-bg px-3.5 py-2 text-sm text-text placeholder:text-text-muted/40 outline-none focus:border-accent/50 transition-colors pr-9 font-mono"
+              />
+              <button
+                type="button"
+                onClick={() => setShowOpenRouterKey((v) => !v)}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text transition-colors cursor-pointer"
+              >
+                {showOpenRouterKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+            <button
+              onClick={() => saveAIKey("openrouter_api_key", openrouterKey)}
+              disabled={aiKeySaving === "openrouter_api_key"}
+              className="rounded-xl border border-border bg-surface px-3.5 py-2 text-xs font-medium text-text hover:border-accent/50 hover:text-accent transition-colors cursor-pointer disabled:opacity-50"
+            >
+              {aiKeySaving === "openrouter_api_key" ? "Saving..." : openrouterKey ? "Update" : "Save"}
+            </button>
+          </div>
+          <p className="text-[11px] text-text-muted m-0">
+            Get a key at <span className="text-accent font-mono">openrouter.ai/keys</span> — pay-per-token, has free models.
+          </p>
+        </div>
+
+        {/* NVIDIA Key — fallback 2 */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold uppercase tracking-wider text-text-muted">
+            NVIDIA NIM API Key <span className="normal-case font-normal">(fallback 2 — parsing)</span>
+          </label>
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <input
+                type={showNvidiaKey ? "text" : "password"}
+                value={nvidiaKey}
+                onChange={(e) => setNvidiaKey(e.target.value)}
+                placeholder="nvapi-..."
+                className="w-full rounded-xl border border-border bg-bg px-3.5 py-2 text-sm text-text placeholder:text-text-muted/40 outline-none focus:border-accent/50 transition-colors pr-9 font-mono"
+              />
+              <button
+                type="button"
+                onClick={() => setShowNvidiaKey((v) => !v)}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text transition-colors cursor-pointer"
+              >
+                {showNvidiaKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+            <button
+              onClick={() => saveAIKey("nvidia_api_key", nvidiaKey)}
+              disabled={aiKeySaving === "nvidia_api_key"}
+              className="rounded-xl border border-border bg-surface px-3.5 py-2 text-xs font-medium text-text hover:border-accent/50 hover:text-accent transition-colors cursor-pointer disabled:opacity-50"
+            >
+              {aiKeySaving === "nvidia_api_key" ? "Saving..." : nvidiaKey ? "Update" : "Save"}
+            </button>
+          </div>
+          <p className="text-[11px] text-text-muted m-0">
+            Free credits at <span className="text-accent font-mono">build.nvidia.com</span> — key starts with <span className="font-mono">nvapi-</span>.
+          </p>
+        </div>
+
+        {/* Groq Key — STT fallback */}
+        <div className="flex flex-col gap-1.5">
+          <label className="text-xs font-semibold uppercase tracking-wider text-text-muted">
+            Groq API Key <span className="normal-case font-normal">(fallback — fast Whisper transcription)</span>
+          </label>
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <input
+                type={showGroqKey ? "text" : "password"}
+                value={groqKey}
+                onChange={(e) => setGroqKey(e.target.value)}
+                placeholder="gsk_..."
+                className="w-full rounded-xl border border-border bg-bg px-3.5 py-2 text-sm text-text placeholder:text-text-muted/40 outline-none focus:border-accent/50 transition-colors pr-9 font-mono"
+              />
+              <button
+                type="button"
+                onClick={() => setShowGroqKey((v) => !v)}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text transition-colors cursor-pointer"
+              >
+                {showGroqKey ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </button>
+            </div>
+            <button
+              onClick={() => saveAIKey("groq_api_key", groqKey)}
+              disabled={aiKeySaving === "groq_api_key"}
+              className="rounded-xl border border-border bg-surface px-3.5 py-2 text-xs font-medium text-text hover:border-accent/50 hover:text-accent transition-colors cursor-pointer disabled:opacity-50"
+            >
+              {aiKeySaving === "groq_api_key" ? "Saving..." : groqKey ? "Update" : "Save"}
+            </button>
+          </div>
+          <p className="text-[11px] text-text-muted m-0">
+            Free high-speed Whisper Large v3 at <span className="text-accent font-mono">console.groq.com</span>.
+          </p>
         </div>
       </section>
 

@@ -30,6 +30,7 @@ const domainColors: Record<string, string> = {
   writing: "#ec4899",
   skills: "#14b8a6",
   experiences: "#6366f1",
+  journal: "#64748b",
 };
 
 export default function CalendarView() {

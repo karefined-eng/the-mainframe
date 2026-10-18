@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { Mic, Radio, X, Check, FileCode, Trash2, ArrowRight } from "lucide-react";
-import { parseRantTranscript, type ParsedItem } from "../engine/rantParser";
+import { Mic, Square, Radio, X, Check, FileCode, Trash2, ArrowRight, Loader2 } from "lucide-react";
+import { parseRantWithAI, transcribeAudio, type AIProvider } from "../engine/aiProvider";
 import { exportCardAsOriginMd, downloadFile } from "../engine/exportEngine";
 import { getDb, domains, type DomainKey } from "../App";
+import type { ParsedItem } from "../engine/rantParser";
 
 interface VoiceCaptureModalProps {
   isOpen: boolean;
@@ -16,14 +17,20 @@ export default function VoiceCaptureModal({
   onItemsImported,
 }: VoiceCaptureModalProps) {
   const [isRecording, setIsRecording] = useState(false);
+  const [isTranscribing, setIsTranscribing] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [parsedItems, setParsedItems] = useState<ParsedItem[]>([]);
   const [isProcessing, setIsProcessing] = useState(false);
   const [approvedIndices, setApprovedIndices] = useState<Set<number>>(new Set());
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [activeProvider, setActiveProvider] = useState<AIProvider | null>(null);
+  const [recordingSeconds, setRecordingSeconds] = useState(0);
 
-  // Web Speech Recognition reference
-  const recognitionRef = useRef<any>(null);
+  // MediaRecorder refs
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
+  const streamRef = useRef<MediaStream | null>(null);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -32,83 +39,108 @@ export default function VoiceCaptureModal({
       setParsedItems([]);
       setApprovedIndices(new Set());
       setStatusMessage(null);
+      setActiveProvider(null);
+      setRecordingSeconds(0);
     }
   }, [isOpen]);
 
-  const startRecording = () => {
-    const SpeechRecognition =
-      (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-
-    if (!SpeechRecognition) {
-      setStatusMessage("Speech recognition not supported in this browser/environment. You can paste or type your rant directly below.");
-      return;
+  // ---------------------------------------------------------------------------
+  // Recording controls
+  // ---------------------------------------------------------------------------
+  const transcribeRecording = async (blob: Blob) => {
+    setIsTranscribing(true);
+    setStatusMessage("Preparing transcription...");
+    const text = await transcribeAudio(blob, (msg) => setStatusMessage(msg));
+    setIsTranscribing(false);
+    if (text) {
+      setTranscript((prev) => (prev ? prev + " " + text : text));
     }
+  };
 
+  const startRecording = async () => {
+    setStatusMessage(null);
     try {
-      const recognition = new SpeechRecognition();
-      recognition.continuous = true;
-      recognition.interimResults = true;
-      recognition.lang = "en-US";
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream;
+      audioChunksRef.current = [];
 
-      let finalSoFar = transcript;
+      // Pick a supported MIME type
+      const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus")
+        ? "audio/webm;codecs=opus"
+        : MediaRecorder.isTypeSupported("audio/ogg;codecs=opus")
+        ? "audio/ogg;codecs=opus"
+        : "";
 
-      recognition.onresult = (event: any) => {
-        let interim = "";
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const trans = event.results[i][0].transcript;
-          if (event.results[i].isFinal) {
-            finalSoFar += (finalSoFar ? " " : "") + trans;
-          } else {
-            interim += trans;
-          }
+      const recorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+      mediaRecorderRef.current = recorder;
+
+      recorder.ondataavailable = (e) => {
+        if (e.data && e.data.size > 0) {
+          audioChunksRef.current.push(e.data);
         }
-        setTranscript(finalSoFar + (interim ? " " + interim : ""));
       };
 
-      recognition.onerror = (e: any) => {
-        console.error("Speech recognition error:", e);
-        setIsRecording(false);
-        setStatusMessage(`Mic error: ${e.error || "Speech recognition paused."}`);
+      recorder.onstop = async () => {
+        streamRef.current?.getTracks().forEach((t) => t.stop());
+        streamRef.current = null;
+        if (audioChunksRef.current.length === 0) {
+          setStatusMessage("No audio captured. Speak and tap stop when finished.");
+          return;
+        }
+        const blob = new Blob(audioChunksRef.current, { type: mimeType || "audio/webm" });
+        audioChunksRef.current = [];
+        if (blob.size < 100) {
+          setStatusMessage("Audio recording too short. Try speaking a longer phrase.");
+          return;
+        }
+        await transcribeRecording(blob);
       };
 
-      recognition.onend = () => {
-        setIsRecording(false);
-      };
-
-      recognition.start();
-      recognitionRef.current = recognition;
+      recorder.start(250);
       setIsRecording(true);
-      setStatusMessage("Listening... Speak freely about apps, goals, experiences, or reflections.");
-    } catch (err) {
+      setRecordingSeconds(0);
+      timerRef.current = setInterval(() => setRecordingSeconds((s) => s + 1), 1000);
+      setStatusMessage("Recording... Speak freely. Tap stop when done.");
+    } catch (err: any) {
       console.error(err);
-      setStatusMessage("Could not access microphone.");
+      setStatusMessage(
+        err?.name === "NotAllowedError"
+          ? "Microphone access denied. Allow mic access and try again."
+          : "Could not access microphone."
+      );
       setIsRecording(false);
     }
   };
 
   const stopRecording = () => {
-    if (recognitionRef.current) {
-      try {
-        recognitionRef.current.stop();
-      } catch {
-        // ignore
-      }
-      recognitionRef.current = null;
+    if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
     }
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
+      mediaRecorderRef.current.stop();
+    }
+    mediaRecorderRef.current = null;
     setIsRecording(false);
   };
 
-  const handleDecompose = () => {
+  const handleDecompose = async () => {
     if (!transcript.trim()) return;
     stopRecording();
     setIsProcessing(true);
+    setActiveProvider(null);
 
     try {
-      const result = parseRantTranscript(transcript);
+      const result = await parseRantWithAI(transcript, (msg) => setStatusMessage(msg));
       setParsedItems(result.items);
+      setActiveProvider(result.provider);
       // Auto-approve all by default for one-click simplicity
       setApprovedIndices(new Set(result.items.map((_, i) => i)));
-      setStatusMessage(`Identified ${result.items.length} distinct item${result.items.length !== 1 ? "s" : ""} across domains.`);
+      setStatusMessage(
+        `Identified ${result.items.length} distinct item${
+          result.items.length !== 1 ? "s" : ""
+        } across domains.`
+      );
     } catch (err) {
       console.error(err);
       setStatusMessage("Failed to decompose transcript.");
@@ -154,12 +186,23 @@ export default function VoiceCaptureModal({
     setIsProcessing(true);
     try {
       const db = await getDb();
+      const domainsWithTrigger = new Set(["goals", "build_ideas", "ventures"]);
       for (const item of toSave) {
         // Insert into respective domain with native SQLite deduplication
-        await db.execute(
-          `INSERT OR IGNORE INTO ${item.domain} (title, notes, raw_import_text, action_trigger) VALUES ($1, $2, $3, $4)`,
-          [item.title, item.notes || null, transcript, item.action_trigger || null]
-        );
+        if (domainsWithTrigger.has(item.domain)) {
+          await db.execute(
+            `INSERT OR IGNORE INTO ${item.domain} (title, notes, raw_import_text, action_trigger) VALUES ($1, $2, $3, $4)`,
+            [item.title, item.notes || null, transcript, item.action_trigger || null]
+          );
+        } else {
+          const effectiveNotes = item.action_trigger
+            ? `${item.notes ? item.notes + "\n\n" : ""}Trigger: ${item.action_trigger}`
+            : (item.notes || null);
+          await db.execute(
+            `INSERT OR IGNORE INTO ${item.domain} (title, notes, raw_import_text) VALUES ($1, $2, $3)`,
+            [item.title, effectiveNotes, transcript]
+          );
+        }
       }
       setStatusMessage(`Saved ${toSave.length} item${toSave.length !== 1 ? "s" : ""} to The Mainframe!`);
       setTimeout(() => {
@@ -196,20 +239,39 @@ export default function VoiceCaptureModal({
         <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-4">
           {/* Mic control */}
           <div className="flex flex-col items-center justify-center p-6 rounded-2xl bg-surface-alt border border-border gap-3 text-center">
-            <button
-              onClick={isRecording ? stopRecording : startRecording}
-              className={`w-16 h-16 rounded-full flex items-center justify-center transition-all cursor-pointer ${
-                isRecording
-                  ? "bg-danger text-white ring-4 ring-danger/30 scale-105"
-                  : "bg-accent text-bg hover:opacity-90 hover:scale-105"
-              }`}
-              title={isRecording ? "Stop Recording" : "Start Voice Rant"}
-            >
-              <Mic className="w-7 h-7" />
-            </button>
-            <span className="text-xs font-medium text-text-muted">
-              {isRecording ? "Recording... Tap to pause" : "Tap mic and speak freely"}
-            </span>
+            {isTranscribing ? (
+              <div className="w-16 h-16 rounded-full flex items-center justify-center bg-surface border border-border">
+                <Loader2 className="w-7 h-7 text-accent animate-spin" />
+              </div>
+            ) : (
+              <button
+                onClick={isRecording ? stopRecording : startRecording}
+                disabled={isTranscribing}
+                className={`w-16 h-16 rounded-full flex items-center justify-center transition-all cursor-pointer ${
+                  isRecording
+                    ? "bg-danger text-white ring-4 ring-danger/30 scale-105 animate-pulse"
+                    : "bg-accent text-bg hover:opacity-90 hover:scale-105"
+                }`}
+                title={isRecording ? "Stop Recording" : "Start Voice Rant"}
+              >
+                {isRecording ? <Square className="w-6 h-6" fill="currentColor" /> : <Mic className="w-7 h-7" />}
+              </button>
+            )}
+            <div className="flex flex-col items-center gap-0.5">
+              <span className="text-xs font-medium text-text-muted">
+                {isTranscribing
+                  ? (statusMessage || "Transcribing audio...")
+                  : isRecording
+                  ? "Recording — tap to stop"
+                  : "Tap mic and speak freely"}
+              </span>
+              {isRecording && (
+                <span className="text-[11px] font-mono text-danger tabular-nums">
+                  {String(Math.floor(recordingSeconds / 60)).padStart(2, "0")}:
+                  {String(recordingSeconds % 60).padStart(2, "0")}
+                </span>
+              )}
+            </div>
           </div>
 
           {/* Transcript input / preview */}
@@ -251,18 +313,31 @@ export default function VoiceCaptureModal({
                 <span className="text-xs font-semibold uppercase tracking-wider text-text-muted">
                   Decomposed Domain Cards ({approvedIndices.size}/{parsedItems.length} Approved)
                 </span>
-                <button
-                  onClick={() => {
-                    if (approvedIndices.size === parsedItems.length) {
-                      setApprovedIndices(new Set());
-                    } else {
-                      setApprovedIndices(new Set(parsedItems.map((_, i) => i)));
-                    }
-                  }}
-                  className="text-xs text-accent hover:underline cursor-pointer"
-                >
-                  {approvedIndices.size === parsedItems.length ? "Deselect All" : "Approve All"}
-                </button>
+                <div className="flex items-center gap-2">
+                  {activeProvider && activeProvider !== "local" && (
+                    <span className={`text-[11px] font-medium px-2 py-0.5 rounded-full border ${
+                      activeProvider === "gemini"
+                        ? "bg-blue-500/10 text-blue-400 border-blue-500/20"
+                        : activeProvider === "openrouter"
+                        ? "bg-accent/10 text-accent border-accent/20"
+                        : "bg-green-500/10 text-green-400 border-green-500/20"
+                    }`}>
+                      {activeProvider === "gemini" ? "Gemini" : activeProvider === "openrouter" ? "OpenRouter" : "NVIDIA"}
+                    </span>
+                  )}
+                  <button
+                    onClick={() => {
+                      if (approvedIndices.size === parsedItems.length) {
+                        setApprovedIndices(new Set());
+                      } else {
+                        setApprovedIndices(new Set(parsedItems.map((_, i) => i)));
+                      }
+                    }}
+                    className="text-xs text-accent hover:underline cursor-pointer"
+                  >
+                    {approvedIndices.size === parsedItems.length ? "Deselect All" : "Approve All"}
+                  </button>
+                </div>
               </div>
 
               <div className="flex flex-col gap-2.5">
